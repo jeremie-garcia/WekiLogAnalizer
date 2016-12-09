@@ -5,7 +5,7 @@
 *.ear
 *.class
 
-.metadata
+.metadata/
 bin/
 tmp/
 *.tmp
