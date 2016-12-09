@@ -8,20 +8,20 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import WekiLogs.logs.KNNTrainingData;
-import WekiLogs.logs.KNNTrainingDataSet;
+import WekiLogs.logs.TrainingData;
+import WekiLogs.logs.TrainingDataSet;
 import WekiLogs.utils.ColorScale;
 
 public class InputVisKNN extends JPanel {
 
 	TrainingViz parent;
-	KNNTrainingDataSet data;
+	TrainingDataSet data;
 
 	private int offset = 20;
 
 	private int diameter = 5;
 
-	public InputVisKNN(KNNTrainingDataSet data, TrainingViz parent) {
+	public InputVisKNN(TrainingDataSet data, TrainingViz parent) {
 		super();
 		this.parent = parent;
 		this.data = data;
@@ -43,7 +43,7 @@ public class InputVisKNN extends JPanel {
 
 	private void drawInputData(Graphics2D g2) {
 		int index = 1;
-		for (KNNTrainingData d : data.examples) {
+		for (TrainingData d : data.examples) {
 			Color c = ColorScale.getColorWithGoldenRationByIndex(d.output);
 			g2.setColor(c);
 			double[] coords = getScreenPosFromCoords(d.inputs.get(0), d.inputs.get(1));

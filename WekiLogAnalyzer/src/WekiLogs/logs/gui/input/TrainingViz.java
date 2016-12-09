@@ -11,7 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import WekiLogs.logs.KNNTrainingDataSet;
+import WekiLogs.logs.TrainingDataSet;
 import WekiLogs.logs.LogEvent;
 import WekiLogs.logs.ModelProcessor;
 import WekiLogs.utils.ColorScale;
@@ -30,7 +30,7 @@ public class TrainingViz extends JFrame {
 	String type;
 	ArrayList<LogEvent> events;
 
-	ArrayList<KNNTrainingDataSet> dataSets;
+	ArrayList<TrainingDataSet> dataSets;
 
 	public int[] globalInputMinValues;
 	public int[] globalInputMaxValues;
@@ -40,7 +40,7 @@ public class TrainingViz extends JFrame {
 	public TrainingViz(String type, ArrayList<LogEvent> events) {
 		this.type = type;
 		this.events = events;
-		this.dataSets = new ArrayList<KNNTrainingDataSet>();
+		this.dataSets = new ArrayList<TrainingDataSet>();
 
 		String dir = null;
 		for (LogEvent logEvent : this.events) {
@@ -48,7 +48,7 @@ public class TrainingViz extends JFrame {
 			if (dir == null) {
 				dir = new File(fileName).getParent();
 			}
-			KNNTrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
+			TrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
 			data.setTimeStamp(logEvent.getTimeStamp());
 			this.dataSets.add(data);
 		}
@@ -67,7 +67,7 @@ public class TrainingViz extends JFrame {
 
 	private void updateColorScale() {
 		this.colorMap = new HashMap<Integer, Color>();
-		for (KNNTrainingDataSet set : this.dataSets) {
+		for (TrainingDataSet set : this.dataSets) {
 			for (int out : set.possibleOutputs) {
 				if (!colorMap.containsKey(out)) {
 					colorMap.put(out, ColorScale.getColorWithGoldenRationByIndex(out));
@@ -86,7 +86,7 @@ public class TrainingViz extends JFrame {
 
 			// then iterate over all dataSets to pudate the min max values
 
-			for (KNNTrainingDataSet set : this.dataSets) {
+			for (TrainingDataSet set : this.dataSets) {
 				for (int k = 0; k < size; k++) {
 					if (set.inputMinValues[k] < this.globalInputMinValues[k]) {
 						this.globalInputMinValues[k] = set.inputMinValues[k];
@@ -105,13 +105,13 @@ public class TrainingViz extends JFrame {
 		}
 	}
 
-	private JPanel buildCentralPanel(ArrayList<KNNTrainingDataSet> dataSets) {
+	private JPanel buildCentralPanel(ArrayList<TrainingDataSet> dataSets) {
 		JPanel centralPanel = new JPanel();
 		centralPanel.setBackground(Color.white);
 		// use a box layout first
 		centralPanel.setLayout(new BoxLayout(centralPanel, BoxLayout.LINE_AXIS));
 
-		for (KNNTrainingDataSet data : dataSets) {
+		for (TrainingDataSet data : dataSets) {
 			InputVisKNN vis = new InputVisKNN(data, this);
 			centralPanel.add(vis);
 		}

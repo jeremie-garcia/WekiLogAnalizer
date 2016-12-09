@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import WekiLogs.logs.KNNTrainingDataSet;
+import WekiLogs.logs.TrainingDataSet;
 import WekiLogs.logs.LogEvent;
 import WekiLogs.logs.ModelProcessor;
 import WekiLogs.utils.Utils;
@@ -30,7 +30,7 @@ public class InputVis extends JPanel {
 		this.setBackground(Color.white);
 		String fileName = Utils.getFileNameForModelFromEvent(event);
 		points = ModelProcessor.extractPointsFromModel(fileName);
-		KNNTrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
+		TrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
 		System.out.println(data.examples.size());
 		updateRangeForPoints(points);
 	}

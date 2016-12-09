@@ -87,7 +87,7 @@ public class ModelProcessor {
 	 * First get the ...filename.._m.xml to extract meta data and build dataSet
 	 * Second get the file and extract data
 	 */
-	public static KNNTrainingDataSet extractDataSetFromKNNModelFile(String fileName) {
+	public static TrainingDataSet extractDataSetFromKNNModelFile(String fileName) {
 		if (fileName == null) {
 			return null;
 		}
@@ -99,7 +99,7 @@ public class ModelProcessor {
 			return null;
 		} else {
 
-			KNNTrainingDataSet examples = getTrainingSetFromMetaDataFile(metadataFile);
+			TrainingDataSet examples = getTrainingSetFromMetaDataFile(metadataFile);
 			FileInputStream fstream;
 			try {
 				fstream = new FileInputStream(dataFile);
@@ -127,7 +127,7 @@ public class ModelProcessor {
 		}
 	}
 
-	private static KNNTrainingDataSet getTrainingSetFromMetaDataFile(File metadataFile) {
+	private static TrainingDataSet getTrainingSetFromMetaDataFile(File metadataFile) {
 
 		FileInputStream fstream;
 		try {
@@ -183,7 +183,7 @@ public class ModelProcessor {
 
 			}
 			br.close();
-			return new KNNTrainingDataSet(numIn, numOut, outputs, dateFormat);
+			return new TrainingDataSet(numIn, numOut, outputs, dateFormat);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

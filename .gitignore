@@ -9,6 +9,7 @@
 *.pydevproject
 .project
 .metadata
+.metadata/*
 bin/**
 tmp/**
 tmp/**/*
@@ -26,3 +27,7 @@ local.properties
 
 # Locally stored "Eclipse launch configurations"
 *.launch
+
+.metadata/.mylyn/tasks.xml.zip
+
+.metadata/.mylyn/.tasks.xml.zip
