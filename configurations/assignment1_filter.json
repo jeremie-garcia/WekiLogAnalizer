@@ -1,0 +1,8 @@
+{
+  "rawDataFolder": "./data1",
+  "correspondenceFile": "./data1/_corresp.txt",
+  "outputFolder": "./assignement1",
+  "zipFileName": "assignment1.zip",
+  "assignementFileName": "assignment1.txt",
+  "cleaning": true
+}
