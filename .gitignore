@@ -1,3 +1,6 @@
+#ignore wekin mini to avoid sharing grader files
+/lib/WekiMini.jar
+
 #java gitignore
 *target*
 *.jar
@@ -55,3 +58,8 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+.metadata/.log
+
+*.ini
+
+.metadata/version.ini
