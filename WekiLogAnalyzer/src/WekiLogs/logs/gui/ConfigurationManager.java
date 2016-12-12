@@ -19,7 +19,6 @@ public class ConfigurationManager extends JPanel {
 		this.visualizer = visualizer;
 
 		this.setPreferredSize(new Dimension(200, 0));
-
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		JLabel title = new JLabel("Configuration Manager");
@@ -37,7 +36,6 @@ public class ConfigurationManager extends JPanel {
 			}
 		});
 		this.add(checkBox);
-
 		this.add(Box.createGlue());
 
 	}

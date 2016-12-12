@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import WekiLogs.logs.TrainingDataSet;
+import WekiLogs.logs.gui.LogExplorer;
 import WekiLogs.logs.LogEvent;
 import WekiLogs.logs.ModelProcessor;
 import WekiLogs.utils.ColorScale;
@@ -37,7 +38,7 @@ public class TrainingViz extends JFrame {
 	public int[] globalInputRangeValues;
 	HashMap<Integer, Color> colorMap;
 
-	public TrainingViz(String type, ArrayList<LogEvent> events) {
+	public TrainingViz(String type, ArrayList<LogEvent> events, double grade) {
 		this.type = type;
 		this.events = events;
 		this.dataSets = new ArrayList<TrainingDataSet>();
@@ -50,19 +51,25 @@ public class TrainingViz extends JFrame {
 			}
 			TrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
 			data.setTimeStamp(logEvent.getTimeStamp());
+			data.grade = grade;
+			// global grade for now but should be individualized
 			this.dataSets.add(data);
 		}
 
 		this.updateMinMaxValues();
 		this.updateColorScale();
 
-		this.setLocation(0, 400);
+		this.setLocation(0, 800);
 		this.setTitle("Training for " + dir);
 		this.setSize(new Dimension(1200, 100));
 		this.setLayout(new BorderLayout());
 		this.buildMenuBar();
 		this.add(buildCentralPanel(this.dataSets), BorderLayout.CENTER);
 		this.setVisible(true);
+	}
+
+	public void updateScreenPosition(int x, int y) {
+		this.setLocation(x, y);
 	}
 
 	private void updateColorScale() {

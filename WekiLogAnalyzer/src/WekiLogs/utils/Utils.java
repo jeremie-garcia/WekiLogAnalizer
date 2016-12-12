@@ -1,7 +1,5 @@
 package WekiLogs.utils;
 
-import net.lingala.zip4j.exception.ZipException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +9,7 @@ import java.nio.channels.FileChannel;
 
 import WekiLogs.logs.LogEvent;
 import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 public class Utils {
 
@@ -99,6 +98,13 @@ public class Utils {
 		}
 		return null;
 
+	}
+
+	public static String getAssignementStringFromFile(String logFile) {
+		File f = new File(logFile);
+		String name = f.getName();
+		String exercice = name.substring(name.indexOf("_") - 1, name.indexOf('.'));
+		return exercice;
 	}
 
 }

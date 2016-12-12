@@ -5,6 +5,12 @@ import java.awt.Font;
 
 public class Configuration {
 
+	////////////// FILES AND FOLDERS PREFERENCES
+
+	public static final String TMP_DIR = "./tmp";
+	public static final String DEFAULT_ZIP_FILE = "./zipFilesTest/CreatingClassifiers-Parts1-3/32377/assignment2.zip";
+
+	////////////// GRAPHICAL PREFERENCES
 	public static int TIMELINE_HEIGHT = 20;
 	public static Font font = new Font("Helvetica", Font.PLAIN, 10);
 

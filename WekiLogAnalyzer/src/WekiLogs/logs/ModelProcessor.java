@@ -54,7 +54,8 @@ public class ModelProcessor {
 							p = new Point2D.Double(i1, i2);
 							res.add(p);
 						} catch (Exception e) {
-							e.printStackTrace();
+							System.out.println("number format exception in line " + line);
+							// e.printStackTrace();
 						}
 						// System.out.println(idx + " " + i1 + " " + i2 + " " +
 						// o1);

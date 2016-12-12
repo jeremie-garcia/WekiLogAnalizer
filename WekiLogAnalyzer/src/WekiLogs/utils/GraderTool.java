@@ -1,28 +1,67 @@
 package WekiLogs.utils;
 
 import java.io.File;
+import java.util.HashMap;
 
-import com.google.gson.Gson;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import WekiLogs.logs.gui.Configuration;
 import wekimini.kadenze.Assignment2Grader_Feb6;
 import wekimini.kadenze.Grade;
 
 public class GraderTool {
 
-	public static void main(String[] args) {
-
-		String zipFilePath = "./zipFilesTest/CreatingClassifiers-Parts1-3/32357/assignment2.zip";
-		String tmpDir = "./tmp";
-		File f = new File(tmpDir);
-		if (!f.exists()) {
-			f.mkdir();
-		}
-
+	public static Grade unzipAndGetGradeForFile(String zipFilePath) {
 		File fZip = new File(zipFilePath);
-		System.out.println(fZip.exists());
+		if (fZip.exists()) {
+			return Assignment2Grader_Feb6.gradeAssignment2(zipFilePath, Configuration.TMP_DIR);
+		}
+		return null;
+	}
 
-		System.out.println(f.getAbsolutePath());
-		Grade g = Assignment2Grader_Feb6.gradeAssignment2(zipFilePath, tmpDir);
-		System.out.println(g.toJSONString());
+	public static double getScoreGradeForAssignment(Grade grade, String logFile) {
+
+		JSONObject json = new JSONObject(grade.toJSONString());
+		String name = Utils.getAssignementStringFromFile(logFile);
+		HashMap<String, Double> map = gradeToScoreMap(grade);
+
+		if (name.contains("2_1A")) {
+			return map.get("part1a_experimented");
+
+		} else if (name.contains("2_1B")) {
+			return map.get("part1b_classifier_quality");
+
+		} else if (name.contains("2_1C")) {
+			return map.get("part1c_classifier_quality");
+
+		} else if (name.contains("2_1D")) {
+			return map.get("part1d_classifier_quality");
+
+		} else if (name.contains("2_2")) {
+			return map.get("part2_experimented");
+
+		} else if (name.contains("2_3A")) {
+			return map.get("part3a_built_classifier");
+
+		} else if (name.contains("2_3B")) {
+			return map.get("part3b_classifier_accuracy");
+		}
+		return -1;
+	}
+
+	public static HashMap<String, Double> gradeToScoreMap(Grade grade) {
+		HashMap<String, Double> map = new HashMap<String, Double>();
+
+		JSONObject json = new JSONObject(grade.toJSONString());
+		JSONArray results = json.getJSONArray("grade_results");
+		for (int i = 0; i < results.length(); i++) {
+			JSONObject obj = results.getJSONObject(i);
+			String featureId = obj.getString("feature_id");
+			double score = obj.getDouble("score");
+
+			map.put(featureId, score);
+		}
+		return map;
 	}
 }

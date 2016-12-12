@@ -60,11 +60,6 @@ public class SingleEventTypePanel extends JPanel implements RangeListener, Compo
 		}
 
 		updateComponents();
-
-		if (type.toLowerCase().contains("model_num")) {
-			// open a new window with the visualization
-			TrainingViz viz = new TrainingViz(type, events);
-		}
 	}
 
 	public void updateComponents() {
