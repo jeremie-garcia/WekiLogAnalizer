@@ -1,4 +1,4 @@
-package WekiLogs.utils;
+package wekilogs.utils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import WekiLogs.logs.gui.Configuration;
+import logs.config.Configuration;
 import wekimini.kadenze.Assignment2Grader_Feb6;
 import wekimini.kadenze.Grade;
 
@@ -23,7 +23,7 @@ public class GraderTool {
 	public static double getScoreGradeForAssignment(Grade grade, String logFile) {
 
 		JSONObject json = new JSONObject(grade.toJSONString());
-		String name = Utils.getAssignementStringFromFile(logFile);
+		String name = LogFileUtils.getAssignementStringFromFile(logFile);
 		HashMap<String, Double> map = gradeToScoreMap(grade);
 
 		if (name.contains("2_1A")) {
