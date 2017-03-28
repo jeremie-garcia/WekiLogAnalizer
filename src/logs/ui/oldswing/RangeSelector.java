@@ -16,7 +16,7 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 
 import logs.model.DiscreteLogEvent;
-import logs.model.LogProcessor;
+import logs.model.LogEventsLoader;
 
 /**
  * This is a simple zoom + range selection </br>
@@ -80,8 +80,8 @@ public class RangeSelector extends JPanel implements MouseListener, MouseMotionL
 	// behavior
 	public void setData(HashMap<String, ArrayList<DiscreteLogEvent>> eventsMap) {
 		this.eventsMap = eventsMap;
-		long refTime = LogProcessor.getFirstTimeFromMap(this.eventsMap) - 5000;
-		long endTime = LogProcessor.getLastTimeFromMap(this.eventsMap) + 8000;
+		long refTime = LogEventsLoader.getFirstTimeFromMap(this.eventsMap) - 5000;
+		long endTime = LogEventsLoader.getLastTimeFromMap(this.eventsMap) + 8000;
 		this.setRange(refTime, endTime);
 	}
 

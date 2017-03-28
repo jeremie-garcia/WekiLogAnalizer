@@ -1,7 +1,7 @@
-package wekilogs.utils.anonymize;
+package wekilogs.anonymize;
 
 import javafx.concurrent.Task;
-import wekilogs.utils.LogFileUtils;
+import logs.utils.LogFileUtils;
 
 import java.io.File;
 import java.io.FileWriter;

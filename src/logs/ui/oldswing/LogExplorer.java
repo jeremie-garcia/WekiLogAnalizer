@@ -31,7 +31,7 @@ import org.apache.commons.io.FileUtils;
 
 import logs.config.Configuration;
 import logs.model.DiscreteLogEvent;
-import logs.model.LogProcessor;
+import logs.model.LogEventsLoader;
 import wekilogs.trainingdata.ui.TrainingVizContainerFrame;
 import wekilogs.utils.GraderTool;
 import wekimini.kadenze.Grade;
@@ -140,7 +140,7 @@ public class LogExplorer extends JFrame {
 
 			double grade = GraderTool.getScoreGradeForAssignment(this.currentGrade, this.logFile);
 
-			this.eventsMap = LogProcessor.extractEventsFromLogFileAsHashMap(file);
+			this.eventsMap = LogEventsLoader.extractEventsFromLogFileAsHashMap(file);
 			this.visualizer.buildEventsPanelsFromMap(eventsMap);
 			this.visualizer.resetRuler();
 

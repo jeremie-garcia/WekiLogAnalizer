@@ -1,4 +1,4 @@
-package wekilogs.model;
+package wekilogs.trainingdata.model;
 
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -11,8 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import wekilogs.trainingdata.model.TrainingDataSet;
 
 public class ModelProcessor {
 

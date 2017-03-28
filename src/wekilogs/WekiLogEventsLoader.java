@@ -1,4 +1,4 @@
-package logs.model;
+package wekilogs;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,21 +8,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 
-import wekilogs.utils.LogFileUtils;
+import logs.model.LogEvent;
+import logs.model.LogEventsLoader;
+import logs.utils.LogFileUtils;
+import wekilogs.utils.WekiLogFileUtils;
 
-public class LogProcessor {
+/**
+ * This classes offers methods to load log files from wekinator as Lists and
+ * Maps of DiscreteLogEvents
+ *
+ * @author jeremiegarcia
+ *
+ */
+public class WekiLogEventsLoader extends LogEventsLoader {
 
 	/**
-	 * Returns all events from a log file as a list of event
+	 * Returns all events from a log file as a list of events
 	 *
 	 * @param logFile
 	 * @return
 	 */
-	public static ArrayList<DiscreteLogEvent> extractEventsFromLogFileAsArrayList(File logFile) {
-		ArrayList<DiscreteLogEvent> events = new ArrayList<>();
+	public ArrayList<LogEvent> extractEventsFromLogFileAsArrayList(File logFile) {
+		ArrayList<LogEvent> events = new ArrayList<>();
 
 		FileInputStream fstream;
 		try {
@@ -33,13 +42,15 @@ public class LogProcessor {
 			long timeStamp;
 			String[] args;
 			while ((line = br.readLine()) != null) {
-				label = LogFileUtils.getLogLineLabel(line);
-				timeStamp = LogFileUtils.getLogLineTime(line);
-				args = LogFileUtils.getLogLineArgs(line);
-				DiscreteLogEvent event = new DiscreteLogEvent(label, timeStamp, new ArrayList<String>(Arrays.asList(args)),
+				label = WekiLogFileUtils.getLogLineLabel(line);
+				timeStamp = WekiLogFileUtils.getLogLineTime(line);
+				args = WekiLogFileUtils.getLogLineArgs(line);
+				LogEvent event = new LogEvent(label, timeStamp, 0, new ArrayList<String>(Arrays.asList(args)),
 						logFile.getPath());
 				events.add(event);
+
 			}
+			br.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,13 +62,13 @@ public class LogProcessor {
 	}
 
 	/**
-	 * Returns the events of a log file as a dictionary with lael as the keys
+	 * Returns the events of a log file as a dictionary with label as the keys
 	 *
 	 * @param logFile
 	 * @return
 	 */
-	public static HashMap<String, ArrayList<DiscreteLogEvent>> extractEventsFromLogFileAsHashMap(File logFile) {
-		HashMap<String, ArrayList<DiscreteLogEvent>> map = new HashMap<String, ArrayList<DiscreteLogEvent>>();
+	public HashMap<String, ArrayList<LogEvent>> extractEventsFromLogFileAsHashMap(File logFile) {
+		HashMap<String, ArrayList<LogEvent>> map = new HashMap<String, ArrayList<LogEvent>>();
 
 		FileInputStream fstream;
 		try {
@@ -68,19 +79,20 @@ public class LogProcessor {
 			long timeStamp;
 			String[] args;
 			while ((line = br.readLine()) != null) {
-				label = LogFileUtils.getLogLineLabel(line);
-				timeStamp = LogFileUtils.getLogLineTime(line);
-				args = LogFileUtils.getLogLineArgs(line);
-				DiscreteLogEvent event = new DiscreteLogEvent(label, timeStamp, new ArrayList<String>(Arrays.asList(args)),
+				label = WekiLogFileUtils.getLogLineLabel(line);
+				timeStamp = WekiLogFileUtils.getLogLineTime(line);
+				args = WekiLogFileUtils.getLogLineArgs(line);
+				LogEvent event = new LogEvent(label, timeStamp, 0, new ArrayList<String>(Arrays.asList(args)),
 						logFile.getPath());
 				if (map.containsKey(label)) {
 					map.get(label).add(event);
 				} else {
-					ArrayList<DiscreteLogEvent> new_list = new ArrayList<DiscreteLogEvent>();
+					ArrayList<LogEvent> new_list = new ArrayList<LogEvent>();
 					new_list.add(event);
 					map.put(label, new_list);
 				}
 			}
+			br.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,7 +103,13 @@ public class LogProcessor {
 		return map;
 	}
 
-	public static long getFirstTimeForFile(File logFile) {
+	/**
+	 * Returns the first time contained in the file
+	 *
+	 * @param logFile
+	 * @return
+	 */
+	public long getFirstTimeForFile(File logFile) {
 		FileInputStream fstream;
 		long timeStamp = -1;
 		try {
@@ -103,8 +121,9 @@ public class LogProcessor {
 			String[] args;
 
 			if ((line = br.readLine()) != null) {
-				timeStamp = LogFileUtils.getLogLineTime(line);
+				timeStamp = WekiLogFileUtils.getLogLineTime(line);
 			}
+			br.close();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -116,11 +135,25 @@ public class LogProcessor {
 		return timeStamp;
 	}
 
-	public static long getFirstTimeFromMap(HashMap<String, ArrayList<DiscreteLogEvent>> map) {
+	/**
+	 * returns the first time from the map It assumes that the first element is
+	 * always STARTLOG...
+	 *
+	 * @param map
+	 * @return
+	 */
+	public long getFirstTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
 		return map.get("STARTLOG").get(0).getTimeStamp();
 	}
 
-	public static long getLastTimeFromMap(HashMap<String, ArrayList<DiscreteLogEvent>> map) {
+	/**
+	 * returns the last time found in the Map It assumes that the last element
+	 * is always STOPLOG
+	 *
+	 * @param map
+	 * @return
+	 */
+	public long getLastTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
 		// should be stop log but can also be Project closed (last instance)
 		if (map.containsKey("STOPLOG")) {
 			return map.get("STOPLOG").get(0).getTimeStamp();

@@ -31,4 +31,8 @@ public class ColorScale {
 
 	}
 
+	public static Color applyAlpha(Color c, float alpha) {
+		return new Color((float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255, alpha);
+	}
+
 }

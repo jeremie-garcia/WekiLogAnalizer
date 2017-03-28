@@ -1,20 +1,30 @@
 package logs.model;
 
+import java.util.ArrayList;
+
+import javafx.scene.Node;
+
 /**
- * This is the basic class that represent a log event All other classes should
- * inherit form this one.
+ * This is the basic class that represent a log event If duration is set to
+ * zero, the event is considered as a point event
  *
  * @author jeremiegarcia
  *
  */
-public abstract class LogEvent {
+public class LogEvent {
 
 	private String label = "";
 	private String source = "";
+	private long timeStamp = 0;
+	private long duration = 0;
+	private ArrayList<String> args;
 
-	public LogEvent(String label2, String source2) {
-		this.label = label2;
-		this.source = source2;
+	public LogEvent(String label, long timeStamps, long duration, ArrayList<String> args, String source) {
+		this.label = label;
+		this.source = source;
+		this.timeStamp = timeStamps;
+		this.duration = duration;
+		this.args = args;
 	}
 
 	public String getLabel() {
@@ -23,6 +33,43 @@ public abstract class LogEvent {
 
 	public String getSource() {
 		return source;
+	}
+
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+
+	public ArrayList<String> getArgs() {
+		return args;
+	}
+
+	/**
+	 * This means that the event has no duration
+	 *
+	 * @return
+	 */
+	public boolean isPointEvent() {
+		return duration == 0;
+	}
+
+	/**
+	 * This methods has to be overidden to have a node displayed in the
+	 * inspector for specific types of LogEvents
+	 *
+	 * @return
+	 */
+	public boolean hasInspectorNode() {
+		return false;
+	}
+
+	/**
+	 * This methods need to be overidden to give the Node
+	 *
+	 * @return
+	 */
+	public Node getInspectorNode() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

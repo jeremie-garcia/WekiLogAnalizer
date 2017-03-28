@@ -7,15 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import logs.config.Configuration;
+import logs.utils.LogFileUtils;
 import wekimini.kadenze.Assignment2Grader_Feb6;
 import wekimini.kadenze.Grade;
 
 public class GraderTool {
 
-	public static Grade unzipAndGetGradeForFile(String zipFilePath) {
-		File fZip = new File(zipFilePath);
+	public static Grade unzipAndGetGradeForFile(File fZip) {
 		if (fZip.exists()) {
-			return Assignment2Grader_Feb6.gradeAssignment2(zipFilePath, Configuration.TMP_DIR);
+			return Assignment2Grader_Feb6.gradeAssignment2(fZip.getPath(), Configuration.TMP_DIR);
 		}
 		return null;
 	}
@@ -23,7 +23,7 @@ public class GraderTool {
 	public static double getScoreGradeForAssignment(Grade grade, String logFile) {
 
 		JSONObject json = new JSONObject(grade.toJSONString());
-		String name = LogFileUtils.getAssignementStringFromFile(logFile);
+		String name = WekiLogFileUtils.getAssignementStringFromFile(logFile);
 		HashMap<String, Double> map = gradeToScoreMap(grade);
 
 		if (name.contains("2_1A")) {

@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import logs.model.DiscreteLogEvent;
-import wekilogs.model.ModelProcessor;
+import logs.model.LogEvent;
+import wekilogs.trainingdata.model.ModelProcessor;
 import wekilogs.trainingdata.model.TrainingDataSet;
-import wekilogs.utils.LogFileUtils;
+import wekilogs.utils.WekiLogFileUtils;
 
 public class SimpleTrainingVizKNN extends JPanel {
 
-	DiscreteLogEvent evt;
+	LogEvent evt;
 	double xmax = Double.MIN_VALUE;
 	double xmin = Double.MAX_VALUE;
 	double xrange = xmax - xmin;
@@ -25,10 +25,10 @@ public class SimpleTrainingVizKNN extends JPanel {
 
 	ArrayList<Point2D> points;
 
-	public SimpleTrainingVizKNN(DiscreteLogEvent event) {
+	public SimpleTrainingVizKNN(LogEvent event) {
 		this.evt = event;
 		this.setBackground(Color.white);
-		String fileName = LogFileUtils.getFileNameForModelFromEvent(event);
+		String fileName = WekiLogFileUtils.getFileNameForModelFromEvent(event);
 		points = ModelProcessor.extractPointsFromModel(fileName);
 		TrainingDataSet data = ModelProcessor.extractDataSetFromKNNModelFile(fileName);
 		System.out.println(data.examples.size());

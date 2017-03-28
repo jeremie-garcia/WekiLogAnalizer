@@ -11,11 +11,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import logs.model.DiscreteLogEvent;
+import logs.model.LogEvent;
 import logs.utils.ColorScale;
-import wekilogs.model.ModelProcessor;
+import wekilogs.trainingdata.model.ModelProcessor;
 import wekilogs.trainingdata.model.TrainingDataSet;
-import wekilogs.utils.LogFileUtils;
+import wekilogs.utils.WekiLogFileUtils;
 
 /**
  * This class is the main container for comparison tool of a single exercise
@@ -28,7 +28,7 @@ import wekilogs.utils.LogFileUtils;
 public class TrainingVizContainerFrame extends JFrame {
 
 	String type;
-	ArrayList<DiscreteLogEvent> events;
+	ArrayList<LogEvent> events;
 
 	ArrayList<TrainingDataSet> dataSets;
 
@@ -37,14 +37,14 @@ public class TrainingVizContainerFrame extends JFrame {
 	public int[] globalInputRangeValues;
 	HashMap<Integer, Color> colorMap;
 
-	public TrainingVizContainerFrame(String type, ArrayList<DiscreteLogEvent> events, double grade) {
+	public TrainingVizContainerFrame(String type, ArrayList<LogEvent> events, double grade) {
 		this.type = type;
 		this.events = events;
 		this.dataSets = new ArrayList<TrainingDataSet>();
 
 		String dir = null;
-		for (DiscreteLogEvent logEvent : this.events) {
-			String fileName = LogFileUtils.getFileNameForModelFromEvent(logEvent);
+		for (LogEvent logEvent : this.events) {
+			String fileName = WekiLogFileUtils.getFileNameForModelFromEvent(logEvent);
 			if (dir == null) {
 				dir = new File(fileName).getParent();
 			}
