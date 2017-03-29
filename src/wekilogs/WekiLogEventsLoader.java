@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import logs.model.LogEvent;
-import logs.model.LogEventsLoader;
-import logs.utils.LogFileUtils;
 import wekilogs.utils.WekiLogFileUtils;
 
 /**
@@ -22,7 +20,7 @@ import wekilogs.utils.WekiLogFileUtils;
  * @author jeremiegarcia
  *
  */
-public class WekiLogEventsLoader extends LogEventsLoader {
+public class WekiLogEventsLoader {
 
 	/**
 	 * Returns all events from a log file as a list of events
@@ -30,7 +28,7 @@ public class WekiLogEventsLoader extends LogEventsLoader {
 	 * @param logFile
 	 * @return
 	 */
-	public ArrayList<LogEvent> extractEventsFromLogFileAsArrayList(File logFile) {
+	public static ArrayList<LogEvent> extractEventsFromLogFileAsArrayList(File logFile) {
 		ArrayList<LogEvent> events = new ArrayList<>();
 
 		FileInputStream fstream;
@@ -67,7 +65,7 @@ public class WekiLogEventsLoader extends LogEventsLoader {
 	 * @param logFile
 	 * @return
 	 */
-	public HashMap<String, ArrayList<LogEvent>> extractEventsFromLogFileAsHashMap(File logFile) {
+	public static HashMap<String, ArrayList<LogEvent>> extractEventsFromLogFileAsHashMap(File logFile) {
 		HashMap<String, ArrayList<LogEvent>> map = new HashMap<String, ArrayList<LogEvent>>();
 
 		FileInputStream fstream;
@@ -109,7 +107,7 @@ public class WekiLogEventsLoader extends LogEventsLoader {
 	 * @param logFile
 	 * @return
 	 */
-	public long getFirstTimeForFile(File logFile) {
+	public static long getFirstTimeForFile(File logFile) {
 		FileInputStream fstream;
 		long timeStamp = -1;
 		try {
@@ -142,7 +140,7 @@ public class WekiLogEventsLoader extends LogEventsLoader {
 	 * @param map
 	 * @return
 	 */
-	public long getFirstTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
+	public static long getFirstTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
 		return map.get("STARTLOG").get(0).getTimeStamp();
 	}
 
@@ -153,10 +151,10 @@ public class WekiLogEventsLoader extends LogEventsLoader {
 	 * @param map
 	 * @return
 	 */
-	public long getLastTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
+	public static long getLastTimeFromMap(HashMap<String, ArrayList<LogEvent>> map) {
 		// should be stop log but can also be Project closed (last instance)
 		if (map.containsKey("STOPLOG")) {
-			return map.get("STOPLOG").get(0).getTimeStamp();
+			return map.get("STOPLOG").get(map.get("STOPLOG").size() - 1).getTimeStamp();
 		} else if (map.containsKey("PROJECT_CLOSED")) {
 			return map.get("PROJECT_CLOSED").get(map.get("PROJECT_CLOSED").size() - 1).getTimeStamp();
 		} else {

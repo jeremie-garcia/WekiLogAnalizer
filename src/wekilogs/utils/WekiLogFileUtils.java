@@ -16,7 +16,7 @@ public class WekiLogFileUtils {
 	}
 
 	public static String getLogLineLabel(String line) {
-		return line.split(",")[2];
+		return line.split(",")[2].trim();
 	}
 
 	public static String[] getLogLineArgs(String line) {

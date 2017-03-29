@@ -15,11 +15,10 @@ import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
 
 import logs.config.Configuration;
-import logs.model.DiscreteLogEvent;
+import logs.model.LogEvent;
 
 /**
- * Main container for individual panel representing each event type. </br>
- * It also contains a ruler and a range selector vertically aligned
+ * .
  *
  * @author jeremiegarcia
  *
@@ -53,7 +52,7 @@ public class LogVisualizer extends JPanel implements ComponentListener {
 		add(scaling, BorderLayout.SOUTH);
 	}
 
-	public void buildEventsPanelsFromMap(HashMap<String, ArrayList<DiscreteLogEvent>> eventsMap) {
+	public void buildEventsPanelsFromMap(HashMap<String, ArrayList<LogEvent>> eventsMap) {
 
 		rangeSelector.setData(eventsMap);
 

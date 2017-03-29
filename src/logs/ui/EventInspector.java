@@ -35,11 +35,14 @@ public class EventInspector extends VBox {
 
 		Label date = new Label("Date");
 		dateTxt.setMaxSize(200, 40);
+		dateTxt.setEditable(false);
 
 		Label type = new Label("Type");
 		typeTxt.setMaxSize(200, 40);
+		typeTxt.setEditable(false);
 
 		Label args = new Label("Args");
+		argsTxt.setEditable(false);
 
 		this.setPadding(new Insets(5, 10, 5, 10));
 

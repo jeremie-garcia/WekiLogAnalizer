@@ -38,7 +38,9 @@ import logs.config.Configuration;
 import logs.model.LogEvent;
 import logs.ui.EventInspector;
 import logs.ui.FileCellRenderer;
+import logs.ui.TimelinesExplorer;
 import wekilogs.WekiLogConfiguration;
+import wekilogs.WekiLogEventsLoader;
 import wekilogs.utils.GraderTool;
 import wekimini.kadenze.Grade;
 
@@ -54,6 +56,8 @@ public class MainUI extends Application {
 	private HashMap<String, ArrayList<LogEvent>> eventsMap;
 
 	private Grade currentGrade;
+
+	private TimelinesExplorer timelinesExplorer;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -83,6 +87,8 @@ public class MainUI extends Application {
 		root.setRight(inspector);
 
 		// central pane (main scene)
+		timelinesExplorer = new TimelinesExplorer();
+		root.setCenter(timelinesExplorer);
 
 		// create the tmp directory if it does not exists
 		File tmpDir = new File(Configuration.TMP_DIR);
@@ -96,7 +102,7 @@ public class MainUI extends Application {
 		// load an initial file
 		this.loadFromZipFile(new File(WekiLogConfiguration.DEFAULT_ZIP_FILE));
 		// select first log file from extracted files
-		// this.filesList.setSelectedIndex(0);
+		this.updateFileFromList(filesList.get(0));
 
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
@@ -166,7 +172,8 @@ public class MainUI extends Application {
 	private void updateFileFromList(File file) {
 		if (file != null) {
 			if (file.exists()) {
-				System.out.println(file);
+				this.eventsMap = WekiLogEventsLoader.extractEventsFromLogFileAsHashMap(file);
+				this.timelinesExplorer.setEventsMap(eventsMap);
 			}
 		}
 	}
@@ -222,7 +229,7 @@ public class MainUI extends Application {
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("About WekiLog Visualizer");
 				alert.setHeaderText("WekiLog Visualizer - 2016-2017 - ENAC");
-				alert.setContentText("developped by Jérémie Garcia and ....");
+				alert.setContentText("developped by....\n" + "blabla");
 				alert.showAndWait();
 			}
 		});
