@@ -1,13 +1,6 @@
 package logs.ui;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.util.concurrent.TimeUnit;
-
 import javafx.scene.layout.Pane;
-import logs.config.Configuration;
 
 public class Ruler extends Pane {
 

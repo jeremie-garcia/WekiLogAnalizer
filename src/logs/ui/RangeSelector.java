@@ -45,8 +45,8 @@ public class RangeSelector extends Pane implements MouseListener, MouseMotionLis
 	// behavior
 	public void setData(HashMap<String, ArrayList<LogEvent>> eventsMap) {
 		this.eventsMap = eventsMap;
-		long refTime = WekiLogEventsLoader.getFirstTimeFromMap(this.eventsMap) - 5000;
-		long endTime = WekiLogEventsLoader.getLastTimeFromMap(this.eventsMap) + 8000;
+		long refTime = KLogEventsManager.getFirstTimeFromMap(this.eventsMap) - 5000;
+		long endTime = KLogEventsManager.getLastTimeFromMap(this.eventsMap) + 8000;
 		this.setRange(refTime, endTime);
 	}
 

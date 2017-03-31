@@ -3,24 +3,24 @@ package logs.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javafx.event.EventHandler;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import klogs.KLogEventsManager;
 import logs.model.LogEvent;
-import wekilogs.WekiLogEventsLoader;
+import logs.model.LogEventsManager;
+import logs.ui.events.LogEventNode;
 
 /**
  * Main container for individual nodes representing each log events. It also
@@ -35,17 +35,22 @@ public class TimelinesExplorer extends BorderPane {
 
 	private double scalingFactorForTimeStamps = 1000;
 
-	HashMap<String, ArrayList<LogEvent>> eventsMap = null;
+	private SimpleDoubleProperty scaleX = new SimpleDoubleProperty(1);
+
+	private LogEventsManager logManager;
 
 	VBox centralPane;
 	Pane ruler;
 	BackgroundImage rulerBgImage;
+	ArrayList<Text> labels = new ArrayList<Text>();
+	ArrayList<Group> allPointsGroup = new ArrayList<Group>();
 
 	// Ruler ruler;
 	// RangeSelector rangeSelector;
 
-	public TimelinesExplorer() {
+	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
+		this.logManager = logManager;
 		this.setPrefWidth(600);
 		ruler = this.buildRulerAndScale();
 		this.setBottom(ruler);
@@ -57,52 +62,40 @@ public class TimelinesExplorer extends BorderPane {
 	Circle prevc;
 
 	/**
-	 * Set the events Map to populate the visualisation of the log events
+	 * Update the visualisation of the log events Uses the logEventsManager
+	 * database
 	 *
 	 * @param newEventsMap
 	 */
-	public void setEventsMap(HashMap<String, ArrayList<LogEvent>> newEventsMap) {
-		if (newEventsMap != this.eventsMap) {
-			this.eventsMap = newEventsMap;
-			this.centralPane.getChildren().clear();
+	public void update() {
+		UnitConverter.updateTimeBounds(this.logManager.getBeginTime(), logManager.getEndTime());
 
-			double start = WekiLogEventsLoader.getFirstTimeFromMap(eventsMap) / scalingFactorForTimeStamps;
-			double end = WekiLogEventsLoader.getLastTimeFromMap(eventsMap) / scalingFactorForTimeStamps;
-			double dur = end - start;
+		this.centralPane.getChildren().clear();
+		this.labels.clear();
 
-			for (String key : this.eventsMap.keySet()) {
-				Group group = new Group();
-				Text txt = new Text(key);
-				txt.setFont(Font.font(10));
-				group.getChildren().add(txt);
-				Line l = new Line(0, 10, dur, 10);
-				group.getChildren().add(l);
+		double start = UnitConverter.getPosFromTime(this.logManager.getBeginTime());
+		double end = UnitConverter.getPosFromTime(this.logManager.getEndTime());
+		double dur = end - start;
 
-				Group points = new Group();
-				for (LogEvent logEvent : this.eventsMap.get(key)) {
-					Circle c = new Circle(logEvent.getTimeStamp() / scalingFactorForTimeStamps - start, 10, 5);
-					c.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		for (String key : this.logManager.getLogevents().keySet()) {
+			Group group = new Group();
+			Text txt = new Text(key);
+			txt.setFont(Font.font(10));
+			this.labels.add(txt);
+			group.getChildren().add(txt);
+			Line l = new Line(0, 10, dur, 10);
+			group.getChildren().add(l);
 
-						@Override
-						public void handle(MouseEvent event) {
-							EventInspector.getInstance().update(logEvent);
-							c.setFill(Paint.valueOf("green"));
-							if (prevc != null)
-								prevc.setFill(Paint.valueOf("black"));
-
-							prevc = c;
-						}
-					});
-
-					points.getChildren().add(c);
-				}
-
-				group.getChildren().add(points);
-				this.centralPane.getChildren().add(group);
+			Group points = new Group();
+			for (LogEvent logEvent : this.logManager.getLogevents().get(key)) {
+				points.getChildren().add(new LogEventNode(logEvent));
 			}
-			updateRulerBgImage();
-		}
 
+			this.allPointsGroup.add(points);
+			group.getChildren().add(points);
+			this.centralPane.getChildren().add(group);
+		}
+		updateRulerBgImage();
 	}
 
 	private void updateRulerBgImage() {

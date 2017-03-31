@@ -1,4 +1,4 @@
-package wekilogs.utils;
+package wekiLogs.utils;
 
 import java.io.File;
 

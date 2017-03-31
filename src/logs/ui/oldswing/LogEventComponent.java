@@ -9,10 +9,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
-import javax.swing.border.StrokeBorder;
 
 import logs.config.Configuration;
 import logs.model.DiscreteLogEvent;
+import logs.ui.EventInspector;
 
 public class LogEventComponent extends JComponent implements MouseListener {
 

@@ -32,6 +32,7 @@ import org.apache.commons.io.FileUtils;
 import logs.config.Configuration;
 import logs.model.DiscreteLogEvent;
 import logs.model.LogEventsLoader;
+import logs.ui.EventInspector;
 import wekilogs.trainingdata.ui.TrainingVizContainerFrame;
 import wekilogs.utils.GraderTool;
 import wekimini.kadenze.Grade;

@@ -1,7 +1,4 @@
-package wekilogs;
-
-import java.awt.Color;
-import java.awt.Font;
+package klogs;
 
 public class WekiLogConfiguration {
 

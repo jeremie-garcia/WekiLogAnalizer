@@ -1,10 +1,6 @@
 package logs.ui;
 
-import java.awt.Dimension;
 import java.util.Date;
-
-import javax.swing.Box;
-import javax.swing.JLabel;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -13,7 +9,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import logs.model.LogEvent;
-import wekilogs.trainingdata.ui.SimpleTrainingVizKNN;
 
 public class EventInspector extends VBox {
 

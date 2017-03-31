@@ -1,12 +1,12 @@
 package wekilogs.anonymize;
 
-import javafx.concurrent.Task;
-import logs.utils.LogFileUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
+import javafx.concurrent.Task;
+import logs.utils.LogFileUtils;
 
 public class AnonymizeTask extends Task {
 

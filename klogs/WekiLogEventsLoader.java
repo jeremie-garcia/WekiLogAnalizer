@@ -1,4 +1,4 @@
-package wekilogs;
+package wekiLogs;
 
 import java.io.BufferedReader;
 import java.io.File;

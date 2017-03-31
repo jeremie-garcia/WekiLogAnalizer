@@ -17,8 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -236,6 +234,7 @@ public class MainUI extends Application {
 		aboutMenu.getItems().add(aboutMenuItem);
 
 		MenuBar menuBar = new MenuBar(fileMenu, aboutMenu);
+		menuBar.useSystemMenuBarProperty().set(true);
 		return menuBar;
 	}
 }
