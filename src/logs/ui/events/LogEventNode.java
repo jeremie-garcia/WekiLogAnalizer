@@ -1,12 +1,11 @@
 package logs.ui.events;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
 import logs.ui.EventInspector;
 import logs.ui.UnitConverter;
@@ -18,15 +17,15 @@ public class LogEventNode extends Group {
 	private static LogEventNode prevActiveNode;
 	private int RADIUS = 6;
 	private int ACTIVE_RADIUS = 6;
-	private Circle circle;
+	private Ellipse item;
 	private Color color = Color.BLUE;
 
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
-		circle = new Circle(UnitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()), 10, RADIUS);
-		circle.scaleXProperty().bind(UnitConverter.getReversedScaleXBinding());
-		this.getChildren().add(circle);
+		item = new Ellipse(UnitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()), 10, RADIUS / 2, RADIUS);
+		item.scaleXProperty().bind(UnitConverter.getReversedScaleXBinding());
+		this.getChildren().add(item);
 
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
@@ -46,14 +45,14 @@ public class LogEventNode extends Group {
 
 	public void setFillColor(Color color) {
 		this.color = color;
-		this.circle.setFill(this.color);
+		this.item.setFill(this.color);
 
 	}
 
 	private void highlight(boolean setHighlight) {
-		circle.setFill(setHighlight ? ColorScale.getEmphasizedColor(color) : color);
-		circle.setRadius(setHighlight ? ACTIVE_RADIUS : RADIUS);
-		circle.setStroke(setHighlight ? Color.RED : Color.BLACK);
-		circle.setStrokeWidth(setHighlight ? 2 : 1);
+		item.setFill(setHighlight ? ColorScale.getEmphasizedColor(color) : color);
+		item.setRadiusX(setHighlight ? ACTIVE_RADIUS : RADIUS / 2);
+		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
+		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 }
