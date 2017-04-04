@@ -4,7 +4,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
 import logs.ui.EventInspector;
@@ -16,7 +15,6 @@ public class LogEventNode extends Group {
 	private LogEvent logEvent;
 	private static LogEventNode prevActiveNode;
 	private int RADIUS = 6;
-	private int ACTIVE_RADIUS = 6;
 	private Ellipse item;
 	private Color color = Color.BLUE;
 
@@ -24,7 +22,6 @@ public class LogEventNode extends Group {
 		super();
 		this.logEvent = event;
 		item = new Ellipse(UnitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()), 10, RADIUS / 2, RADIUS);
-		item.scaleXProperty().bind(UnitConverter.getReversedScaleXBinding());
 		this.getChildren().add(item);
 
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -51,7 +48,7 @@ public class LogEventNode extends Group {
 
 	private void highlight(boolean setHighlight) {
 		item.setFill(setHighlight ? ColorScale.getEmphasizedColor(color) : color);
-		item.setRadiusX(setHighlight ? ACTIVE_RADIUS : RADIUS / 2);
+		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}

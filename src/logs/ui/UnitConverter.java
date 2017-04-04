@@ -7,24 +7,46 @@ import javafx.beans.property.SimpleDoubleProperty;
 
 public class UnitConverter {
 
-	private static SimpleDoubleProperty scaleX = new SimpleDoubleProperty(1);
-	private static SimpleDoubleProperty translateX = new SimpleDoubleProperty(0);
+	private static long beginTimeMillis = 0;
 
-	private static long beginTime = 0;
-	private static long endTime = 1000;
+	public static long getBeginTimeMillis() {
+		return beginTimeMillis;
+	}
 
-	private static long timeRange = 1000;
+	public static long getEndTimeMillis() {
+		return endTimeMillis;
+	}
 
-	private static double reductionFactor = 1000;
+	public static long getTimeRangeMillis() {
+		return timeRangeMillis;
+	}
+
+	public static double getReductionFactor() {
+		return reductionFactor;
+	}
+
+	private static long endTimeMillis = 1000;
+
+	private static long timeRangeMillis = 1000;
+
+	private static double reductionFactor = 10000;
 
 	public static double getPosInSceneFromTime(long timeStamp) {
-		double val = timeStamp - beginTime;
+		double val = timeStamp - beginTimeMillis;
 		return val / reductionFactor;
 	}
 
-	public static long getTimeFromPosInScene(int posInPix) {
-		long time = (long) (posInPix * reductionFactor);
-		return time + beginTime;
+	public static long getTimeFromPosInScene(int posInScene) {
+		long time = (long) (posInScene * reductionFactor);
+		return time + beginTimeMillis;
+	}
+
+	public static long getDurationFromLengthInScene(int dInPix) {
+		return (long) (dInPix * reductionFactor);
+	}
+
+	public static long getLengthInSceneFromDuration(int dt) {
+		return (long) (dt / reductionFactor);
 	}
 
 	public static String getTimeAsFormattedString(long dateInMillis) {
@@ -37,31 +59,12 @@ public class UnitConverter {
 	}
 
 	public static long getTimeRange() {
-		return timeRange;
+		return timeRangeMillis;
 	}
 
 	public static void updateTimeBounds(long begin, long end) {
-		beginTime = begin;
-		endTime = end;
-		timeRange = endTime - beginTime;
+		beginTimeMillis = begin;
+		endTimeMillis = end;
+		timeRangeMillis = endTimeMillis - beginTimeMillis;
 	}
-
-	public static SimpleDoubleProperty getScaleXProperty() {
-		return scaleX;
-	}
-
-	public static SimpleDoubleProperty getTranslateXProperty() {
-		return translateX;
-	}
-
-	/**
-	 * returns the inverse scaling transformation to fit node that need to
-	 * preserve their aspect ratios
-	 *
-	 * @return
-	 */
-	public static DoubleBinding getReversedScaleXBinding() {
-		return new SimpleDoubleProperty(1).divide(UnitConverter.getScaleXProperty());
-	}
-
 }
