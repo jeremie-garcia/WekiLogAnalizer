@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
@@ -38,11 +40,10 @@ public class TimelinesExplorer extends BorderPane {
 
 	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
-		System.out.println("heyyyy");
 		this.logEventsManager = logManager;
 		this.setPrefWidth(600);
 		ruler = new RulerAndRange();
-		System.out.println(ruler);
+		ruler.prefWidthProperty().bind(this.widthProperty());
 		this.setBottom(ruler);
 
 		this.centralPane = new VBox();
@@ -50,6 +51,14 @@ public class TimelinesExplorer extends BorderPane {
 		Group contentGroup = new Group();
 		contentGroup.getChildren().add(centralPane);
 		scrollPane = new ScrollPane(contentGroup);
+		scrollPane.hvalueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("scroll HValue " + newValue + " layout " + scrollPane.getLayoutBounds());
+
+			}
+		});
 		this.setCenter(scrollPane);
 	}
 
@@ -77,7 +86,7 @@ public class TimelinesExplorer extends BorderPane {
 			Text txt = new Text(key);
 			txt.setFont(Font.font(10));
 			txt.scaleXProperty().bind(this.getReversedScaleXBinding());
-			txt.translateXProperty().bind(scrollPane.hvalueProperty());
+			txt.translateXProperty().set(100);
 
 			txt.setTranslateY(6);
 			this.labels.add(txt);
@@ -98,6 +107,12 @@ public class TimelinesExplorer extends BorderPane {
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
+		System.out.println(scrollPane.getViewportBounds());
+		System.out.println(this.centralPane.getBoundsInLocal());
+		System.out.println(this.centralPane.getBoundsInParent());
+		scrollPane.setViewportBounds(this.centralPane.getBoundsInLocal());
+		System.out.println(scrollPane.getViewportBounds());
+		this.ruler.selectAll();
 	}
 
 	/**
