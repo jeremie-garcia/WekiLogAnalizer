@@ -1,30 +1,33 @@
 package logs.utils;
 
-import java.awt.Color;
+import javafx.scene.paint.Color;
 
 public class ColorScale {
 
 	private static float goldenRatioConjugate = 0.618033988749895f;
 
-	private static float saturation = 0.8f;
+	private static float saturation = 0.5f;
 	private static float brightness = 1f;
-	private static float alpha = 0.4f;
+	private static float alpha = 0.6f;
 
 	public static Color getColorWithGoldenRationByIndex(int index) {
 		float hue = index * goldenRatioConjugate;
 		hue %= 1;
-		Color col = new Color(Color.HSBtoRGB(hue, saturation, brightness));
-		// col = new Color(col.getRed() / 255, col.getGreen() / 255,
-		// col.getBlue() / 255, alpha);
+		hue *= 360;
+		Color col = Color.hsb(hue, saturation, brightness, alpha);
 		return col;
+	}
+
+	public static Color getEmphasizedColor(Color col) {
+		return col.deriveColor(0, 1, 1.5, 2);
 	}
 
 	public static Color getColorForGrade(double grade) {
 		Color col;
 		if (grade == -1) {
-			col = Color.white;
+			col = Color.WHITE;
 		} else {
-			col = new Color(Color.HSBtoRGB((float) (grade * 0.3), saturation, brightness));
+			col = Color.hsb((grade * 0.3) * 360, saturation, brightness);
 		}
 		col = new Color((float) col.getRed() / 255, (float) col.getGreen() / 255, (float) col.getBlue() / 255, alpha);
 		return col;
