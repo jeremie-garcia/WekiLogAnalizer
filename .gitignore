@@ -6,7 +6,7 @@
 
 #java gitignore
 *target*
-*.jar
+#*.jar
 *.war
 *.ear
 *.class
