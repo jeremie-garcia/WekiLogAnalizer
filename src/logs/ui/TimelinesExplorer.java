@@ -2,14 +2,10 @@ package logs.ui;
 
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BorderPane;
@@ -22,6 +18,8 @@ import javafx.scene.text.Text;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.events.LogEventNode;
+import logs.ui.oldswing.RangeSelector;
+import logs.ui.oldswing.Ruler;
 import logs.ui.ongoing.RulerAndRange;
 import logs.utils.ColorScale;
 
@@ -34,17 +32,13 @@ import logs.utils.ColorScale;
  */
 public class TimelinesExplorer extends BorderPane {
 
-	private SimpleDoubleProperty scaleX = new SimpleDoubleProperty(1);
 	private LogEventsManager logManager;
 
 	VBox centralPane;
-	// RulerAndRange ruler;
+	RulerAndRange ruler;
 	BackgroundImage rulerBgImage;
 	ArrayList<Text> labels = new ArrayList<Text>();
 	ArrayList<Group> allPointsGroup = new ArrayList<Group>();
-
-	// Ruler ruler;
-	// RangeSelector rangeSelector;
 
 	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
