@@ -89,6 +89,11 @@ public class MainUI extends Application {
 		timelinesExplorer = new TimelinesExplorer(this.logEventsManager);
 		root.setCenter(timelinesExplorer);
 
+		// Show the scene containing the root layout.
+		Scene scene = new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
 		// create the tmp directory if it does not exists
 		File tmpDir = new File(Configuration.TMP_DIR);
 
@@ -103,10 +108,6 @@ public class MainUI extends Application {
 		// select first log file from extracted files
 		this.filesListView.getSelectionModel().select(0);
 
-		// Show the scene containing the root layout.
-		Scene scene = new Scene(root);
-		primaryStage.setScene(scene);
-		primaryStage.show();
 	}
 
 	ObservableList<File> filesList = FXCollections.observableArrayList();

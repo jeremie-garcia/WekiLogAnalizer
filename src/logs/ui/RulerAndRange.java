@@ -26,10 +26,6 @@ public class RulerAndRange extends Pane {
 
 	private Color FILLCOLOR = Color.hsb(90, 0.8, 0.9, 0.4);
 
-	// Interaction state machine
-	private boolean drag = false;
-	private double prevx, prevy;
-
 	public RulerAndRange() {
 		super();
 		this.setStyle("-fx-background-color:#eeeeee;");
@@ -101,47 +97,44 @@ public class RulerAndRange extends Pane {
 		zoomRectangle.xProperty().bind(visibleMinPercentage.multiply(this.widthProperty()));
 
 		zoomRectangle.setFill(FILLCOLOR);
-		zoomRectangle.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				drag = true;
-				prevx = event.getX();
-				prevy = event.getY();
-			}
-		});
+		zoomRectangle.setOnMousePressed(HandlesPressEventFilter);
+		zoomRectangle.setOnMouseReleased(HandlesReleasedEventFilter);
 		zoomRectangle.setOnMouseDragged(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				if (drag) {
-					double diffx = event.getX() - prevx;
-					double diffy = event.getY() - prevy;
-					if (Math.abs(diffx) > 5) {
+					double diffx = event.getScreenX() - prevx;
+					double diffy = event.getScreenY() - prevy;
+
+					if (diffx != 0 && (translate || Math.abs(diffx) > 5)) {
+						translate = true;
 						double newMin = visibleMinPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
 						double newMax = visibleMaxPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
-						prevx = event.getX();
 						updateSelection(newMin, newMax);
-					} else if (Math.abs(diffy) > 5) {
+						prevx = event.getScreenX();
+					}
+					if (diffy != 0 && (zoom || Math.abs(diffy) > 5)) {
+						zoom = true;
 						// A get the central position
 						double sel_range = visibleMaxPercentage.doubleValue() - visibleMinPercentage.doubleValue();
 						double center = visibleMinPercentage.doubleValue() + sel_range / 2;
 
 						double scale = 1;
 						if (diffy > 0) {
-							scale = 1.1;
+							scale = 1.01;
 						} else {
-							scale = 1 / 1.1;
+							scale = 1 / 1.01;
 						}
 
 						double new_range = sel_range * scale;
 
 						double scaledMin = center - new_range / 2;
 						double scaledMax = center + new_range / 2;
-
-						prevy = event.getY();
 						updateSelection(scaledMin, scaledMax);
+						prevy = event.getScreenY();
 					}
+
 				}
 			}
 		});
@@ -153,101 +146,112 @@ public class RulerAndRange extends Pane {
 		});
 
 		// right rectangle for handles
-		Rectangle rightHandle = new Rectangle(10, 20);
-		rightHandle.setFill(Color.LIGHTGREY.deriveColor(1, 1, 1, 0.5));
-		rightHandle.heightProperty().bind(zoomRectangle.heightProperty());
-		rightHandle.xProperty().bind(
+		Pane rightHandle = new Pane();
+		rightHandle.setPrefWidth(10);
+		rightHandle.setStyle(
+				"-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);");
+		rightHandle.prefHeightProperty().bind(zoomRectangle.heightProperty());
+		rightHandle.layoutXProperty().bind(
 				zoomRectangle.xProperty().add(zoomRectangle.widthProperty().subtract(rightHandle.widthProperty())));
-		rightHandle.setOnMousePressed(new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent event) {
-				drag = true;
-				prevx = event.getX();
-				prevy = event.getY();
-			}
-		});
-		rightHandle.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		rightHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
+		rightHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
+		rightHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				if (drag) {
-					double diffx = event.getX() - prevx;
-					double newMin = visibleMinPercentage.doubleValue();
-					double newMax = visibleMaxPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
-					prevx = event.getX();
+					double diffx = event.getScreenX() - prevx;
+					event.consume();
+					double newMin = initMin;
+					double percentage = diffx / RulerAndRange.this.getWidth();
+					double newMax = initMax + percentage;
 					updateSelection(newMin, newMax);
+
 				}
-			}
-		});
-		rightHandle.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				drag = false;
-
 			}
 		});
 
 		Group rightDotsGroup = new Group();
-		rightDotsGroup.translateXProperty().bind(rightHandle.xProperty().add(rightHandle.getWidth() / 2));
-		for (int i = 0; i < 4; i++) {
+		rightDotsGroup.translateXProperty().bind(rightHandle.widthProperty().divide(2));
+
+		for (int i = 1; i <= 3; i++) {
 			Circle c = new Circle(0, 0, 3);
 			c.setFill(Color.DARKGREY);
-			c.translateYProperty().bind(rightHandle.heightProperty()
-					.multiply(new SimpleDoubleProperty(1).divide(3).multiply(i + 1)).divide(2));
+			c.translateYProperty().bind(rightHandle.heightProperty().divide(4).multiply(i));
 			rightDotsGroup.getChildren().add(c);
 		}
+		rightHandle.getChildren().add(rightDotsGroup);
 
 		// left and right rectangle for handles
-		Rectangle leftHandle = new Rectangle(10, 20);
-		leftHandle.heightProperty().bind(zoomRectangle.heightProperty());
-		leftHandle.xProperty().bind(zoomRectangle.xProperty());
-		leftHandle.setFill(Color.LIGHTGREY.deriveColor(1, 1, 1, 0.5));
-		leftHandle.setOnMousePressed(new EventHandler<MouseEvent>() {
+		Pane leftHandle = new Pane();
+		leftHandle.setPrefWidth(10);
+		leftHandle.prefHeightProperty().bind(zoomRectangle.heightProperty());
+		leftHandle.layoutXProperty().bind(zoomRectangle.xProperty());
+		leftHandle.setStyle(
+				"-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);");
 
-			@Override
-			public void handle(MouseEvent event) {
-				drag = true;
-				prevx = event.getX();
-				prevy = event.getY();
-			}
-		});
-		leftHandle.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		leftHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
+		leftHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
+		leftHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
 				if (drag) {
-					double diffx = event.getX() - prevx;
-					double newMin = visibleMinPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
-					double newMax = visibleMaxPercentage.doubleValue();
-					prevx = event.getX();
+					double diffx = event.getScreenX() - prevx;
+					event.consume();
+					double percentage = diffx / RulerAndRange.this.getWidth();
+					double newMin = initMin + percentage;
+					double newMax = initMax;
 					updateSelection(newMin, newMax);
+
 				}
-			}
-		});
-		leftHandle.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				drag = false;
-
 			}
 		});
 
 		Group leftDotsGroup = new Group();
-		leftDotsGroup.translateXProperty().bind(leftHandle.xProperty().add(leftHandle.widthProperty().divide(2)));
-		for (int i = 0; i < 4; i++) {
+		leftDotsGroup.translateXProperty().bind(leftHandle.widthProperty().divide(2));
+		for (int i = 1; i <= 3; i++) {
 			Circle c = new Circle(0, 0, 3);
 			c.setFill(Color.DARKGREY);
-			c.translateYProperty().bind(leftHandle.heightProperty()
-					.multiply(new SimpleDoubleProperty(1).divide(3).multiply(i + 1)).divide(2));
+			c.translateYProperty().bind(rightHandle.heightProperty().divide(4).multiply(i));
 			leftDotsGroup.getChildren().add(c);
 		}
-		p.getChildren().addAll(zoomRectangle, leftHandle, leftDotsGroup, rightHandle, rightDotsGroup);
+		leftHandle.getChildren().add(leftDotsGroup);
+		p.getChildren().addAll(zoomRectangle, leftHandle, rightHandle);
 
 		return p;
 	}
+
+	// Interaction state machine
+	private boolean drag = false;
+	private boolean zoom = false, translate = false;
+	private double prevx, prevy;
+	private double initMin, initMax;
+
+	private EventHandler<MouseEvent> HandlesPressEventFilter = new EventHandler<MouseEvent>() {
+
+		@Override
+		public void handle(MouseEvent event) {
+			drag = true;
+			prevx = event.getScreenX();
+			prevy = event.getScreenY();
+			initMin = visibleMinPercentage.doubleValue();
+			initMax = visibleMaxPercentage.doubleValue();
+			event.consume();
+		}
+	};
+
+	private EventHandler<MouseEvent> HandlesReleasedEventFilter = new EventHandler<MouseEvent>() {
+
+		@Override
+		public void handle(MouseEvent event) {
+			drag = false;
+			zoom = false;
+			translate = false;
+			event.consume();
+		}
+	};
 
 	public SimpleDoubleProperty getVisibleMinPercentage() {
 		return visibleMinPercentage;

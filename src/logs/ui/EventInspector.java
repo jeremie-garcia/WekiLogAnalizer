@@ -39,7 +39,7 @@ public class EventInspector extends VBox {
 		Label args = new Label("Args");
 		argsTxt.setEditable(false);
 
-		this.setPadding(new Insets(5, 10, 5, 10));
+		this.setPadding(new Insets(5, 10, 5, 20));
 
 		this.getChildren().addAll(title, date, dateTxt, type, typeTxt, args, argsTxt);
 

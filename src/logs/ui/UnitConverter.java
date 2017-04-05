@@ -10,7 +10,7 @@ public class UnitConverter {
 	private static long beginTimeMillis = 0;
 	private static long endTimeMillis = 1000;
 	private static long timeRangeMillis = 1000;
-	private static double reductionFactor = 10000;
+	private static double reductionFactor = 1;
 
 	public static void updateTimeBounds(long begin, long end) {
 		beginTimeMillis = begin;
