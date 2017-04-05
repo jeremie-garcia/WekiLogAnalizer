@@ -2,7 +2,7 @@ package logs.config;
 
 import java.awt.Font;
 
-import logs.utils.ColorScale;
+import logs.utils.JavaFXUtils;
 
 public class Configuration {
 

@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import klogs.trainingdata.model.TrainingData;
 import klogs.trainingdata.model.TrainingDataSet;
-import logs.utils.ColorScale;
+import logs.utils.JavaFXUtils;
 
 public class TrainingVizKNN extends JPanel {
 
@@ -26,7 +26,7 @@ public class TrainingVizKNN extends JPanel {
 		this.data = data;
 
 		// draw colored background depending on the grade
-		Color col = ColorScale.getColorForGrade(data.grade);
+		Color col = JavaFXUtils.getColorForGrade(data.grade);
 		this.setBackground(col);
 
 		this.setPreferredSize(new Dimension(50, 50));
@@ -43,7 +43,7 @@ public class TrainingVizKNN extends JPanel {
 	private void drawInputData(Graphics2D g2) {
 		int index = 1;
 		for (TrainingData d : data.examples) {
-			Color c = ColorScale.getColorWithGoldenRationByIndex(d.output);
+			Color c = JavaFXUtils.getColorWithGoldenRationByIndex(d.output);
 			g2.setColor(c);
 			double[] coords = getScreenPosFromCoords(d.inputs.get(0), d.inputs.get(1));
 			g2.fillOval((int) coords[0] - diameter / 2, (int) coords[1] - diameter / 2, diameter, diameter);

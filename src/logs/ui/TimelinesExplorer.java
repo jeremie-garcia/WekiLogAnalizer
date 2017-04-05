@@ -2,8 +2,6 @@ package logs.ui;
 
 import java.util.ArrayList;
 
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -19,7 +17,7 @@ import javafx.scene.text.Text;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.events.LogEventNode;
-import logs.utils.ColorScale;
+import logs.utils.JavaFXUtils;
 
 /**
  * Main container for individual nodes representing each log events. It also
@@ -34,7 +32,6 @@ public class TimelinesExplorer extends BorderPane {
 
 	private VBox centralPane;
 	private RulerAndRange ruler;
-	private ArrayList<Text> labels = new ArrayList<Text>();
 	private ArrayList<Group> allPointsGroup = new ArrayList<Group>();
 	private ScrollPane scrollPane;
 
@@ -51,15 +48,39 @@ public class TimelinesExplorer extends BorderPane {
 		Group contentGroup = new Group();
 		contentGroup.getChildren().add(centralPane);
 		scrollPane = new ScrollPane(contentGroup);
-		scrollPane.hvalueProperty().addListener(new ChangeListener<Number>() {
+		// scrollPane.hvalueProperty().addListener(new ChangeListener<Number>()
+		// {
+		//
+		// @Override
+		// public void changed(ObservableValue<? extends Number> observable,
+		// Number oldValue, Number newValue) {
+		// System.out.println("Offset V " +
+		// JavaFXUtils.getVerticalOffset(scrollPane) + " H: "
+		// + JavaFXUtils.getHorizontalOffset(scrollPane));
+		//
+		// }
+		// });
+
+		this.setCenter(scrollPane);
+		centralPane.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(ruler.getVisiblePercentage()));
+		this.ruler.getVisibleMinPercentage().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				System.out.println("scroll HValue " + newValue + " layout " + scrollPane.getLayoutBounds());
-
+				double hValue = JavaFXUtils.getScrollHValueFromPercentage(scrollPane, newValue.doubleValue());
+				scrollPane.setHvalue(hValue);
 			}
 		});
-		this.setCenter(scrollPane);
+
+		this.centralPane.scaleXProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("Scale " + newValue.doubleValue());
+
+			}
+
+		});
 	}
 
 	Circle prevc;
@@ -74,7 +95,6 @@ public class TimelinesExplorer extends BorderPane {
 		UnitConverter.updateTimeBounds(this.logEventsManager.getBeginTime(), logEventsManager.getEndTime());
 
 		this.centralPane.getChildren().clear();
-		this.labels.clear();
 
 		double start = UnitConverter.getPosInSceneFromTime(this.logEventsManager.getBeginTime());
 		double end = UnitConverter.getPosInSceneFromTime(this.logEventsManager.getEndTime());
@@ -85,11 +105,9 @@ public class TimelinesExplorer extends BorderPane {
 			Pane pane = new Pane();
 			Text txt = new Text(key);
 			txt.setFont(Font.font(10));
-			txt.scaleXProperty().bind(this.getReversedScaleXBinding());
-			txt.translateXProperty().set(100);
-
+			txt.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(this.centralPane.scaleXProperty()));
+			txt.xProperty().bind(ruler.getVisibleMinPercentage().multiply(UnitConverter.getTotalLengthInScene()));
 			txt.setTranslateY(6);
-			this.labels.add(txt);
 			pane.getChildren().add(txt);
 			Line l = new Line(start, 10, end, 10);
 			pane.getChildren().add(l);
@@ -97,8 +115,8 @@ public class TimelinesExplorer extends BorderPane {
 			Group points = new Group();
 			for (LogEvent logEvent : this.logEventsManager.getLogevents().get(key)) {
 				LogEventNode node = new LogEventNode(logEvent);
-				node.scaleXProperty().bind(getReversedScaleXBinding());
-				node.setFillColor(ColorScale.getColorWithGoldenRationByIndex(index));
+				node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(this.centralPane.scaleXProperty()));
+				node.setFillColor(JavaFXUtils.getColorWithGoldenRationByIndex(index));
 				points.getChildren().add(node);
 			}
 
@@ -107,22 +125,7 @@ public class TimelinesExplorer extends BorderPane {
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
-		System.out.println(scrollPane.getViewportBounds());
-		System.out.println(this.centralPane.getBoundsInLocal());
-		System.out.println(this.centralPane.getBoundsInParent());
-		scrollPane.setViewportBounds(this.centralPane.getBoundsInLocal());
-		System.out.println(scrollPane.getViewportBounds());
 		this.ruler.selectAll();
-	}
-
-	/**
-	 * returns the inverse scaling transformation to fit node that need to
-	 * preserve their aspect ratios
-	 *
-	 * @return
-	 */
-	public DoubleBinding getReversedScaleXBinding() {
-		return new SimpleDoubleProperty(1).divide(this.centralPane.scaleXProperty());
 	}
 
 }

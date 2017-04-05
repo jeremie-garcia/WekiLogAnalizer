@@ -71,8 +71,7 @@ public class RulerAndRange extends Pane {
 			}
 			this.visibleMinPercentage.set(selMin);
 			this.visibleMaxPercentage.set(selMax);
-			double scaleFactor = (selMax - selMin);
-			this.visiblePercentage.set(scaleFactor);
+			this.visiblePercentage.set(selMax - selMin);
 		}
 	}
 

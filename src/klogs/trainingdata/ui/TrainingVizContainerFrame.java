@@ -1,7 +1,6 @@
 package klogs.trainingdata.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
@@ -11,12 +10,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import javafx.scene.paint.Color;
 import klogs.trainingdata.model.ModelProcessor;
 import klogs.trainingdata.model.TrainingDataSet;
 import klogs.utils.KLogFileUtils;
 import logs.model.LogEvent;
-import logs.utils.ColorScale;
-
+import logs.utils.JavaFXUtils;
 
 /**
  * This class is the main container for comparison tool of a single exercise
@@ -77,7 +76,7 @@ public class TrainingVizContainerFrame extends JFrame {
 		for (TrainingDataSet set : this.dataSets) {
 			for (int out : set.possibleOutputs) {
 				if (!colorMap.containsKey(out)) {
-					colorMap.put(out, ColorScale.getColorWithGoldenRationByIndex(out));
+					colorMap.put(out, JavaFXUtils.getColorWithGoldenRationByIndex(out));
 				}
 			}
 		}
@@ -114,7 +113,7 @@ public class TrainingVizContainerFrame extends JFrame {
 
 	private JPanel buildCentralPanel(ArrayList<TrainingDataSet> dataSets) {
 		JPanel centralPanel = new JPanel();
-		centralPanel.setBackground(Color.white);
+		centralPanel.setBackground(Color.WHITE);
 		// use a box layout first
 		centralPanel.setLayout(new BoxLayout(centralPanel, BoxLayout.LINE_AXIS));
 

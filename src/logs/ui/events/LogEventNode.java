@@ -8,7 +8,7 @@ import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
 import logs.ui.EventInspector;
 import logs.ui.UnitConverter;
-import logs.utils.ColorScale;
+import logs.utils.JavaFXUtils;
 
 public class LogEventNode extends Group {
 
@@ -47,7 +47,7 @@ public class LogEventNode extends Group {
 	}
 
 	private void highlight(boolean setHighlight) {
-		item.setFill(setHighlight ? ColorScale.getEmphasizedColor(color) : color);
+		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
