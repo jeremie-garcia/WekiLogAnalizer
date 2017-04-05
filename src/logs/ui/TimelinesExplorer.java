@@ -48,17 +48,18 @@ public class TimelinesExplorer extends BorderPane {
 		this.logEventsManager = logManager;
 		ruler = new RulerAndRange();
 		ruler.prefWidthProperty().bind(this.widthProperty());
-		// ruler.setPadding(new Insets(5, 0, 5, 0));
+		ruler.setPadding(VISIBILITY_INSETS);
 		this.setBottom(ruler);
 
 		Rectangle r = new Rectangle();
-		// r.setX(-10);
-		r.widthProperty().bind(this.widthProperty());
+		r.setX(-VISIBILITY_OFFSET);
+		r.widthProperty().bind(this.widthProperty().add(VISIBILITY_OFFSET * 2));
 		r.heightProperty().bind(this.heightProperty());
 		this.setClip(r);
 
 		this.centralPane = new VBox();
-		// this.centralPane.setPadding(new Insets(5, 0, 5, 0));
+		this.centralPane.prefWidthProperty().bind(this.widthProperty());
+		this.centralPane.setPadding(VISIBILITY_INSETS);
 		this.centralPane.getTransforms().add(horizontalScale);
 		this.setCenter(centralPane);
 
@@ -114,6 +115,16 @@ public class TimelinesExplorer extends BorderPane {
 			pane.getChildren().add(txt);
 			Line l = new Line(start, 10, end, 10);
 			pane.getChildren().add(l);
+
+			// TODO:Improve this (lagging)
+			ruler.getVisibleMinPercentage().addListener(new ChangeListener<Number>() {
+
+				@Override
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					double scenePos = newValue.doubleValue() * UnitConverter.getTotalLengthInScene();
+					txt.setX((int) (scenePos * horizontalScale.getX()));
+				}
+			});
 
 			Group points = new Group();
 			for (LogEvent logEvent : this.logEventsManager.getLogevents().get(key)) {
