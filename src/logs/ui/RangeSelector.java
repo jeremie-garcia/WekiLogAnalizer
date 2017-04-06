@@ -1,102 +1,101 @@
 package logs.ui;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class RulerAndRange extends Pane {
+/**
+ * This class is a range selector to select a portion of a scene. </br>
+ * Other Components can use these DoubleProperties:</br>
+ * visibleMinPercentage : the minimum value that it selected in percentage</br>
+ * visibleMaxPercentage: the max value that is selected in percentage</br>
+ * visiblePercentage: the selected range in percentage</br>
+ *
+ * A background image can be set (usually a scene screen capture)
+ *
+ * @author jeremiegarcia
+ *
+ */
+public class RangeSelector extends Pane {
 
-	// these values are expressed in percentage of the rangeSelectionPane width
-	private SimpleDoubleProperty visibleMinPercentage = new SimpleDoubleProperty(0);
-	private SimpleDoubleProperty visibleMaxPercentage = new SimpleDoubleProperty(1);
-	private SimpleDoubleProperty visiblePercentage = new SimpleDoubleProperty(1);
+	private static final double SCALE_DELTA = 1.01;
+	private SimpleDoubleProperty visibleMinPercentage = new SimpleDoubleProperty();
+	private SimpleDoubleProperty visibleMaxPercentage = new SimpleDoubleProperty();
+	private SimpleDoubleProperty visiblePercentage = new SimpleDoubleProperty();
 
-	private Canvas scaleCanvas = new Canvas();
-	private Pane rangeSelectionPane = new Pane();
+	// style options
+	private Color SELECTION_FILL_COLOR = Color.hsb(100, 0.2, 0.9, 0.4);
+	private Color DOTS_FILL_COLOR = Color.DARKGREY;
+	private String handleStyleString = "-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);";
 
-	private Color FILLCOLOR = Color.hsb(90, 0.8, 0.9, 0.4);
+	// background (could try something different with cameras looking at the
+	// scene)
+	private ImageView bgImageView = null;
 
-	public RulerAndRange() {
+	public RangeSelector() {
 		super();
 		this.setStyle("-fx-background-color:#eeeeee;");
 		this.setPrefHeight(80);
 		this.setPrefWidth(600);
-		this.setMaxHeight(80);
-
-		VBox vBox = new VBox();
-
-		// time Ruler as a canvas
-		scaleCanvas.heightProperty().set(20);
-		scaleCanvas.widthProperty().bind(this.widthProperty());
-		vBox.getChildren().add(scaleCanvas);
-		drawTimeScale(scaleCanvas.getGraphicsContext2D());
 
 		// Range Selection
-		rangeSelectionPane = createRangeSelector();
-		rangeSelectionPane.setPrefHeight(60);
-		rangeSelectionPane.prefWidthProperty().bind(this.widthProperty());
-		vBox.getChildren().add(rangeSelectionPane);
+		this.createRangeSelector();
 
-		this.getChildren().add(vBox);
-		this.selectAll();
-	}
-
-	void selectAll() {
-		this.updateSelection(0., 1.);
-	}
-
-	private void updateSelection(double newMin, double newMax) {
-		if (newMin < newMax && ((newMax - newMin) * this.getWidth() > 25)) {
-			double selMin = newMin;
-			double selMax = newMax;
-			if (selMin < 0) {
-				selMin = 0;
-			}
-			if (selMax > 1.) {
-				selMax = 1.;
-			}
-			this.visibleMinPercentage.set(selMin);
-			this.visibleMaxPercentage.set(selMax);
-			this.visiblePercentage.set(selMax - selMin);
-		}
-	}
-
-	private void drawTimeScale(GraphicsContext gc) {
-		gc.setFill(Color.RED);
-		gc.fillRect(0, 0, this.scaleCanvas.getWidth(), this.scaleCanvas.getHeight());
-	}
-
-	private Pane createRangeSelector() {
-		Pane p = new Pane();
-		p.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
+		// Select All if double click (or more)
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getClickCount() > 1) {
 					selectAll();
 				}
-
 			}
 		});
+	}
+
+	void selectAll() {
+		this.updateSelection(0.001, 0.999);
+		this.updateSelection(0, 1);
+	}
+
+	private void updateSelection(double newMin, double newMax) {
+
+		if (newMin != this.visibleMinPercentage.doubleValue() || newMax != this.visibleMaxPercentage.doubleValue()) {
+
+			if (newMin < newMax && ((newMax - newMin) * this.getWidth() > 25)) {
+				double selMin = newMin;
+				double selMax = newMax;
+
+				if (selMin < 0) {
+					selMin = 0;
+				}
+				if (selMax > 1.) {
+					selMax = 1.;
+				}
+				double range = selMax - selMin;
+
+				this.visibleMinPercentage.set(selMin);
+				this.visibleMaxPercentage.set(selMax);
+				this.visiblePercentage.set(range);
+			}
+		}
+	}
+
+	private void createRangeSelector() {
 
 		// central pane for OrthoZoom
 		Rectangle zoomRectangle = new Rectangle();
-		zoomRectangle.heightProperty().bind(p.heightProperty());
+		zoomRectangle.heightProperty().bind(this.heightProperty());
 		zoomRectangle.widthProperty()
 				.bind(visibleMaxPercentage.subtract(visibleMinPercentage).multiply(this.widthProperty()));
 		zoomRectangle.xProperty().bind(visibleMinPercentage.multiply(this.widthProperty()));
 
-		zoomRectangle.setFill(FILLCOLOR);
+		zoomRectangle.setFill(SELECTION_FILL_COLOR);
 		zoomRectangle.setOnMousePressed(HandlesPressEventFilter);
 		zoomRectangle.setOnMouseReleased(HandlesReleasedEventFilter);
 		zoomRectangle.setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -109,8 +108,8 @@ public class RulerAndRange extends Pane {
 
 					if (diffx != 0 && (translate || Math.abs(diffx) > 5)) {
 						translate = true;
-						double newMin = visibleMinPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
-						double newMax = visibleMaxPercentage.doubleValue() + diffx / RulerAndRange.this.getWidth();
+						double newMin = visibleMinPercentage.doubleValue() + diffx / RangeSelector.this.getWidth();
+						double newMax = visibleMaxPercentage.doubleValue() + diffx / RangeSelector.this.getWidth();
 						updateSelection(newMin, newMax);
 						prevx = event.getScreenX();
 					}
@@ -120,11 +119,10 @@ public class RulerAndRange extends Pane {
 						double sel_range = visibleMaxPercentage.doubleValue() - visibleMinPercentage.doubleValue();
 						double center = visibleMinPercentage.doubleValue() + sel_range / 2;
 
-						double scale = 1;
-						if (diffy > 0) {
-							scale = 1.01;
-						} else {
-							scale = 1 / 1.01;
+						double scale = SCALE_DELTA;
+						if (diffy < 0) {
+							scale = 1 / SCALE_DELTA;
+							;
 						}
 
 						double new_range = sel_range * scale;
@@ -138,18 +136,11 @@ public class RulerAndRange extends Pane {
 				}
 			}
 		});
-		zoomRectangle.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				drag = false;
-			}
-		});
 
-		// right rectangle for handles
+		// right handle
 		Pane rightHandle = new Pane();
 		rightHandle.setPrefWidth(10);
-		rightHandle.setStyle(
-				"-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);");
+		rightHandle.setStyle(handleStyleString);
 		rightHandle.prefHeightProperty().bind(zoomRectangle.heightProperty());
 		rightHandle.layoutXProperty().bind(
 				zoomRectangle.xProperty().add(zoomRectangle.widthProperty().subtract(rightHandle.widthProperty())));
@@ -162,12 +153,16 @@ public class RulerAndRange extends Pane {
 			public void handle(MouseEvent event) {
 				if (drag) {
 					double diffx = event.getScreenX() - prevx;
-					event.consume();
-					double newMin = initMin;
-					double percentage = diffx / RulerAndRange.this.getWidth();
-					double newMax = initMax + percentage;
-					updateSelection(newMin, newMax);
 
+					if (diffx != 0) {
+						double newMin = visibleMinPercentage.doubleValue();
+						double percentage = diffx / RangeSelector.this.getWidth();
+						double newMax = visibleMaxPercentage.doubleValue() + percentage;
+						updateSelection(newMin, newMax);
+						prevx = event.getScreenX();
+						prevy = event.getScreenY();
+					}
+					event.consume();
 				}
 			}
 		});
@@ -177,19 +172,18 @@ public class RulerAndRange extends Pane {
 
 		for (int i = 1; i <= 3; i++) {
 			Circle c = new Circle(0, 0, 3);
-			c.setFill(Color.DARKGREY);
+			c.setFill(DOTS_FILL_COLOR);
 			c.translateYProperty().bind(rightHandle.heightProperty().divide(4).multiply(i));
 			rightDotsGroup.getChildren().add(c);
 		}
 		rightHandle.getChildren().add(rightDotsGroup);
 
-		// left and right rectangle for handles
+		// left handle
 		Pane leftHandle = new Pane();
 		leftHandle.setPrefWidth(10);
 		leftHandle.prefHeightProperty().bind(zoomRectangle.heightProperty());
 		leftHandle.layoutXProperty().bind(zoomRectangle.xProperty());
-		leftHandle.setStyle(
-				"-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);");
+		leftHandle.setStyle(handleStyleString);
 
 		leftHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
 		leftHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
@@ -199,13 +193,17 @@ public class RulerAndRange extends Pane {
 			public void handle(MouseEvent event) {
 				if (drag) {
 					double diffx = event.getScreenX() - prevx;
+					if (diffx != 0) {
+						double percentage = diffx / RangeSelector.this.getWidth();
+						double newMin = visibleMinPercentage.doubleValue() + percentage;
+						double newMax = visibleMaxPercentage.doubleValue();
+						updateSelection(newMin, newMax);
+						prevx = event.getScreenX();
+						prevy = event.getScreenY();
+					}
 					event.consume();
-					double percentage = diffx / RulerAndRange.this.getWidth();
-					double newMin = initMin + percentage;
-					double newMax = initMax;
-					updateSelection(newMin, newMax);
-
 				}
+
 			}
 		});
 
@@ -213,14 +211,12 @@ public class RulerAndRange extends Pane {
 		leftDotsGroup.translateXProperty().bind(leftHandle.widthProperty().divide(2));
 		for (int i = 1; i <= 3; i++) {
 			Circle c = new Circle(0, 0, 3);
-			c.setFill(Color.DARKGREY);
+			c.setFill(DOTS_FILL_COLOR);
 			c.translateYProperty().bind(rightHandle.heightProperty().divide(4).multiply(i));
 			leftDotsGroup.getChildren().add(c);
 		}
 		leftHandle.getChildren().add(leftDotsGroup);
-		p.getChildren().addAll(zoomRectangle, leftHandle, rightHandle);
-
-		return p;
+		this.getChildren().addAll(zoomRectangle, leftHandle, rightHandle);
 	}
 
 	// Interaction state machine
@@ -252,6 +248,16 @@ public class RulerAndRange extends Pane {
 			event.consume();
 		}
 	};
+
+	public void setBgImageView(ImageView imgView) {
+		if (this.bgImageView != null) {
+			this.getChildren().remove(this.bgImageView);
+		}
+		this.bgImageView = imgView;
+		this.bgImageView.fitWidthProperty().bind(this.widthProperty());
+		this.bgImageView.fitHeightProperty().bind(this.heightProperty());
+		this.getChildren().add(0, imgView);
+	}
 
 	public SimpleDoubleProperty getVisibleMinPercentage() {
 		return visibleMinPercentage;

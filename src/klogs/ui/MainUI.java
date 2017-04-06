@@ -57,6 +57,8 @@ public class MainUI extends Application {
 
 	private TimelinesExplorer timelinesExplorer;
 
+	private MainUI app;
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -107,7 +109,6 @@ public class MainUI extends Application {
 		this.loadFromZipFile(new File(KLogConfiguration.DEFAULT_ZIP_FILE));
 		// select first log file from extracted files
 		this.filesListView.getSelectionModel().select(0);
-
 	}
 
 	ObservableList<File> filesList = FXCollections.observableArrayList();

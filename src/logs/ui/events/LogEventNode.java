@@ -10,6 +10,12 @@ import logs.ui.EventInspector;
 import logs.ui.UnitConverter;
 import logs.utils.JavaFXUtils;
 
+/**
+ * This class represents a logEvent in the scene
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class LogEventNode extends Group {
 
 	private LogEvent logEvent;
@@ -21,7 +27,7 @@ public class LogEventNode extends Group {
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
-		item = new Ellipse(UnitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()), 10, RADIUS / 2, RADIUS);
+		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
 		this.getChildren().add(item);
 
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -51,5 +57,9 @@ public class LogEventNode extends Group {
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
+	}
+
+	public void setPosX(double posX) {
+		this.item.setCenterX(posX);
 	}
 }

@@ -5,71 +5,52 @@ import java.util.concurrent.TimeUnit;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 
+/**
+ *
+ * This class provides utilities methods to convert from time to scene, scene to
+ * time and percentage to scene
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class UnitConverter {
 
-	private static long beginTimeMillis = 0;
-	private static long endTimeMillis = 1000;
-	private static long timeRangeMillis = 1000;
-	private static double reductionFactor = 1;
+	private long beginTimeMillis = 0;
+	private long endTimeMillis = 1000;
+	private long timeRangeMillis = 1000;
 
-	public static void updateTimeBounds(long begin, long end) {
-		beginTimeMillis = begin;
-		endTimeMillis = end;
-		timeRangeMillis = endTimeMillis - beginTimeMillis;
+	public UnitConverter(long begin, long end) {
+		this.beginTimeMillis = (begin < end) ? begin : end;
+		this.endTimeMillis = (end > begin) ? end : begin;
+		this.timeRangeMillis = endTimeMillis - beginTimeMillis;
 	}
 
-	public static double getPosInSceneFromTime(long timeStamp) {
-		double val = timeStamp - beginTimeMillis;
-		return val / reductionFactor;
+	public double getPosInSceneFromTime(long time) {
+		return time - beginTimeMillis;
 	}
 
-	public static long getTimeFromPosInScene(int posInScene) {
-		long time = (long) (posInScene * reductionFactor);
-		return time + beginTimeMillis;
+	public double getTimeFromPosInScene(double posX) {
+		return posX + beginTimeMillis;
 	}
 
-	public static long getDurationFromLengthInScene(double dInPix) {
-		return (long) (dInPix * reductionFactor);
+	public long getTimeFromPercentage(double percentage) {
+		return (long) (getDurationInMillisFromPercentage(percentage) + beginTimeMillis);
 	}
 
-	public static long getLengthInSceneFromDuration(double d) {
-		return (long) (d / reductionFactor);
+	public double getPosInSceneFromPercentage(double percentage) {
+		return percentage * timeRangeMillis;
 	}
 
-	public static String getTimeAsFormattedString(long dateInMillis) {
+	public double getDurationInMillisFromPercentage(double percentage) {
+		return percentage * timeRangeMillis;
+	}
+
+	public String getTimeAsFormattedString(long dateInMillis) {
 		String format = String.format("%d hour, %d min, %d sec", TimeUnit.MILLISECONDS.toHours(dateInMillis),
 				TimeUnit.MILLISECONDS.toMinutes(dateInMillis)
 						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(dateInMillis)),
 				TimeUnit.MILLISECONDS.toSeconds(dateInMillis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(dateInMillis)));
 		return format;
-	}
-
-	public static double getDurationInMillisFromPercentage(double percentage) {
-		return percentage * timeRangeMillis;
-	}
-
-	public static double getLengthInSceneFromPercentage(double percentage) {
-		return getLengthInSceneFromDuration(getDurationInMillisFromPercentage(percentage));
-	}
-
-	public static long getBeginTimeMillis() {
-		return beginTimeMillis;
-	}
-
-	public static long getEndTimeMillis() {
-		return endTimeMillis;
-	}
-
-	public static long getTimeRangeMillis() {
-		return timeRangeMillis;
-	}
-
-	public static double getReductionFactor() {
-		return reductionFactor;
-	}
-
-	public static double getTotalLengthInScene() {
-		return getLengthInSceneFromDuration(timeRangeMillis);
 	}
 }
