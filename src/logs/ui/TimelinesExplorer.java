@@ -36,7 +36,8 @@ public class TimelinesExplorer extends BorderPane {
 	private UnitConverter unitConverter;
 
 	private VBox centralPane;
-	private RangeSelector ruler;
+	private RangeSelector rangeSelector;
+	private TimeRuler timeRuler;
 	private ArrayList<Group> allPointsGroup = new ArrayList<Group>();
 	private Scale horizontalScale = new Scale(1, 1);
 	private int VISIBILITY_OFFSET = 10;
@@ -52,10 +53,20 @@ public class TimelinesExplorer extends BorderPane {
 		this.logEventsManager = logManager;
 		this.unitConverter = new UnitConverter(0, 1000);
 
-		ruler = new RangeSelector();
-		ruler.prefWidthProperty().bind(this.widthProperty());
-		ruler.setPadding(VISIBILITY_INSETS);
-		this.setBottom(ruler);
+		// create the time scale and the ruler
+		VBox bottomBox = new VBox();
+
+		// range Selector
+		rangeSelector = new RangeSelector();
+		rangeSelector.prefWidthProperty().bind(this.widthProperty());
+		rangeSelector.setPadding(VISIBILITY_INSETS);
+
+		// ruler
+		timeRuler = new TimeRuler();
+		timeRuler.prefWidthProperty().bind(this.widthProperty());
+
+		bottomBox.getChildren().addAll(timeRuler, rangeSelector);
+		this.setBottom(bottomBox);
 
 		// set the clip area to prevent scene getting out of the bounds
 		Rectangle r = new Rectangle();
@@ -72,28 +83,23 @@ public class TimelinesExplorer extends BorderPane {
 		this.setCenter(centralPane);
 
 		// scaling and translating functions (mapping between ruler and scene)
-		ruler.getVisiblePercentage().addListener(new ChangeListener<Number>() {
+		rangeSelector.getVisiblePercentage().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newPercentage) {
-				double visibleWidthInPixels = centralPane.getWidth();
-				double sceneWidthInSceneUnits = unitConverter.getDurationInMillisFromPercentage(1.0);
-				double ratio = visibleWidthInPixels / sceneWidthInSceneUnits;
-				horizontalScale.setX(ratio / newPercentage.doubleValue());
+				updateCentralPaneScaleX();
+				updateCentralPaneTranslateX();
+				updateTimeRulerRange();
 			}
 		});
 
 		// translate scena and the Text t keep them visible
-		ruler.getVisibleMinPercentage().addListener(new ChangeListener<Number>() {
+		rangeSelector.getVisibleMinPercentage().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				double scenePos = unitConverter.getPosInSceneFromPercentage(newValue.doubleValue());
-				centralPane.setTranslateX(-scenePos * horizontalScale.getX());
-
-				for (Text txt : textLabels) {
-					txt.setX(scenePos * horizontalScale.getX());
-				}
+				updateCentralPaneTranslateX();
+				updateTimeRulerRange();
 			}
 		});
 	}
@@ -117,7 +123,6 @@ public class TimelinesExplorer extends BorderPane {
 
 		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
 		double extendedEndInScene = unitConverter.getPosInSceneFromTime(extendedDuration);
-		System.out.println(extendedEndInScene);
 
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
@@ -152,10 +157,37 @@ public class TimelinesExplorer extends BorderPane {
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
-		this.ruler.selectAll();
+		this.rangeSelector.selectAll();
 
 		ImageView backgroundImage = this.createImageViewFromScene();
-		this.ruler.setBgImageView(backgroundImage);
+		this.rangeSelector.setBgImageView(backgroundImage);
+	}
+
+	private void updateTimeRulerRange() {
+		long minTime = unitConverter
+				.getDurationInMillisFromPercentage(rangeSelector.getVisibleMinPercentage().doubleValue());
+		long maxTime = unitConverter
+				.getDurationInMillisFromPercentage(rangeSelector.getVisibleMaxPercentage().doubleValue());
+		timeRuler.getMinTimeInMillisProperty().set(minTime);
+		timeRuler.getMaxTimeInMillisProperty().set(maxTime);
+	}
+
+	private void updateCentralPaneScaleX() {
+		double visibleWidthInPixels = centralPane.getWidth();
+		double sceneWidthInSceneUnits = unitConverter.getLengthInSceneFromPercentage(1.0);
+		double ratio = visibleWidthInPixels / sceneWidthInSceneUnits;
+		double visiblePercentage = rangeSelector.getVisiblePercentage().doubleValue();
+		horizontalScale.setX(ratio / visiblePercentage);
+	}
+
+	private void updateCentralPaneTranslateX() {
+		double minPercentage = rangeSelector.getVisibleMinPercentage().doubleValue();
+		double scenePos = unitConverter.getPosInSceneFromPercentage(minPercentage);
+		centralPane.setTranslateX(-scenePos * horizontalScale.getX());
+
+		for (Text txt : textLabels) {
+			txt.setX(scenePos * horizontalScale.getX());
+		}
 	}
 
 	private ImageView createImageViewFromScene() {

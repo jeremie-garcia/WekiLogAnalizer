@@ -1,5 +1,7 @@
 package logs.utils;
 
+import java.util.concurrent.TimeUnit;
+
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -94,6 +96,15 @@ public class JavaFXUtils {
 	 */
 	public static DoubleBinding getReversedScaleXBinding(DoubleProperty doubleProperty) {
 		return new SimpleDoubleProperty(1).divide(doubleProperty);
+	}
+
+	public static String getTimeAsFormattedString(long dateInMillis) {
+		String format = String.format("%d hour, %d min, %d sec", TimeUnit.MILLISECONDS.toHours(dateInMillis),
+				TimeUnit.MILLISECONDS.toMinutes(dateInMillis)
+						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(dateInMillis)),
+				TimeUnit.MILLISECONDS.toSeconds(dateInMillis)
+						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(dateInMillis)));
+		return format;
 	}
 
 }

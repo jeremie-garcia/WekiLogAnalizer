@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
@@ -30,10 +31,8 @@ public class RangeSelector extends Pane {
 	private SimpleDoubleProperty visiblePercentage = new SimpleDoubleProperty();
 
 	// style options
-	private Color SELECTION_FILL_COLOR = Color.hsb(100, 0.2, 0.9, 0.4);
+	private String handleStyleString = "-fx-background-color: rgba(220, 220, 220, 0.5);";
 	private Color DOTS_FILL_COLOR = Color.DARKGREY;
-	private String handleStyleString = "-fx-background-color: rgba(220, 220, 220, 0.5);-fx-border-radius: 5; -fx-border-color: rgb(0,0,0);";
-
 	// background (could try something different with cameras looking at the
 	// scene)
 	private ImageView bgImageView = null;
@@ -67,7 +66,7 @@ public class RangeSelector extends Pane {
 
 		if (newMin != this.visibleMinPercentage.doubleValue() || newMax != this.visibleMaxPercentage.doubleValue()) {
 
-			if (newMin < newMax && ((newMax - newMin) * this.getWidth() > 25)) {
+			if (newMin < newMax && ((newMax - newMin) * this.getWidth() > 10)) {
 				double selMin = newMin;
 				double selMax = newMax;
 
@@ -95,7 +94,9 @@ public class RangeSelector extends Pane {
 				.bind(visibleMaxPercentage.subtract(visibleMinPercentage).multiply(this.widthProperty()));
 		zoomRectangle.xProperty().bind(visibleMinPercentage.multiply(this.widthProperty()));
 
-		zoomRectangle.setFill(SELECTION_FILL_COLOR);
+		zoomRectangle.setStroke(Paint.valueOf("black"));
+		zoomRectangle.setStrokeWidth(1);
+		zoomRectangle.setFill(Color.TRANSPARENT);
 		zoomRectangle.setOnMousePressed(HandlesPressEventFilter);
 		zoomRectangle.setOnMouseReleased(HandlesReleasedEventFilter);
 		zoomRectangle.setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -112,8 +113,7 @@ public class RangeSelector extends Pane {
 						double newMax = visibleMaxPercentage.doubleValue() + diffx / RangeSelector.this.getWidth();
 						updateSelection(newMin, newMax);
 						prevx = event.getScreenX();
-					}
-					if (diffy != 0 && (zoom || Math.abs(diffy) > 5)) {
+					} else if (diffy != 0 && (zoom || Math.abs(diffy) > 5)) {
 						zoom = true;
 						// A get the central position
 						double sel_range = visibleMaxPercentage.doubleValue() - visibleMinPercentage.doubleValue();
