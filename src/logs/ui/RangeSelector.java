@@ -1,7 +1,15 @@
 package logs.ui;
 
+import java.nio.channels.SelectableChannel;
+import java.nio.channels.SelectionKey;
+
+import com.sun.corba.se.pept.transport.Acceptor;
+import com.sun.corba.se.pept.transport.Connection;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
+
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -32,6 +40,11 @@ public class RangeSelector extends Pane {
 
 	// style options
 	private String handleStyleString = "-fx-background-color: rgba(220, 220, 220, 0.5);";
+	private String handleStyleStringFocus = "-fx-background-color: rgba(207, 242, 4, 0.5);";
+
+	private Color selectionFillColor = Color.TRANSPARENT;
+	private Color selectionFillColorFocus = Color.rgb(207, 242, 4, 0.1);
+
 	private Color DOTS_FILL_COLOR = Color.DARKGREY;
 	// background (could try something different with cameras looking at the
 	// scene)
@@ -113,7 +126,28 @@ public class RangeSelector extends Pane {
 
 		zoomRectangle.setStroke(Paint.valueOf("black"));
 		zoomRectangle.setStrokeWidth(1);
-		zoomRectangle.setFill(Color.TRANSPARENT);
+		zoomRectangle.setFill(selectionFillColor);
+
+		// use event filter to bypass dots group event capture
+		zoomRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				zoomRectangle.setStrokeWidth(2);
+			}
+
+		});
+
+		// use event filter to bypass dots group event capture
+		zoomRectangle.setOnMouseExited(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				zoomRectangle.setStrokeWidth(1);
+			}
+
+		});
+
 		zoomRectangle.setOnMousePressed(HandlesPressEventFilter);
 		zoomRectangle.setOnMouseReleased(HandlesReleasedEventFilter);
 		zoomRectangle.setOnMouseDragged(new EventHandler<MouseEvent>() {
@@ -125,12 +159,14 @@ public class RangeSelector extends Pane {
 					double diffy = event.getScreenY() - prevy;
 
 					if (diffx != 0 && (translate || Math.abs(diffx) > 5)) {
+						setCursor(Cursor.H_RESIZE);
 						translate = true;
 						double newMin = visibleMinPercentage.doubleValue() + diffx / RangeSelector.this.getWidth();
 						double newMax = visibleMaxPercentage.doubleValue() + diffx / RangeSelector.this.getWidth();
 						updateSelection(newMin, newMax);
 						prevx = event.getScreenX();
 					} else if (diffy != 0 && (zoom || Math.abs(diffy) > 5)) {
+						setCursor(Cursor.V_RESIZE);
 						zoom = true;
 						// A get the central position
 						double sel_range = visibleMaxPercentage.doubleValue() - visibleMinPercentage.doubleValue();
@@ -163,6 +199,24 @@ public class RangeSelector extends Pane {
 				zoomRectangle.xProperty().add(zoomRectangle.widthProperty().subtract(rightHandle.widthProperty())));
 
 		// use event filter to bypass dots group event capture
+		rightHandle.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				rightHandle.setStyle(handleStyleStringFocus);
+			}
+
+		});
+
+		// use event filter to bypass dots group event capture
+		rightHandle.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				rightHandle.setStyle(handleStyleString);
+			}
+
+		});
 		rightHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
 		rightHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
 		rightHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
@@ -204,6 +258,26 @@ public class RangeSelector extends Pane {
 		leftHandle.setStyle(handleStyleString);
 
 		// use event filter to bypass dots group event capture
+		// use event filter to bypass dots group event capture
+		leftHandle.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				leftHandle.setStyle(handleStyleStringFocus);
+			}
+
+		});
+
+		// use event filter to bypass dots group event capture
+		leftHandle.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				leftHandle.setStyle(handleStyleString);
+			}
+
+		});
+
 		leftHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
 		leftHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
 		leftHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
@@ -243,6 +317,15 @@ public class RangeSelector extends Pane {
 	private boolean zoom = false, translate = false;
 	private double prevx, prevy;
 
+	private EventHandler<MouseEvent> enterNodeEventFilter = new EventHandler<MouseEvent>() {
+
+		@Override
+		public void handle(MouseEvent event) {
+			// TODO Auto-generated method stub
+
+		}
+	};
+
 	private EventHandler<MouseEvent> HandlesPressEventFilter = new EventHandler<MouseEvent>() {
 
 		@Override
@@ -250,6 +333,7 @@ public class RangeSelector extends Pane {
 			drag = true;
 			prevx = event.getScreenX();
 			prevy = event.getScreenY();
+			setCursor(Cursor.H_RESIZE);
 			event.consume();
 		}
 	};
@@ -261,6 +345,7 @@ public class RangeSelector extends Pane {
 			drag = false;
 			zoom = false;
 			translate = false;
+			setCursor(Cursor.DEFAULT);
 			event.consume();
 		}
 	};

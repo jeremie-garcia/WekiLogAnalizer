@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import klogs.ui.events.ModelUpdatedLogEvent;
 import klogs.utils.KLogFileUtils;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
@@ -39,7 +40,7 @@ public class KLogEventsManager extends LogEventsManager {
 				label = KLogFileUtils.getLogLineLabel(line);
 				timeStamp = KLogFileUtils.getLogLineTime(line);
 				args = KLogFileUtils.getLogLineArgs(line);
-				LogEvent event = new LogEvent(label, timeStamp, 0, new ArrayList<String>(Arrays.asList(args)),
+				LogEvent event = logEventFactory(label, timeStamp, 0, new ArrayList<String>(Arrays.asList(args)),
 						logFileToLoad.getPath());
 				events.add(event);
 
@@ -53,5 +54,27 @@ public class KLogEventsManager extends LogEventsManager {
 			e.printStackTrace();
 		}
 		return events;
+	}
+
+	/**
+	 * this method create the appropriate type of LogEvent class
+	 *
+	 * @param label
+	 * @param timeStamp
+	 * @param duration
+	 * @param arrayList
+	 * @param path
+	 * @return
+	 */
+	private LogEvent logEventFactory(String label, long timeStamp, long duration, ArrayList<String> args,
+			String source) {
+
+		if (label.toLowerCase().contains("model_num")) {
+			return new ModelUpdatedLogEvent(label, timeStamp, duration, args, source);
+
+		} else {
+			return new LogEvent(label, timeStamp, 0, args, source);
+		}
+
 	}
 }

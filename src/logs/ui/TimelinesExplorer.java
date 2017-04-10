@@ -126,13 +126,10 @@ public class TimelinesExplorer extends BorderPane {
 		long begin = this.logEventsManager.getBeginTime();
 		long end = this.logEventsManager.getEndTime();
 
-		// add some duration to avoid end being not visible
-		long extendedDuration = end + (end - begin) / 20;
-
-		this.unitConverter = new UnitConverter(begin, extendedDuration);
+		this.unitConverter = new UnitConverter(begin, end);
 
 		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
-		double extendedEndInScene = unitConverter.getPosInSceneFromTime(extendedDuration);
+		double endPosInScene = unitConverter.getPosInSceneFromTime(end);
 
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
@@ -151,7 +148,7 @@ public class TimelinesExplorer extends BorderPane {
 			txt.setTranslateY(6);
 			this.textLabels.add(txt);
 			pane.getChildren().add(txt);
-			Line l = new Line(beginPosInScene, 10, extendedEndInScene, 10);
+			Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
 			pane.getChildren().add(l);
 
 			Group points = new Group();

@@ -77,4 +77,5 @@ public class LogEventNode extends Group {
 	public void setPosX(double posX) {
 		this.item.setCenterX(posX);
 	}
+
 }

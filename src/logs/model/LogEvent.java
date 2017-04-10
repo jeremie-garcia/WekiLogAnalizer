@@ -13,11 +13,11 @@ import javafx.scene.Node;
  */
 public class LogEvent {
 
-	private String label = "";
-	private String source = "";
-	private long timeStamp = 0;
-	private long duration = 0;
-	private ArrayList<String> args;
+	protected String label = "";
+	protected String source = "";
+	protected long timeStamp = 0;
+	protected long duration = 0;
+	protected ArrayList<String> args;
 
 	public LogEvent(String label, long timeStamps, long duration, ArrayList<String> args, String source) {
 		this.label = label;
