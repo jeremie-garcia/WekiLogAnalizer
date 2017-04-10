@@ -1,9 +1,15 @@
-package logs.ui;
+package logs.utils;
 
 import java.io.File;
 
 import javafx.scene.control.ListCell;
 
+/**
+ * Utilisties to render a logFIle in a ListView
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class FileCellRenderer extends ListCell<File> {
 
 	@Override

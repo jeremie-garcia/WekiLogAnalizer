@@ -10,6 +10,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import logs.model.LogEvent;
 
+/**
+ * LogEventInspector class that display the data available for the event. It
+ * shows the date, the type and the arguments. Extra views can be added for
+ * specific event Types.
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class EventInspector extends VBox {
 
 	public static EventInspector singleton = null;

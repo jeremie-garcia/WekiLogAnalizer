@@ -36,6 +36,7 @@ public class RangeSelector extends Pane {
 	// background (could try something different with cameras looking at the
 	// scene)
 	private ImageView bgImageView = null;
+	private double componentMinimalSizeInPixels = 10;
 
 	public RangeSelector() {
 		super();
@@ -57,16 +58,29 @@ public class RangeSelector extends Pane {
 		});
 	}
 
+	/**
+	 * Selects all the available range. It first change the selection to ensure
+	 * all bindings will be activated event if the value is similar to the
+	 * previous one.
+	 */
 	void selectAll() {
 		this.updateSelection(0.001, 0.999);
 		this.updateSelection(0, 1);
 	}
 
+	/**
+	 * this methods updates visibleMin, visibleMax and Visible Range according
+	 * to new values. It performs simple verifications to ensure validity and
+	 * minimal Width of the component (componentMinimalSizeInPixels)
+	 *
+	 * @param newMin
+	 * @param newMax
+	 */
 	private void updateSelection(double newMin, double newMax) {
 
 		if (newMin != this.visibleMinPercentage.doubleValue() || newMax != this.visibleMaxPercentage.doubleValue()) {
 
-			if (newMin < newMax && ((newMax - newMin) * this.getWidth() > 10)) {
+			if (newMin < newMax && ((newMax - newMin) * this.getWidth() > this.componentMinimalSizeInPixels)) {
 				double selMin = newMin;
 				double selMax = newMax;
 
@@ -85,6 +99,9 @@ public class RangeSelector extends Pane {
 		}
 	}
 
+	/**
+	 * create the scene graph to build the component and define the interactions
+	 */
 	private void createRangeSelector() {
 
 		// central pane for OrthoZoom
@@ -145,6 +162,7 @@ public class RangeSelector extends Pane {
 		rightHandle.layoutXProperty().bind(
 				zoomRectangle.xProperty().add(zoomRectangle.widthProperty().subtract(rightHandle.widthProperty())));
 
+		// use event filter to bypass dots group event capture
 		rightHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
 		rightHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
 		rightHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
@@ -185,6 +203,7 @@ public class RangeSelector extends Pane {
 		leftHandle.layoutXProperty().bind(zoomRectangle.xProperty());
 		leftHandle.setStyle(handleStyleString);
 
+		// use event filter to bypass dots group event capture
 		leftHandle.addEventFilter(MouseEvent.MOUSE_PRESSED, HandlesPressEventFilter);
 		leftHandle.addEventFilter(MouseEvent.MOUSE_RELEASED, HandlesReleasedEventFilter);
 		leftHandle.addEventFilter(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
@@ -223,7 +242,6 @@ public class RangeSelector extends Pane {
 	private boolean drag = false;
 	private boolean zoom = false, translate = false;
 	private double prevx, prevy;
-	private double initMin, initMax;
 
 	private EventHandler<MouseEvent> HandlesPressEventFilter = new EventHandler<MouseEvent>() {
 
@@ -232,8 +250,6 @@ public class RangeSelector extends Pane {
 			drag = true;
 			prevx = event.getScreenX();
 			prevy = event.getScreenY();
-			initMin = visibleMinPercentage.doubleValue();
-			initMax = visibleMaxPercentage.doubleValue();
 			event.consume();
 		}
 	};

@@ -4,6 +4,12 @@ import java.io.File;
 
 import logs.model.LogEvent;
 
+/**
+ * Utilities for processing wekinator log events files
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class KLogFileUtils {
 
 	public static long getLogLineTime(String line) {

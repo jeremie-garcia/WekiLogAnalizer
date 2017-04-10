@@ -3,7 +3,7 @@ package logs.ui;
 /**
  *
  * This class provides utilities methods to convert from time to scene, scene to
- * time and percentage to scene
+ * time and percentage to scene. It sets the origin to the begin time event
  *
  * @author jeremiegarcia
  *

@@ -1,9 +1,11 @@
 package logs.config;
 
-import java.awt.Font;
-
-import logs.utils.JavaFXUtils;
-
+/**
+ * Configuration (files, folders, preferences)
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class Configuration {
 
 	////////////// FILES AND FOLDERS PREFERENCES

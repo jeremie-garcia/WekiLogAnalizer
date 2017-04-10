@@ -9,6 +9,13 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 
+/**
+ * JavaFx utilities to generate colors, work with scroll pane, get Time as
+ * formatted string...
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class JavaFXUtils {
 
 	private static float goldenRatioConjugate = 0.618033988749895f;

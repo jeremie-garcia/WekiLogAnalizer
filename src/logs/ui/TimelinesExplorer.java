@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -24,8 +25,9 @@ import logs.ui.events.LogEventsPane;
 import logs.utils.JavaFXUtils;
 
 /**
- * Main container for individual nodes representing each log events. It also
- * contains a ruler and a range selector vertically aligned
+ * Main container for individual nodes (LogEventsPane) representing each log
+ * events by key. It also contains a ruler and a range selector vertically
+ * aligned
  *
  * @author jeremiegarcia
  *
@@ -35,16 +37,24 @@ public class TimelinesExplorer extends BorderPane {
 	private LogEventsManager logEventsManager;
 	private UnitConverter unitConverter;
 
+	// visual elements
 	private VBox centralPane;
 	private RangeSelector rangeSelector;
 	private TimeRuler timeRuler;
-	private ArrayList<Group> allPointsGroup = new ArrayList<Group>();
-	private Scale horizontalScale = new Scale(1, 1);
+	// visibility offset are used to display extended scene portions to avoid
+	// masquing elements
 	private int VISIBILITY_OFFSET = 10;
 	private Insets VISIBILITY_INSETS = new Insets(2 * VISIBILITY_OFFSET);
 
+	// scaling factor for the scene
+	private Scale horizontalScale = new Scale(1, 1);
 	private ArrayList<Text> textLabels;
 
+	/**
+	 * Builds a timelines exploree using a logManager
+	 *
+	 * @param logManager
+	 */
 	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
 		this.setPrefWidth(800);
@@ -108,7 +118,7 @@ public class TimelinesExplorer extends BorderPane {
 
 	/**
 	 * Update the visualization of the log events Uses the logEventsManager
-	 * database
+	 * database. This should be called when data change in the logEventManager.
 	 *
 	 * @param newEventsMap
 	 */
@@ -132,7 +142,8 @@ public class TimelinesExplorer extends BorderPane {
 		Scale inverseScale = new Scale(1, 1);
 		inverseScale.xProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 		for (String key : this.logEventsManager.getLogevents().keySet()) {
-			LogEventsPane pane = new LogEventsPane(key, index);
+			Color color = JavaFXUtils.getColorWithGoldenRationByIndex(index);
+			LogEventsPane pane = new LogEventsPane(key, index, color);
 			pane.setPrefHeight(60);
 			Text txt = new Text(key);
 			txt.setFont(Font.font(8));
@@ -148,11 +159,10 @@ public class TimelinesExplorer extends BorderPane {
 				LogEventNode node = new LogEventNode(logEvent);
 				node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
 				node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
-				node.setFillColor(JavaFXUtils.getColorWithGoldenRationByIndex(index));
+				node.setFillColor(color);
 				points.getChildren().add(node);
 			}
 
-			this.allPointsGroup.add(points);
 			pane.getChildren().add(points);
 			this.centralPane.getChildren().add(pane);
 			index++;
@@ -163,6 +173,10 @@ public class TimelinesExplorer extends BorderPane {
 		this.rangeSelector.setBgImageView(backgroundImage);
 	}
 
+	/**
+	 * This method updates the ruler according to the current VisibleMin and
+	 * Visible Max percentages of the range selector
+	 */
 	private void updateTimeRulerRange() {
 		long minTime = unitConverter
 				.getDurationInMillisFromPercentage(rangeSelector.getVisibleMinPercentage().doubleValue());
@@ -172,6 +186,10 @@ public class TimelinesExplorer extends BorderPane {
 		timeRuler.getMaxTimeInMillisProperty().set(maxTime);
 	}
 
+	/**
+	 * This methods updates the horizontal scale ratio according to visible
+	 * range and the scene size
+	 */
 	private void updateCentralPaneScaleX() {
 		double visibleWidthInPixels = centralPane.getWidth();
 		double sceneWidthInSceneUnits = unitConverter.getLengthInSceneFromPercentage(1.0);
@@ -180,6 +198,10 @@ public class TimelinesExplorer extends BorderPane {
 		horizontalScale.setX(ratio / visiblePercentage);
 	}
 
+	/**
+	 * This method updates the translateX of the central pane and the labels
+	 * according to the Visible Min percentage
+	 */
 	private void updateCentralPaneTranslateX() {
 		double minPercentage = rangeSelector.getVisibleMinPercentage().doubleValue();
 		double scenePos = unitConverter.getPosInSceneFromPercentage(minPercentage);
@@ -190,6 +212,11 @@ public class TimelinesExplorer extends BorderPane {
 		}
 	}
 
+	/**
+	 * this methods creates an ImageView from the scene (screen snapshot)
+	 *
+	 * @return
+	 */
 	private ImageView createImageViewFromScene() {
 
 		WritableImage snapshot = this.centralPane.snapshot(new SnapshotParameters(), null);

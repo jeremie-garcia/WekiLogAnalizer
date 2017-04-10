@@ -11,7 +11,7 @@ import logs.ui.UnitConverter;
 import logs.utils.JavaFXUtils;
 
 /**
- * This class represents a logEvent in the scene
+ * This class represents a logEvent in the scene THe shape is an ellipse
  *
  * @author jeremiegarcia
  *
@@ -24,6 +24,11 @@ public class LogEventNode extends Group {
 	private Ellipse item;
 	private Color color = Color.BLUE;
 
+	/**
+	 * builds a LogEventNode with a LogEvent
+	 *
+	 * @param event
+	 */
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
@@ -52,6 +57,11 @@ public class LogEventNode extends Group {
 
 	}
 
+	/**
+	 * This methods sets the visual parameters to highlight (true or false)
+	 *
+	 * @param setHighlight
+	 */
 	private void highlight(boolean setHighlight) {
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
@@ -59,6 +69,11 @@ public class LogEventNode extends Group {
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 
+	/**
+	 * This methods sets the horizontal position of the node in the scene
+	 *
+	 * @param posX
+	 */
 	public void setPosX(double posX) {
 		this.item.setCenterX(posX);
 	}

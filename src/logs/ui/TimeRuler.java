@@ -14,6 +14,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logs.utils.JavaFXUtils;
 
+/**
+ * this class provides a time ruler that draws numberofHatch marks between minT
+ * and MaxT
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class TimeRuler extends Pane {
 
 	private SimpleDoubleProperty minT = new SimpleDoubleProperty();
@@ -35,12 +42,11 @@ public class TimeRuler extends Pane {
 		this.getChildren().add(axis);
 
 		// Create hatch marks and Text
-		double sep = width / numberOfHatchMark;
-		double y0 = lineHeight - 5;
-		double y1 = y0 + 10;
+		double hatchMarkYTop = lineHeight - 5;
+		double hatchMarkYBottom = hatchMarkYTop + 10;
 
 		for (int i = 0; i <= numberOfHatchMark; i++) {
-			Line tickLine = new Line(0, y0, 0, y1);
+			Line tickLine = new Line(0, hatchMarkYTop, 0, hatchMarkYBottom);
 			tickLine.startXProperty().bind(this.widthProperty().divide(numberOfHatchMark).multiply(i));
 			tickLine.endXProperty().bind(this.widthProperty().divide(numberOfHatchMark).multiply(i));
 			this.getChildren().add(tickLine);
@@ -50,7 +56,7 @@ public class TimeRuler extends Pane {
 				String format = JavaFXUtils.getTimeAsFormattedString(dateInMillis);
 				Text text = new Text(format);
 				text.setFont(new Font("helvetica", 8));
-				text.setY(y1 + 12);
+				text.setY(hatchMarkYBottom + 12);
 				text.xProperty().bind(this.widthProperty().divide(numberOfHatchMark).multiply(i));
 				this.tickLabels.add(text);
 				this.getChildren().add(text);

@@ -38,8 +38,8 @@ import klogs.utils.GraderTool;
 import logs.config.Configuration;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
-import logs.ui.FileCellRenderer;
 import logs.ui.TimelinesExplorer;
+import logs.utils.FileCellRenderer;
 import wekimini.kadenze.Grade;
 
 /**

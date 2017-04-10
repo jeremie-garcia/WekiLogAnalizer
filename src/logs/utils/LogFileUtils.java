@@ -10,6 +10,13 @@ import java.nio.channels.FileChannel;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+/**
+ * tools to process files (unzip, copy, find all files in a folder, delete
+ * directory)
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class LogFileUtils {
 
 	public static void unzip(String source, String destination, String password) {

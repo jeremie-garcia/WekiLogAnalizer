@@ -1,5 +1,11 @@
 package klogs;
 
+/**
+ * configuration for default files to open
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class KLogConfiguration {
 
 	////////////// FILES AND FOLDERS PREFERENCES

@@ -2,6 +2,12 @@ package logs.model;
 
 import java.util.ArrayList;
 
+/**
+ * This class aggregates two events into an aggregated one with a duration
+ *
+ * @author jeremiegarcia
+ *
+ */
 public class LogEventsAggregator {
 
 	public static LogEvent aggregateLogEvents(LogEvent startEvent, LogEvent endEvent) {
