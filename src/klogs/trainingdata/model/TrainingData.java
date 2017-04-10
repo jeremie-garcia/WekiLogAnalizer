@@ -13,4 +13,9 @@ public class TrainingData {
 		this.output = classe;
 		this.date = date;
 	}
+
+	@Override
+	public String toString() {
+		return "date: " + date + " class: " + this.output + " inputs: " + inputs;
+	}
 }

@@ -9,10 +9,12 @@ import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -87,7 +89,7 @@ public class TimelinesExplorer extends BorderPane {
 		this.setClip(r);
 
 		this.centralPane = new VBox();
-		this.centralPane.prefWidthProperty().bind(this.widthProperty());
+		//this.centralPane.prefWidthProperty().bind(this.widthProperty());
 		this.centralPane.setPadding(VISIBILITY_INSETS);
 		this.centralPane.getTransforms().add(horizontalScale);
 		this.setCenter(centralPane);
@@ -113,8 +115,6 @@ public class TimelinesExplorer extends BorderPane {
 			}
 		});
 	}
-
-	Circle prevc;
 
 	/**
 	 * Update the visualization of the log events Uses the logEventsManager
@@ -149,6 +149,7 @@ public class TimelinesExplorer extends BorderPane {
 			this.textLabels.add(txt);
 			pane.getChildren().add(txt);
 			Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
+			l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
 			pane.getChildren().add(l);
 
 			Group points = new Group();

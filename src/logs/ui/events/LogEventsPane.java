@@ -17,9 +17,9 @@ public class LogEventsPane extends Pane {
 	private Color col;
 
 	public LogEventsPane(String key, int index, Color col) {
+		super();
 		this.index = index;
 		this.key = key;
 		this.col = col;
 	}
-
 }

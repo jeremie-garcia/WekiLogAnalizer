@@ -1,12 +1,5 @@
 package logs.ui;
 
-import java.nio.channels.SelectableChannel;
-import java.nio.channels.SelectionKey;
-
-import com.sun.corba.se.pept.transport.Acceptor;
-import com.sun.corba.se.pept.transport.Connection;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
-
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -41,9 +34,6 @@ public class RangeSelector extends Pane {
 	// style options
 	private String handleStyleString = "-fx-background-color: rgba(220, 220, 220, 0.5);";
 	private String handleStyleStringFocus = "-fx-background-color: rgba(207, 242, 4, 0.5);";
-
-	private Color selectionFillColor = Color.TRANSPARENT;
-	private Color selectionFillColorFocus = Color.rgb(207, 242, 4, 0.1);
 
 	private Color DOTS_FILL_COLOR = Color.DARKGREY;
 	// background (could try something different with cameras looking at the
@@ -126,7 +116,7 @@ public class RangeSelector extends Pane {
 
 		zoomRectangle.setStroke(Paint.valueOf("black"));
 		zoomRectangle.setStrokeWidth(1);
-		zoomRectangle.setFill(selectionFillColor);
+		zoomRectangle.setFill(Color.TRANSPARENT);
 
 		// use event filter to bypass dots group event capture
 		zoomRectangle.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -143,7 +133,8 @@ public class RangeSelector extends Pane {
 
 			@Override
 			public void handle(MouseEvent event) {
-				zoomRectangle.setStrokeWidth(1);
+				if (!drag)
+					zoomRectangle.setStrokeWidth(1);
 			}
 
 		});
@@ -204,6 +195,7 @@ public class RangeSelector extends Pane {
 			@Override
 			public void handle(MouseEvent event) {
 				rightHandle.setStyle(handleStyleStringFocus);
+				zoomRectangle.setStrokeWidth(2);
 			}
 
 		});
@@ -214,6 +206,8 @@ public class RangeSelector extends Pane {
 			@Override
 			public void handle(MouseEvent event) {
 				rightHandle.setStyle(handleStyleString);
+				if (!drag)
+					zoomRectangle.setStrokeWidth(1);
 			}
 
 		});
@@ -264,6 +258,7 @@ public class RangeSelector extends Pane {
 			@Override
 			public void handle(MouseEvent event) {
 				leftHandle.setStyle(handleStyleStringFocus);
+				zoomRectangle.setStrokeWidth(2);
 			}
 
 		});
@@ -274,6 +269,8 @@ public class RangeSelector extends Pane {
 			@Override
 			public void handle(MouseEvent event) {
 				leftHandle.setStyle(handleStyleString);
+				if (!drag)
+					zoomRectangle.setStrokeWidth(1);
 			}
 
 		});
@@ -316,15 +313,6 @@ public class RangeSelector extends Pane {
 	private boolean drag = false;
 	private boolean zoom = false, translate = false;
 	private double prevx, prevy;
-
-	private EventHandler<MouseEvent> enterNodeEventFilter = new EventHandler<MouseEvent>() {
-
-		@Override
-		public void handle(MouseEvent event) {
-			// TODO Auto-generated method stub
-
-		}
-	};
 
 	private EventHandler<MouseEvent> HandlesPressEventFilter = new EventHandler<MouseEvent>() {
 

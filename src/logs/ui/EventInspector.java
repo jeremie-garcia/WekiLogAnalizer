@@ -5,9 +5,13 @@ import java.util.Date;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import logs.model.LogEvent;
 
 /**
@@ -27,8 +31,7 @@ public class EventInspector extends VBox {
 	private TextArea argsTxt = new TextArea();
 
 	private LogEvent currentEvent = null;
-
-	private Node eventNode;
+	private Node eventNode = null;
 
 	private EventInspector() {
 		super();
@@ -75,6 +78,19 @@ public class EventInspector extends VBox {
 			if (event.hasInspectorNode()) {
 				this.eventNode = event.getInspectorNode();
 				this.getChildren().add(this.eventNode);
+				// fit node to available space
+				double width = this.getWidth();
+				double height = this.getHeight() - (this.argsTxt.getLayoutY() + this.argsTxt.getHeight());
+
+				double nodeWidth = this.eventNode.getBoundsInParent().getWidth();
+				double nodeHeight = this.eventNode.getBoundsInParent().getHeight();
+
+				double widthRatio = width / nodeWidth;
+				double heightRatio = height / nodeHeight;
+
+				double minRatio = (widthRatio < heightRatio) ? widthRatio : heightRatio;
+				this.eventNode.getTransforms().add(new Scale(minRatio, minRatio));
+
 			}
 		}
 

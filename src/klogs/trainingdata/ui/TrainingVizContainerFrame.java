@@ -1,14 +1,8 @@
 package klogs.trainingdata.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import javafx.scene.paint.Color;
 import klogs.trainingdata.model.ModelProcessor;
@@ -25,7 +19,7 @@ import logs.utils.JavaFXUtils;
  * @author jeremiegarcia
  *
  */
-public class TrainingVizContainerFrame extends JFrame {
+public class TrainingVizContainerFrame {
 
 	String type;
 	ArrayList<LogEvent> events;
@@ -57,18 +51,6 @@ public class TrainingVizContainerFrame extends JFrame {
 
 		this.updateMinMaxValues();
 		this.updateColorScale();
-
-		this.setLocation(0, 800);
-		this.setTitle("Training for " + dir);
-		this.setSize(new Dimension(1200, 100));
-		this.setLayout(new BorderLayout());
-		this.buildMenuBar();
-		this.add(buildCentralPanel(this.dataSets), BorderLayout.CENTER);
-		this.setVisible(true);
-	}
-
-	public void updateScreenPosition(int x, int y) {
-		this.setLocation(x, y);
 	}
 
 	private void updateColorScale() {
@@ -109,24 +91,6 @@ public class TrainingVizContainerFrame extends JFrame {
 				globalInputRangeValues[k] = globalInputMaxValues[k] - globalInputMinValues[k];
 			}
 		}
-	}
-
-	private JPanel buildCentralPanel(ArrayList<TrainingDataSet> dataSets) {
-		JPanel centralPanel = new JPanel();
-		centralPanel.setBackground(Color.WHITE);
-		// use a box layout first
-		centralPanel.setLayout(new BoxLayout(centralPanel, BoxLayout.LINE_AXIS));
-
-		for (TrainingDataSet data : dataSets) {
-			TrainingVizKNN vis = new TrainingVizKNN(data, this);
-			centralPanel.add(vis);
-		}
-		return centralPanel;
-
-	}
-
-	private void buildMenuBar() {
-
 	}
 
 }

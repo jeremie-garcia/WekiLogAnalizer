@@ -52,6 +52,10 @@ public class JavaFXUtils {
 		return new Color((float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255, alpha);
 	}
 
+	public static String getHexWebStringFromColor(Color col) {
+		return "#" + Integer.toHexString(col.hashCode());
+	}
+
 	public static double getHorizontalOffset(ScrollPane scrollPane) {
 		double hmin = scrollPane.getHmin();
 		double hmax = scrollPane.getHmax();
