@@ -1,5 +1,5 @@
 #ignore wekin mini to avoid sharing grader files
-privatelib/WekiMini.jar
+/privatelib/*.jar
 
 #ignore the tmp folder with unzipped submissions
 /tmp
