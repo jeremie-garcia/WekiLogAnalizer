@@ -9,8 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
-import javax.swing.border.StrokeBorder;
-
 import WekiLogs.logs.LogEvent;
 
 public class LogEventComponent extends JComponent implements MouseListener {

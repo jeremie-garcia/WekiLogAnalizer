@@ -12,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import WekiLogs.logs.TrainingDataSet;
-import WekiLogs.logs.gui.LogExplorer;
 import WekiLogs.logs.LogEvent;
 import WekiLogs.logs.ModelProcessor;
 import WekiLogs.utils.ColorScale;

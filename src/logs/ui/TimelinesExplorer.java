@@ -10,7 +10,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -164,7 +163,6 @@ public class TimelinesExplorer extends BorderPane {
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
-		System.out.println(((Pane) this.centralPane.getChildren().get(0)).prefWidthProperty());
 		this.rangeSelector.selectAll();
 
 		ImageView backgroundImage = this.createImageViewFromScene();

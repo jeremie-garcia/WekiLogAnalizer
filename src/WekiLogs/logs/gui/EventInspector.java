@@ -12,7 +12,6 @@ import javax.swing.JTextField;
 
 import WekiLogs.logs.LogEvent;
 import WekiLogs.logs.gui.input.InputVis;
-import WekiLogs.logs.gui.input.InputVisKNN;
 
 public class EventInspector extends JPanel {
 

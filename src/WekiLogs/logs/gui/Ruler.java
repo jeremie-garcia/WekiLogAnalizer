@@ -30,7 +30,7 @@ public class Ruler extends JPanel implements RangeListener {
 
 	public long getDateFromPos(int x) {
 		double range = rangeSelector.getSelRange();
-		double x_d = (double) x;
+		double x_d = x;
 		double value = (x_d / getWidth()) * range;
 		return ((long) value) + rangeSelector.getSelMin();
 

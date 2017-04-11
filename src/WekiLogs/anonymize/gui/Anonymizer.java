@@ -193,6 +193,7 @@ public class Anonymizer extends Application {
 		grid.add(cleanLbl, 0, rowCnt);
 		cleanCb = new CheckBox("");
 		cleanCb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
 				currentConfig.cleaning = new_val;
 			}
@@ -228,6 +229,7 @@ public class Anonymizer extends Application {
 				progressBar.progressProperty().unbind();
 				progressBar.progressProperty().bind(anonymizeTask.progressProperty());
 				anonymizeTask.messageProperty().addListener(new ChangeListener<String>() {
+					@Override
 					public void changed(ObservableValue<? extends String> observable, String oldValue,
 							String newValue) {
 						progressLbl.setText(newValue);

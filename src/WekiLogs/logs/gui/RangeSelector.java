@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
@@ -111,6 +109,7 @@ public class RangeSelector extends JPanel implements MouseListener, MouseMotionL
 	}
 
 	// drawing
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
@@ -167,8 +166,8 @@ public class RangeSelector extends JPanel implements MouseListener, MouseMotionL
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (drag) {
-			int diffx = (int) (e.getX() - prevx);
-			int diffy = (int) (e.getY() - prevy);
+			int diffx = e.getX() - prevx;
+			int diffy = e.getY() - prevy;
 			long range = max - min;
 
 			if (diffx > 3 || diffx < -3) {

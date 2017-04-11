@@ -7,16 +7,15 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 import WekiLogs.logs.LogEvent;
-import WekiLogs.logs.gui.input.TrainingViz;
 import WekiLogs.utils.ColorScale;
 
 /**
@@ -78,7 +77,7 @@ public class SingleEventTypePanel extends JPanel implements RangeListener, Compo
 		g2.setFont(Configuration.font);
 
 		// draw horizontal line
-		g2.drawLine(0, this.HEIGHT / 2, this.WIDTH, this.HEIGHT / 2);
+		g2.drawLine(0, ImageObserver.HEIGHT / 2, ImageObserver.WIDTH, ImageObserver.HEIGHT / 2);
 		g2.drawString(this.type, 10, getHeight() / 2);
 
 		// draw LogEvents
