@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
 import logs.ui.EventInspector;
-import logs.ui.UnitConverter;
 import logs.utils.JavaFXUtils;
 
 /**

@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-
 import klogs.ui.events.ModelUpdatedLogEvent;
 import klogs.utils.KLogFileUtils;
 import logs.model.LogEvent;

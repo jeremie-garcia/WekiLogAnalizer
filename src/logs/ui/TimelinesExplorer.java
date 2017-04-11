@@ -9,10 +9,8 @@ import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -89,7 +87,7 @@ public class TimelinesExplorer extends BorderPane {
 		this.setClip(r);
 
 		this.centralPane = new VBox();
-		//this.centralPane.prefWidthProperty().bind(this.widthProperty());
+		// this.centralPane.prefWidthProperty().bind(this.widthProperty());
 		this.centralPane.setPadding(VISIBILITY_INSETS);
 		this.centralPane.getTransforms().add(horizontalScale);
 		this.setCenter(centralPane);
@@ -162,9 +160,11 @@ public class TimelinesExplorer extends BorderPane {
 			}
 
 			pane.getChildren().add(points);
+			pane.prefWidthProperty().set(endPosInScene);
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
+		System.out.println(((Pane) this.centralPane.getChildren().get(0)).prefWidthProperty());
 		this.rangeSelector.selectAll();
 
 		ImageView backgroundImage = this.createImageViewFromScene();

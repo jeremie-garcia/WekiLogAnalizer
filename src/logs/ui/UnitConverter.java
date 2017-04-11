@@ -29,7 +29,7 @@ public class UnitConverter {
 	}
 
 	public long getTimeFromPercentage(double percentage) {
-		return (long) (getDurationInMillisFromPercentage(percentage) + beginTimeMillis);
+		return getDurationInMillisFromPercentage(percentage) + beginTimeMillis;
 	}
 
 	public double getPosInSceneFromPercentage(double percentage) {
