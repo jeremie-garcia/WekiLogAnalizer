@@ -1,12 +1,11 @@
 #ignore wekin mini to avoid sharing grader files
-/lib/WekiMini.jar
+privatelib/WekiMini.jar
 
 #ignore the tmp folder with unzipped submissions
 /tmp
 
 #java gitignore
 *target*
-#*.jar
 *.war
 *.ear
 *.class
@@ -62,5 +61,3 @@ local.properties
 # Code Recommenders
 .recommenders/
 .metadata/.log
-
-privatelib/WekiMini.jar
