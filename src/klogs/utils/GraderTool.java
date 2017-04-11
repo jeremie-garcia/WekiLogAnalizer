@@ -21,7 +21,6 @@ public class GraderTool {
 
 	public static double getScoreGradeForAssignment(Grade grade, String logFile) {
 
-		JSONObject json = new JSONObject(grade.toJSONString());
 		String name = KLogFileUtils.getAssignementStringFromFile(logFile);
 		HashMap<String, Double> map = gradeToScoreMap(grade);
 

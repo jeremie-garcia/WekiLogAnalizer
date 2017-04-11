@@ -5,6 +5,8 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 
+import com.sun.webkit.InspectorClient;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -52,7 +54,6 @@ import wekimini.kadenze.Grade;
 public class MainUI extends Application {
 	private String logFile = "";
 	private LogEventsManager logEventsManager;
-
 	private Grade currentGrade;
 
 	private TimelinesExplorer timelinesExplorer;

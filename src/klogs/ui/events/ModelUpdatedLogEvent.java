@@ -12,6 +12,7 @@ import logs.model.LogEvent;
 public class ModelUpdatedLogEvent extends LogEvent {
 
 	private TrainingDataSet dataSet;
+	private TrainingVizKNN inspectorNode;
 
 	public ModelUpdatedLogEvent(String label, long timeStamps, long duration, ArrayList<String> args, String source) {
 		super(label, timeStamps, duration, args, source);
@@ -22,12 +23,15 @@ public class ModelUpdatedLogEvent extends LogEvent {
 	// TODO: put back true when bugs are resolved
 	@Override
 	public boolean hasInspectorNode() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public Node getInspectorNode() {
-		return new TrainingVizKNN(this);
+		if (inspectorNode == null) {
+			inspectorNode = new TrainingVizKNN(this);
+		}
+		return inspectorNode;
 	}
 
 	public TrainingDataSet getTrainingDataSet() {

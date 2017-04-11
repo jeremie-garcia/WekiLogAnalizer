@@ -42,13 +42,13 @@ public class JavaFXUtils {
 		} else {
 			col = Color.hsb((grade * 0.3) * 360, saturation, brightness);
 		}
-		col = new Color((float) col.getRed() / 255, (float) col.getGreen() / 255, (float) col.getBlue() / 255, alpha);
+		col = new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha);
 		return col;
 
 	}
 
-	public static Color applyAlpha(Color c, float alpha) {
-		return new Color((float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255, alpha);
+	public static Color applyAlpha(Color c, double alpha) {
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
 	}
 
 	public static String getHexWebStringFromColor(Color col) {
