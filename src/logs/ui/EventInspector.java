@@ -39,16 +39,17 @@ public class EventInspector extends VBox {
 		Label title = new Label("Inspector");
 
 		Label date = new Label("Date");
-		dateTxt.setMaxSize(200, 40);
+		dateTxt.setMaxSize(this.getPrefWidth(), 40);
 		dateTxt.setEditable(false);
 
 		Label type = new Label("Type");
-		typeTxt.setMaxSize(200, 40);
+		typeTxt.setMaxSize(this.getPrefWidth(), 40);
 		typeTxt.setEditable(false);
 
 		Label args = new Label("Args");
 		argsTxt.setEditable(false);
-		argsTxt.setMinHeight(40);
+		argsTxt.setMaxSize(this.getPrefWidth(), 60);
+		argsTxt.setMinHeight(60);
 
 		separator.setMinHeight(20);
 
