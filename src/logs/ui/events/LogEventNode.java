@@ -1,11 +1,14 @@
 package logs.ui.events;
 
+import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
+import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.utils.JavaFXUtils;
 
@@ -19,6 +22,7 @@ public class LogEventNode extends Group {
 
 	private LogEvent logEvent;
 	private static LogEventNode prevActiveNode;
+	private static Boolean selected;
 	private int RADIUS = 6;
 	private Ellipse item;
 	private Color color = Color.BLUE;
@@ -43,6 +47,19 @@ public class LogEventNode extends Group {
 					prevActiveNode.highlight(false);
 				}
 				prevActiveNode = LogEventNode.this;
+			}
+
+		});
+		
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				EventInspector.getInstance().update(logEvent);
+				ArrayList<LogEvent> selectedList=LogEventsManager.getSelectedList();
+				if(!selected){
+					selectedList.add(logEvent);
+				}
+				LogEventNode.this.highlight(true);
 			}
 
 		});
