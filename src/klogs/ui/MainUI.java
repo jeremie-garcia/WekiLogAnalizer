@@ -28,6 +28,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -41,6 +43,7 @@ import logs.config.Configuration;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.ui.TimelinesExplorer;
+import logs.ui.events.LogEventNode;
 import logs.utils.FileCellRenderer;
 import wekimini.kadenze.Grade;
 
@@ -59,7 +62,7 @@ public class MainUI extends Application {
 	private TimelinesExplorer timelinesExplorer;
 
 	private MainUI app;
-
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -241,4 +244,5 @@ public class MainUI extends Application {
 		menuBar.useSystemMenuBarProperty().set(true);
 		return menuBar;
 	}
+	
 }

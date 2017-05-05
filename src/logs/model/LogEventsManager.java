@@ -23,7 +23,7 @@ public abstract class LogEventsManager {
 
 	private File logFile;
 	
-	private static ArrayList<LogEvent> selectedList;
+	private static ArrayList<LogEvent> selectedList=new ArrayList();
 
 	public static ArrayList<LogEvent> getSelectedList(){
 		return selectedList;

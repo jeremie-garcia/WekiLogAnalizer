@@ -4,11 +4,14 @@ import java.util.ArrayList;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -48,7 +51,7 @@ public class TimelinesExplorer extends BorderPane {
 	// scaling factor for the scene
 	private Scale horizontalScale = new Scale(1, 1);
 	private ArrayList<Text> textLabels;
-
+	
 	/**
 	 * Builds a timelines exploree using a logManager
 	 *
@@ -61,7 +64,7 @@ public class TimelinesExplorer extends BorderPane {
 
 		this.logEventsManager = logManager;
 		this.unitConverter = new UnitConverter(0, 1000);
-
+		
 		// create the time scale and the ruler
 		VBox bottomBox = new VBox();
 

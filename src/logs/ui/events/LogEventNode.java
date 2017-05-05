@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
+import logs.ui.TimelinesExplorer;
 import logs.utils.JavaFXUtils;
 
 /**
@@ -22,7 +24,7 @@ public class LogEventNode extends Group {
 
 	private LogEvent logEvent;
 	private static LogEventNode prevActiveNode;
-	private static Boolean selected;
+	private Boolean selected;
 	private int RADIUS = 6;
 	private Ellipse item;
 	private Color color = Color.BLUE;
@@ -37,31 +39,49 @@ public class LogEventNode extends Group {
 		this.logEvent = event;
 		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
 		this.getChildren().add(item);
-
+		selected=false;
+		
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				EventInspector.getInstance().update(logEvent);
 				LogEventNode.this.highlight(true);
-				if (prevActiveNode != null && prevActiveNode != LogEventNode.this) {
+				if (prevActiveNode != null && prevActiveNode != LogEventNode.this && !prevActiveNode.getSelected()) {
 					prevActiveNode.highlight(false);
 				}
 				prevActiveNode = LogEventNode.this;
 			}
-
+		});
+		
+		this.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if(selected){
+					LogEventNode.this.highlight(false);
+					LogEventNode.this.highlight2(true);
+				}
+			}
 		});
 		
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				if(event.isControlDown()){
 				EventInspector.getInstance().update(logEvent);
 				ArrayList<LogEvent> selectedList=LogEventsManager.getSelectedList();
-				if(!selected){
-					selectedList.add(logEvent);
+				if(selected){
+					selected = false;
+					LogEventNode.this.highlight2(false);
+					selectedList.remove(logEvent);
 				}
-				LogEventNode.this.highlight(true);
+				else{
+					selectedList.add(logEvent);
+					selected=true;
+					LogEventNode.this.highlight2(true);
+				}
+				System.out.println(selectedList);
 			}
-
+			}
 		});
 
 		highlight(false);
@@ -85,6 +105,13 @@ public class LogEventNode extends Group {
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 
+	private void highlight2(boolean setHighlight) {
+		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
+		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
+		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);
+		item.setStrokeWidth(setHighlight ? 2 : 1);
+	}
+	
 	/**
 	 * This methods sets the horizontal position of the node in the scene
 	 *
@@ -92,6 +119,10 @@ public class LogEventNode extends Group {
 	 */
 	public void setPosX(double posX) {
 		this.item.setCenterX(posX);
+	}
+	
+	public Boolean getSelected(){
+		return selected;
 	}
 
 }
