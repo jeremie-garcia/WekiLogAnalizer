@@ -38,4 +38,7 @@ public class LogEventsPane extends Pane {
 		this.bgRectangle.setFill(isSelected ? col.deriveColor(1, 0.4, 1, 0.7) : Color.TRANSPARENT);
 
 	}
+	public String getKey(){
+		return key;
+	}
 }

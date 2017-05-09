@@ -23,9 +23,9 @@ public abstract class LogEventsManager {
 
 	private File logFile;
 	
-	private static ArrayList<LogEvent> selectedList=new ArrayList();
+	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap();
 
-	public static ArrayList<LogEvent> getSelectedList(){
+	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
 		return selectedList;
 	}
 	

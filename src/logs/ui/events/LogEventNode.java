@@ -1,6 +1,7 @@
 package logs.ui.events;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -68,14 +69,22 @@ public class LogEventNode extends Group {
 			public void handle(MouseEvent event) {
 				if(event.isControlDown()){
 				EventInspector.getInstance().update(logEvent);
-				ArrayList<LogEvent> selectedList=LogEventsManager.getSelectedList();
+				HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
+				String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
 				if(selected){
 					selected = false;
 					LogEventNode.this.highlight2(false);
-					selectedList.remove(logEvent);
+					selectedList.get(key).remove(logEvent);
 				}
 				else{
-					selectedList.add(logEvent);
+					if (selectedList.containsKey(key)){
+						selectedList.get(key).add(logEvent);
+					}
+					else{
+						ArrayList<LogEvent> bla= new ArrayList();
+						bla.add(logEvent);
+						selectedList.put(key,bla);
+					}
 					selected=true;
 					LogEventNode.this.highlight2(true);
 				}
