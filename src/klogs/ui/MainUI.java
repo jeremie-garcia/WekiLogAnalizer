@@ -97,6 +97,16 @@ public class MainUI extends Application {
 
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
+		
+		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+            	if (event.getCode()==KeyCode.CONTROL){
+            		logEventsManager.fusion();
+            	}
+            }
+        });
+		
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

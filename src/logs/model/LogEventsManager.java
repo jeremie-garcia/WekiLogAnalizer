@@ -96,4 +96,19 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
+	public void fusion(){
+		System.out.println("Ca passe");
+		if (selectedList.isEmpty()){
+			System.out.println("La liste est vide");
+		}
+		else{
+			HashMap <String,ArrayList<LogEvent>> fusionable=new HashMap();
+			for (HashMap.Entry<String, ArrayList<LogEvent>> entry : selectedList.entrySet())
+			{
+			   String key=entry.getKey();
+			   fusionable.put(key, eventsMap.get(key));
+			}
+			System.out.println(fusionable);
+		}
+	}
 }

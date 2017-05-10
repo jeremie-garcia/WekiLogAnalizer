@@ -6,6 +6,7 @@ import java.util.HashMap;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -75,6 +76,9 @@ public class LogEventNode extends Group {
 					selected = false;
 					LogEventNode.this.highlight2(false);
 					selectedList.get(key).remove(logEvent);
+					if (selectedList.get(key).isEmpty()){
+						selectedList.remove(key);
+					}
 				}
 				else{
 					if (selectedList.containsKey(key)){
@@ -92,9 +96,18 @@ public class LogEventNode extends Group {
 			}
 			}
 		});
-
+		
 		highlight(false);
+		
+		this.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
+			System.out.println("bla");
+	        if (evt.getCode() == KeyCode.CONTROL) {
+	            evt.consume();
+	        }
+	});
 	}
+	
+	
 
 	public void setFillColor(Color color) {
 		this.color = color;
