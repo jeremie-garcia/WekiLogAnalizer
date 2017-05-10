@@ -102,7 +102,7 @@ public class MainUI extends Application {
             @Override
             public void handle(KeyEvent event) {
             	if (event.getCode()==KeyCode.CONTROL){
-            		logEventsManager.fusion();
+            		logEventsManager.recherchePattern();
             	}
             }
         });
