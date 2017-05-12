@@ -3,11 +3,17 @@ package logs.ui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -18,10 +24,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
+import javafx.util.Duration;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.events.LogEventNode;
@@ -107,7 +116,7 @@ public class TimelinesExplorer extends BorderPane {
 			}
 		});
 
-		// translate scena and the Text t keep them visible
+		// translate scene and the Text to keep them visible
 		rangeSelector.getVisibleMinPercentage().addListener(new ChangeListener<Number>() {
 
 			@Override
@@ -135,7 +144,7 @@ public class TimelinesExplorer extends BorderPane {
 
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
-
+				
 		int index = 0;
 
 		Scale inverseScale = new Scale(1, 1);
@@ -167,11 +176,90 @@ public class TimelinesExplorer extends BorderPane {
 			pane.prefWidthProperty().set(endPosInScene);
 			this.centralPane.getChildren().add(pane);
 			index++;
-		}
+		}		
+		
 		this.rangeSelector.selectAll();
 
 		ImageView backgroundImage = this.createImageViewFromScene();
 		this.rangeSelector.setBgImageView(backgroundImage);
+		
+		animationFusion(4000, 400);
+
+	}
+	
+	/** This function manage the animation when operating a fusion
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void animationFusion(double x, double y){
+		FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000),this.centralPane.getChildren().get(0));
+		fadeTransition.setFromValue(0.1);
+		fadeTransition.setToValue(0.9);
+
+		TranslateTransition translateTransition = new TranslateTransition();
+		translateTransition.setDuration(Duration.millis(5000));
+		translateTransition.setNode(this.centralPane.getChildren().get(0));
+		translateTransition.setByY(200);
+		
+		ParallelTransition parallelTransition = new ParallelTransition();
+	    parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
+	    parallelTransition.setCycleCount(1);
+	    parallelTransition.play();
+		
+		System.out.println("PLAYED");
+	}
+	
+	public void insertNewPane(int pos, ArrayList<LogEvent> events, ArrayList<String> keys){
+		
+		//PART1 : Add the new pane at pos
+		long begin = this.logEventsManager.getBeginTime();
+		long end = this.logEventsManager.getEndTime();
+
+		this.unitConverter = new UnitConverter(begin, end);
+
+		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
+		double endPosInScene = unitConverter.getPosInSceneFromTime(end);
+		
+		Scale inverseScale = new Scale(1, 1);
+		inverseScale.xProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+		
+		String key = new String();
+		Color color = Color.BLACK;
+		
+		for (String k : keys){
+			key += k;
+		}
+		
+		LogEventsPane pane = new LogEventsPane(key, pos, color);
+		pane.setPrefHeight(60);
+		Text txt = new Text(key);
+		txt.setFont(Font.font(8));
+		txt.getTransforms().add(inverseScale);
+		txt.setTranslateY(6);
+		this.textLabels.add(txt);
+		pane.getChildren().add(txt);
+		Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
+		l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
+		pane.getChildren().add(l);
+
+		Group points = new Group();
+		for (LogEvent logEvent : events) {
+			LogEventNode node = new LogEventNode(logEvent);
+			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
+			node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+			node.setFillColor(color);
+			points.getChildren().add(node);
+		}
+
+		pane.getChildren().add(points);
+		pane.prefWidthProperty().set(endPosInScene);
+		this.centralPane.getChildren().add(pos, pane);
+		
+		//PART2 : Update position of following panes (+1)
+		
+		//for(LogEventsPane nodePane : this.centralPane.getChildren())
+		
 	}
 
 	/**

@@ -96,6 +96,7 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
+	/*
 	public boolean recherchePattern(){
 		System.out.println("Ca passe");
 		if (selectedList.isEmpty()){

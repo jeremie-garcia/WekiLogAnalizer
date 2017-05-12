@@ -2,14 +2,22 @@ package logs.ui.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
@@ -68,7 +76,11 @@ public class LogEventNode extends Group {
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				
+				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
+				
 				if(event.isControlDown()){
+					
 				EventInspector.getInstance().update(logEvent);
 				HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
 				String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
@@ -92,7 +104,7 @@ public class LogEventNode extends Group {
 					selected=true;
 					LogEventNode.this.highlight2(true);
 				}
-				System.out.println(selectedList);
+				System.out.println(LogEventsManager.getSelectedList());
 			}
 			}
 		});
