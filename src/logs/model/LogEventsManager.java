@@ -3,9 +3,7 @@ package logs.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -111,27 +109,23 @@ public abstract class LogEventsManager {
 			return null;
 		}
 		else{
-			ArrayList<String> order=new ArrayList();
-			ArrayList<LogEvent> newLigne=new ArrayList();
-			ArrayList<LogEvent> newLigneAggregated = new ArrayList();
-			ArrayList<LogEvent> intermediaire=new ArrayList();
+			ArrayList<String> order=new ArrayList<String>();
+			ArrayList<LogEvent> newLigne=new ArrayList<LogEvent>();
+			ArrayList<LogEvent> newLigneAggregated = new ArrayList<LogEvent>();
+			ArrayList<LogEvent> intermediaire=new ArrayList<LogEvent>();
 			
 			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
 			{
-			   String key=entry.getKey();
 			   ArrayList<LogEvent> evt=entry.getValue();
 			   intermediaire.addAll(evt);
-			   
 			}
-			System.out.println(intermediaire);
 			Collections.sort(intermediaire);;
-			System.out.println(intermediaire);
 			
 			for(LogEvent evt:intermediaire){
 				order.add((String) evt.getLabel());
 			}
-			System.out.println(order);
 			
+			//recherche de pattern
 			int a=0;
 			for (LogEvent evt:eventsList){
 				String key=order.get(a);
@@ -158,6 +152,7 @@ public abstract class LogEventsManager {
 			}
 			}
 			
+			//On enlève les événements d'un pattern non terminé à la fin de la ligne
 			for(int i=0;i<a;i++){
 				newLigne.remove(newLigne.size()-1);
 			}
@@ -171,7 +166,6 @@ public abstract class LogEventsManager {
 					else{
 						newLigneAggregated.add(LogEventsAggregator.aggregateLogEvents(newLigneAggregated.get(newLigneAggregated.size()-1),newLigne.get(j*order.size()+i+1)));
 						newLigneAggregated.remove(newLigneAggregated.size()-2);
-
 					}
 				}
 			}

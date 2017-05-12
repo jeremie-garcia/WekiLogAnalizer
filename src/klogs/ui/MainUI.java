@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-
-import com.sun.webkit.InspectorClient;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,7 +26,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -43,7 +39,6 @@ import logs.config.Configuration;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.ui.TimelinesExplorer;
-import logs.ui.events.LogEventNode;
 import logs.utils.FileCellRenderer;
 import wekimini.kadenze.Grade;
 

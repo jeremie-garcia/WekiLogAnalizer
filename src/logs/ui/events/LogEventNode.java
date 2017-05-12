@@ -2,26 +2,16 @@ package logs.ui.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-
-import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
-import logs.ui.TimelinesExplorer;
 import logs.utils.JavaFXUtils;
 
 /**
@@ -97,7 +87,7 @@ public class LogEventNode extends Group {
 						selectedList.get(key).add(logEvent);
 					}
 					else{
-						ArrayList<LogEvent> temp= new ArrayList();
+						ArrayList<LogEvent> temp= new ArrayList<LogEvent>();
 						temp.add(logEvent);
 						selectedList.put(key,temp);
 					}
