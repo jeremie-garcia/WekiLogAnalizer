@@ -2,7 +2,12 @@ package logs.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This classes contains utilities to open and process logFiles. It stores
@@ -23,7 +28,7 @@ public abstract class LogEventsManager {
 
 	private File logFile;
 	
-	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap();
+	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap<String, ArrayList<LogEvent>>();
 
 	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
 		return selectedList;
@@ -96,53 +101,87 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
-	/*
-	public boolean recherchePattern(){
+	public Map<String, ArrayList> recherchePattern(){
+		/*Renvoie une Map avec la nouvelle ligne composée de tous les LogEvent sous la clé "eventList" et le nom des lignes
+		 * qui la compose sous la clé "keyList"
+		*/
 		System.out.println("Ca passe");
 		if (selectedList.isEmpty()){
 			System.out.println("La liste est vide");
+			return null;
 		}
 		else{
 			ArrayList<String> order=new ArrayList();
 			ArrayList<LogEvent> newLigne=new ArrayList();
-			ArrayList<LogEventsAggregator> newLigneAggregated = new ArrayList();
-			int c=0;
-			for (HashMap.Entry<String, ArrayList<LogEvent>> entry : selectedList.entrySet())
+			ArrayList<LogEvent> newLigneAggregated = new ArrayList();
+			ArrayList<LogEvent> intermediaire=new ArrayList();
+			
+			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
 			{
 			   String key=entry.getKey();
 			   ArrayList<LogEvent> evt=entry.getValue();
+			   intermediaire.addAll(evt);
 			   
-			   order.add(key);
 			}
+			System.out.println(intermediaire);
+			Collections.sort(intermediaire);;
+			System.out.println(intermediaire);
+			
+			for(LogEvent evt:intermediaire){
+				order.add((String) evt.getLabel());
+			}
+			System.out.println(order);
 			
 			int a=0;
-			System.out.println(order);
 			for (LogEvent evt:eventsList){
 				String key=order.get(a);
 				if(evt.getLabel().equals(key)){
-					System.out.println("Trouveeeeeeeeeeeeeeeeeeee");
 					newLigne.add(evt);
 					a++;
-					if(a==order.size())a=0;
+					if(a==order.size()){a=0;}
 				}
 				else{
-					if(order.contains(evt.getLabel())&& a!=0){
-						for(int i=0;i<a;i++){
-							System.out.println("ON ennnellelllellleeeeeeeeeeeeeeve");
+					if(order.contains(evt.getLabel())){
+						if(a==1 && evt.getLabel().equals(order.get(0))){
 							newLigne.remove(newLigne.size()-1);
+							newLigne.add(evt);
+							a=1;
 						}
-						a=0;
-					}						
+						else{	
+							System.out.println(a);
+							for(int i=0;i<a;i++){
+								newLigne.remove(newLigne.size()-1);
+							}
+							a=0;
+						}
 				}
 			}
+			}
+			
 			for(int i=0;i<a;i++){
 				newLigne.remove(newLigne.size()-1);
 			}
-			System.out.println(newLigne);
-			System.out.println(newLigne.size());
+			
+			//Créer les aggrégés correspondant
+			for (int j=0;j<newLigne.size()/order.size();j++){
+				for(int i=0;i<order.size()-1;i++){
+					if(i==0){
+						newLigneAggregated.add(LogEventsAggregator.aggregateLogEvents(newLigne.get(j*order.size()),newLigne.get(j*order.size()+1)));
+					}
+					else{
+						newLigneAggregated.add(LogEventsAggregator.aggregateLogEvents(newLigneAggregated.get(newLigneAggregated.size()-1),newLigne.get(j*order.size()+i+1)));
+						newLigneAggregated.remove(newLigneAggregated.size()-2);
+
+					}
+				}
 			}
 			
-		return true;
+			Map <String,ArrayList> map=new HashMap();
+			map.put("keyList",order);
+			map.put("eventList", newLigneAggregated);
+			System.out.println(map);
+			return map;
+			}
 		}
 
 	}

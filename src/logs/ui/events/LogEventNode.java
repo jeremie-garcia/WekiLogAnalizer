@@ -97,14 +97,15 @@ public class LogEventNode extends Group {
 						selectedList.get(key).add(logEvent);
 					}
 					else{
-						ArrayList<LogEvent> bla= new ArrayList();
-						bla.add(logEvent);
-						selectedList.put(key,bla);
+						ArrayList<LogEvent> temp= new ArrayList();
+						temp.add(logEvent);
+						selectedList.put(key,temp);
 					}
 					selected=true;
 					LogEventNode.this.highlight2(true);
 				}
 				System.out.println(LogEventsManager.getSelectedList());
+
 			}
 			}
 		});

@@ -11,7 +11,7 @@ import javafx.scene.Node;
  * @author jeremiegarcia
  *
  */
-public class LogEvent {
+public class LogEvent implements Comparable<LogEvent>{
 
 	protected String label = "";
 	protected String source = "";
@@ -70,6 +70,19 @@ public class LogEvent {
 	public Node getInspectorNode() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int compareTo(LogEvent o) {
+		if(this.timeStamp>o.getTimeStamp()){
+			return 1;
+		}
+		else if(this.timeStamp==o.getTimeStamp()){
+			return 0;
+		}
+		else{
+			return -1;
+		}
 	}
 
 }
