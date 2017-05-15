@@ -3,6 +3,7 @@ package logs.ui.events;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import weka.gui.SetInstancesPanel;
 
 /**
  * This is a simple container for logEventsNode It stores a log key and an index
@@ -21,7 +22,7 @@ public class LogEventsPane extends Pane {
 
 	public LogEventsPane(String key, int index, Color col) {
 		super();
-		this.index = index;
+		this.setIndex(index);
 		this.key = key;
 		this.col = col;
 
@@ -41,4 +42,14 @@ public class LogEventsPane extends Pane {
 	public String getKey(){
 		return key;
 	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+	
 }

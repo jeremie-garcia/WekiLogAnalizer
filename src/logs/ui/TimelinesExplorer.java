@@ -1,14 +1,27 @@
 package logs.ui;
 
+import java.awt.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -173,7 +186,7 @@ public class TimelinesExplorer extends BorderPane {
 		ImageView backgroundImage = this.createImageViewFromScene();
 		this.rangeSelector.setBgImageView(backgroundImage);
 		
-		animationFusion(4000, 400);
+		//animationFusion(4000, 400);
 
 	}
 	
@@ -182,27 +195,13 @@ public class TimelinesExplorer extends BorderPane {
 	 * @param x
 	 * @param y
 	 */
-	public void animationFusion(double x, double y){
-		FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000),this.centralPane.getChildren().get(0));
-		fadeTransition.setFromValue(0.1);
-		fadeTransition.setToValue(0.9);
-
-		TranslateTransition translateTransition = new TranslateTransition();
-		translateTransition.setDuration(Duration.millis(5000));
-		translateTransition.setNode(this.centralPane.getChildren().get(0));
-		translateTransition.setByY(200);
+	public void animationFusion(){
 		
-		ParallelTransition parallelTransition = new ParallelTransition();
-	    parallelTransition.getChildren().addAll(fadeTransition, translateTransition);
-	    parallelTransition.setCycleCount(1);
-	    parallelTransition.play();
+		Map<String, ArrayList> map = logEventsManager.recherchePattern();
+			
+		ArrayList<LogEvent> events = map.get("eventList");
+		ArrayList<String> keys = map.get("keyList");
 		
-		System.out.println("PLAYED");
-	}
-	
-	public void insertNewPane(int pos, ArrayList<LogEvent> events, ArrayList<String> keys){
-		
-		//PART1 : Add the new pane at pos
 		long begin = this.logEventsManager.getBeginTime();
 		long end = this.logEventsManager.getEndTime();
 
@@ -221,7 +220,7 @@ public class TimelinesExplorer extends BorderPane {
 			key += k;
 		}
 		
-		LogEventsPane pane = new LogEventsPane(key, pos, color);
+		LogEventsPane pane = new LogEventsPane(key, 0, color);
 		pane.setPrefHeight(60);
 		Text txt = new Text(key);
 		txt.setFont(Font.font(8));
@@ -244,12 +243,108 @@ public class TimelinesExplorer extends BorderPane {
 
 		pane.getChildren().add(points);
 		pane.prefWidthProperty().set(endPosInScene);
-		this.centralPane.getChildren().add(pos, pane);
 		
-		//PART2 : Update position of following panes (+1)
+		String maxIndexKey = "NULLISH";
+		int maxIndex = Integer.MIN_VALUE;
 		
-		//for(LogEventsPane nodePane : this.centralPane.getChildren())
+		Map<String, Integer> indexedKeys = new HashMap();
 		
+		for (String currentKey : keys){
+			for (Node node : this.centralPane.getChildren()){
+				if (((LogEventsPane) node).getKey().equals(currentKey)){
+					indexedKeys.put(currentKey, ((LogEventsPane) node).getIndex());
+				
+					if (((LogEventsPane) node).getIndex()>maxIndex){
+						maxIndexKey = currentKey;
+						maxIndex = ((LogEventsPane) node).getIndex();
+					};
+				}
+			}
+		}
+		
+		System.out.println("Index = " + maxIndex + " and key = " + maxIndexKey);
+		
+		indexedKeys.remove(maxIndexKey);
+		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
+		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
+
+		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
+		
+		final int maxIndexFinal = maxIndex;
+		
+		for(int index : indexedKeys.values()){
+			
+			FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000),this.centralPane.getChildren().get(index));
+			fadeTransition.setFromValue(1);
+			fadeTransition.setToValue(0.1);
+			
+			fades.add(fadeTransition);
+			
+			TranslateTransition translateTransition = new TranslateTransition();
+			translateTransition.setDuration(Duration.millis(3000));
+			translateTransition.setNode(this.centralPane.getChildren().get(index));
+			translateTransition.setByY(height*(maxIndexFinal - index));
+			
+			translates.add(translateTransition);
+			
+		}
+				
+		ParallelTransition parallelTransition = new ParallelTransition();
+	    parallelTransition.getChildren().addAll(fades);
+	    parallelTransition.getChildren().addAll(translates);
+	    parallelTransition.setCycleCount(1);
+	    parallelTransition.play();
+			    
+	    parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
+
+	        @Override
+	        public void handle(ActionEvent event) {
+	        	System.out.println("PLAYED");
+	        	
+	        	deletePane(maxIndexFinal);
+	    		insertNewPane(maxIndexFinal, pane);	
+	    		
+	    		Collection<Integer> collection = indexedKeys.values();
+	    		
+	    		ArrayList<Integer> indexes = new ArrayList<Integer>(collection);
+	    		
+	    		Collections.sort(indexes);
+	    		Collections.reverse(indexes);
+	    		
+	    		for(int index : indexes){
+	    			deletePane(index);
+	    		}
+	        }
+	    });
+
+	}
+	
+	public void insertNewPane(int position, LogEventsPane pane){
+		
+		//PART1 : Update position of following panes (+1)
+		
+		int size = this.centralPane.getChildren().size();
+		
+		for(Node nodePane : this.centralPane.getChildren().subList(position, size)){
+			((LogEventsPane) nodePane).setIndex(((LogEventsPane) nodePane).getIndex()+1);
+		}
+		
+		//PART2 : Add the new pane at position
+		
+		pane.setIndex(position);
+		this.centralPane.getChildren().add(position, pane);
+		
+	}
+	
+	public void deletePane(int position){
+		
+		this.centralPane.getChildren().remove(position);
+		
+		int size = this.centralPane.getChildren().size();
+		
+		for(Node nodePane : this.centralPane.getChildren().subList(position, size)){
+			((LogEventsPane) nodePane).setIndex(((LogEventsPane) nodePane).getIndex()-1);
+		}
 	}
 
 	/**
