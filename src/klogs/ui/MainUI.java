@@ -40,7 +40,8 @@ import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.ui.TimelinesExplorer;
 import logs.utils.FileCellRenderer;
-import wekimini.kadenze.Grade;
+//removing dependencies to private lib
+//import wekimini.kadenze.Grade;
 
 /**
  * This is the main class for the GUI It opens a folder by default and displays
@@ -52,12 +53,13 @@ import wekimini.kadenze.Grade;
 public class MainUI extends Application {
 	private String logFile = "";
 	private LogEventsManager logEventsManager;
-	private Grade currentGrade;
+	//removing dependencies to private lib
+	//private Grade currentGrade;
 
 	private TimelinesExplorer timelinesExplorer;
 
 	private MainUI app;
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -92,7 +94,7 @@ public class MainUI extends Application {
 
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
-		
+
 		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -101,7 +103,7 @@ public class MainUI extends Application {
             	}
             }
         });
-		
+
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -133,7 +135,8 @@ public class MainUI extends Application {
 	private void loadFromZipFile(File zipFile) {
 
 		// extract the grade and unzip in TMP folder
-		this.currentGrade = GraderTool.unzipAndGetGradeForFile(zipFile);
+		//removing dependencies to private lib
+		//this.currentGrade = GraderTool.unzipAndGetGradeForFile(zipFile);
 		String[] elements = zipFile.getParent().split("/");
 		String name = elements[elements.length - 2] + "/" + elements[elements.length - 1];
 		this.selectedZipFileLabel.setText(name);
@@ -249,5 +252,5 @@ public class MainUI extends Application {
 		menuBar.useSystemMenuBarProperty().set(true);
 		return menuBar;
 	}
-	
+
 }
