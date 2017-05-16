@@ -197,11 +197,13 @@ public class TimelinesExplorer extends BorderPane {
 
 		LogEventNode node = new LogEventNode(newEvent);
 		node.setPosX(unitConverter.getPosInSceneFromTime(newEvent.getTimeStamp()+ newEvent.getDuration()/2));
-		System.out.println("llaaaaaaaaaaa "+this.layoutBoundsProperty().get().getWidth() +"pooooo " + tailleScene);
-		//node.setTailleX(Math.abs(newEvent.getDuration()));
-		node.setTailleX(100);
+		//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 
-		node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+		System.out.println("llaaaaaaaaaaa "+centralPane.layoutBoundsProperty().get().getWidth());
+		node.setTailleX(Math.abs(newEvent.getDuration())/2);
+		//node.setTailleX(Math.abs(newEvent.getDuration())/tailleScene*(centralPane.layoutBoundsProperty().get().getWidth()/2));
+		//node.setTailleX(100);
+
 		node.setFillColor(color);
 		points.getChildren().add(node);
 		
