@@ -2,6 +2,7 @@ package logs.ui.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.SynchronousQueue;
 
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -10,10 +11,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.ui.TimelinesExplorer;
+import logs.ui.UnitConverter;
 import logs.utils.JavaFXUtils;
 
 /**
@@ -29,6 +32,8 @@ public class LogEventNode extends Group {
 	private Boolean selected;
 	private int RADIUS = 6;
 	private Ellipse item;
+	private Ellipse item2;
+	private double taille = RADIUS/2;
 	private Color color = Color.BLUE;
 
 	/**
@@ -39,8 +44,21 @@ public class LogEventNode extends Group {
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
-		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
-		this.getChildren().add(item);
+		
+		if (event.getDuration()==0){
+			item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
+			this.getChildren().add(item);
+		}
+		else {
+			item2 = new Ellipse(this.logEvent.getTimeStamp()+this.logEvent.getDuration()/2.0, 10, taille, RADIUS);
+			this.getChildren().add(item2);
+//			Rectangle item2 = new Rectangle(this.logEvent.getTimeStamp(),10, this.logEvent.getTimeStamp()+ this.logEvent.getDuration(), RADIUS);
+//			item2.setArcHeight(60);
+//			item2.setArcWidth(60);
+//			item2.setFill(Color.ORANGE);
+//			this.getChildren().add(item2);
+		}
+		
 		selected=false;
 		
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -92,7 +110,7 @@ public class LogEventNode extends Group {
 					selected=true;
 					LogEventNode.this.highlight2(true);
 				}
-				System.out.println(selectedList);
+				//System.out.println(selectedList);
 			}
 			}
 		});
@@ -111,8 +129,10 @@ public class LogEventNode extends Group {
 
 	public void setFillColor(Color color) {
 		this.color = color;
-		this.item.setFill(this.color);
-
+		if (this.logEvent.getDuration()==0)
+			this.item.setFill(this.color);
+		else
+			this.item2.setFill(Color.RED);
 	}
 
 	/**
@@ -121,10 +141,15 @@ public class LogEventNode extends Group {
 	 * @param setHighlight
 	 */
 	private void highlight(boolean setHighlight) {
+		if (this.logEvent.getDuration()==0){
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
-		item.setStrokeWidth(setHighlight ? 2 : 1);
+		item.setStrokeWidth(setHighlight ? 2 : 1);}
+		
+		else{
+
+		}
 	}
 
 	private void highlight2(boolean setHighlight) {
@@ -140,7 +165,19 @@ public class LogEventNode extends Group {
 	 * @param posX
 	 */
 	public void setPosX(double posX) {
-		this.item.setCenterX(posX);
+		if (this.logEvent.getDuration()==0)
+			{this.item.setCenterX(posX);
+			System.out.println("unnn"+posX);
+			}
+		else{
+			this.item2.setCenterX(posX);
+			System.out.println("deeux" +posX);
+
+		}
+	}
+	
+	public void setTailleX(double time){
+		this.item2.radiusXProperty().setValue(time);
 	}
 	
 	public Boolean getSelected(){

@@ -1,19 +1,14 @@
 package logs.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -23,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import logs.model.LogEvent;
+import logs.model.LogEventsAggregator;
 import logs.model.LogEventsManager;
 import logs.ui.events.LogEventNode;
 import logs.ui.events.LogEventsPane;
@@ -40,7 +36,9 @@ public class TimelinesExplorer extends BorderPane {
 
 	private LogEventsManager logEventsManager;
 	private UnitConverter unitConverter;
-
+	
+	private LogEvent startEvent;
+	private LogEvent endEvent;
 	// visual elements
 	private VBox centralPane;
 	private RangeSelector rangeSelector;
@@ -53,7 +51,7 @@ public class TimelinesExplorer extends BorderPane {
 	// scaling factor for the scene
 	private Scale horizontalScale = new Scale(1, 1);
 	private ArrayList<Text> textLabels;
-	
+
 	/**
 	 * Builds a timelines exploree using a logManager
 	 *
@@ -66,7 +64,7 @@ public class TimelinesExplorer extends BorderPane {
 
 		this.logEventsManager = logManager;
 		this.unitConverter = new UnitConverter(0, 1000);
-		
+
 		// create the time scale and the ruler
 		VBox bottomBox = new VBox();
 
@@ -132,7 +130,7 @@ public class TimelinesExplorer extends BorderPane {
 
 		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
 		double endPosInScene = unitConverter.getPosInSceneFromTime(end);
-
+		double tailleScene = endPosInScene-beginPosInScene;
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
 
@@ -153,6 +151,7 @@ public class TimelinesExplorer extends BorderPane {
 			Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
 			l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
 			pane.getChildren().add(l);
+			//System.out.println(key);
 
 			Group points = new Group();
 			for (LogEvent logEvent : this.logEventsManager.getLogevents().get(key)) {
@@ -168,6 +167,49 @@ public class TimelinesExplorer extends BorderPane {
 			this.centralPane.getChildren().add(pane);
 			index++;
 		}
+		
+		//ajout
+		Color color = JavaFXUtils.getColorWithGoldenRationByIndex(index);
+		LogEventsPane pane = new LogEventsPane("key", index, color);
+		pane.setPrefHeight(60);
+		Text txt = new Text("key");
+		txt.setFont(Font.font(8));
+		txt.getTransforms().add(inverseScale);
+		txt.setTranslateY(6);
+		this.textLabels.add(txt);
+		pane.getChildren().add(txt);
+		Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
+		l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
+		pane.getChildren().add(l);
+		int test=0;
+		
+		for (LogEvent logEvent : this.logEventsManager.getLogevents().get("STARTLOG")) {
+			if (test==0){
+				startEvent = logEvent;
+			}
+			if (test==1){
+				endEvent = logEvent;
+			}
+			test++;
+		}
+		Group points = new Group();
+		LogEvent newEvent = LogEventsAggregator.aggregateLogEvents(startEvent,endEvent);
+
+		LogEventNode node = new LogEventNode(newEvent);
+		node.setPosX(unitConverter.getPosInSceneFromTime(newEvent.getTimeStamp()+ newEvent.getDuration()/2));
+		System.out.println("llaaaaaaaaaaa "+this.layoutBoundsProperty().get().getWidth() +"pooooo " + tailleScene);
+		//node.setTailleX(Math.abs(newEvent.getDuration()));
+		node.setTailleX(100);
+
+		node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+		node.setFillColor(color);
+		points.getChildren().add(node);
+		
+		pane.getChildren().add(points);
+		pane.prefWidthProperty().set(endPosInScene);
+		this.centralPane.getChildren().add(pane);
+		//fin ajout
+		
 		this.rangeSelector.selectAll();
 
 		ImageView backgroundImage = this.createImageViewFromScene();

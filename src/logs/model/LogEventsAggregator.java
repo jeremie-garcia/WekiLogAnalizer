@@ -15,6 +15,8 @@ public class LogEventsAggregator {
 		String label = startEvent.getLabel() + " " + endEvent.getLabel();
 		long start = startEvent.getTimeStamp();
 		long duration = endEvent.getTimeStamp() - start;
+		System.out.println(start);
+		System.out.println(endEvent.getTimeStamp());
 		ArrayList<String> args = startEvent.getArgs();
 		args.addAll(endEvent.getArgs());
 		String source = "user";

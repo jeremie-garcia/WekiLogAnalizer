@@ -96,35 +96,35 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
-	public boolean recherchePattern(){
-		System.out.println("Ca passe");
-		if (selectedList.isEmpty()){
-			System.out.println("La liste est vide");
-		}
-		else{
-			//HashMap <String,ArrayList<LogEvent>> fusionable=new HashMap();
-			ArrayList<String> order=new ArrayList();
-			ArrayList<LogEvent> newLigne=new ArrayList();
-			ArrayList<LogEventsAggregator> newLigneAggregated = new ArrayList();
-			int c=0;
-			for (HashMap.Entry<String, ArrayList<LogEvent>> entry : selectedList.entrySet())
-			{
-			   String key=entry.getKey();
-			   //fusionable.put(key, eventsMap.get(key));
-			   order.add(key);
-			}
-			
-			int a=0;
-			for (LogEvent evt:eventsList){
-				for (int i=0; i<order.size();i++){
-					if (eventsMap.get(order.get(a%(order.size())+i)).contains(evt)){
-						if(i==0){
-							newLigne.add(evt);
-							a++;
-						}
-				}
-				}
-			}
-		}
-	}
+//	public boolean recherchePattern(){
+//		System.out.println("Ca passe");
+//		if (selectedList.isEmpty()){
+//			System.out.println("La liste est vide");
+//		}
+//		else{
+//			//HashMap <String,ArrayList<LogEvent>> fusionable=new HashMap();
+//			ArrayList<String> order=new ArrayList();
+//			ArrayList<LogEvent> newLigne=new ArrayList();
+//			ArrayList<LogEventsAggregator> newLigneAggregated = new ArrayList();
+//			int c=0;
+//			for (HashMap.Entry<String, ArrayList<LogEvent>> entry : selectedList.entrySet())
+//			{
+//			   String key=entry.getKey();
+//			   //fusionable.put(key, eventsMap.get(key));
+//			   order.add(key);
+//			}
+//			
+//			int a=0;
+//			for (LogEvent evt:eventsList){
+//				for (int i=0; i<order.size();i++){
+//					if (eventsMap.get(order.get(a%(order.size())+i)).contains(evt)){
+//						if(i==0){
+//							newLigne.add(evt);
+//							a++;
+//						}
+//				}
+//				}
+//			}
+//		}
+//	}
 }
