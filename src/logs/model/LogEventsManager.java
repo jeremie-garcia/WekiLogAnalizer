@@ -1,6 +1,9 @@
 package logs.model;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +31,7 @@ public abstract class LogEventsManager {
 	
 	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap<String, ArrayList<LogEvent>>();
 
+	private static String pathFileSauvegarde = "./tmp/bla.txt";
 	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
 		return selectedList;
 	}
@@ -173,7 +177,30 @@ public abstract class LogEventsManager {
 			Map <String,ArrayList> map=new HashMap();
 			map.put("keyList",order);
 			map.put("eventList", newLigneAggregated);
-			System.out.println(map);
+			
+			//Sauvegarder dan sun fichier txt les recherches effectuées
+			try{
+				FileWriter fw=new FileWriter(pathFileSauvegarde);
+				BufferedWriter out = new BufferedWriter(fw);
+				out.write("Sauvegarde: [");
+				int b=0;
+				for(String str:order){
+					if(b==order.size()-1){
+						out.write(str);
+					}
+					else{
+						out.write(str+",");
+						b++;
+					}
+				}
+				out.write("]\n");
+				out.close();
+			}
+			catch(IOException e){
+				System.out.println("Impossible d'ouvrir ou de créer le fichier");
+			}
+			selectedList.clear();
+			
 			return map;
 			}
 		}
