@@ -190,9 +190,6 @@ public class TimelinesExplorer extends BorderPane {
 
 		ImageView backgroundImage = this.createImageViewFromScene();
 		this.rangeSelector.setBgImageView(backgroundImage);
-		
-		//animationFusion(4000, 400);
-
 	}
 	
 	//Fait pour le projet SITA
@@ -246,14 +243,29 @@ public class TimelinesExplorer extends BorderPane {
 		expandButton.setMinHeight(1);
 		expandButton.setMaxHeight(9);
 		
-//		expandButton.setOnAction(new EventHandler<ActionEvent>(){
-//
-//			@Override
-//			public void handle(ActionEvent arg0) {
-//				//System.out.println(((Button) arg0.getSource()));
-//			}
-//			
-//		});
+		expandButton.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				LogEventsPane expandPane = (LogEventsPane) ((Button) arg0.getSource()).getParent().getParent();
+				int expandIndex = expandPane.getIndex();
+				if(! expandPane.isExpanded()){
+					for (LogEventsPane pane : expandPane.getChildrenPanes()){
+						expandIndex ++;
+						insertNewPane(expandIndex, pane);
+					}
+					expandPane.setExpanded(true);
+				}
+				else{
+					int childrenLastPos = expandIndex + expandPane.getChildrenPanes().size();
+					for(int i = childrenLastPos; i>expandIndex; i--){
+						deletePane(i);
+					}
+					expandPane.setExpanded(false);
+				}
+			}
+			
+		});
 		
 		textButton.getChildren().add(expandButton);
 		
@@ -340,6 +352,13 @@ public class TimelinesExplorer extends BorderPane {
 	        public void handle(ActionEvent event) {
 	        	System.out.println("PLAYED");
 	        	
+	    		ArrayList<LogEventsPane> childrenPanes = new ArrayList<LogEventsPane>();
+	    		
+	    		LogEventsPane maxIndexPane = (LogEventsPane) centralPane.getChildren().get(maxIndexFinal);
+	    		maxIndexPane.setOpacity(0.7);
+
+	    		childrenPanes.add(maxIndexPane);
+	    		
 	        	deletePane(maxIndexFinal);
 	        	
 	    		insertNewPane(maxIndexFinal, pane);
@@ -352,16 +371,21 @@ public class TimelinesExplorer extends BorderPane {
 	    		
 	    		Collections.sort(indexes);
 	    		Collections.reverse(indexes);
-	    		
-	    		ArrayList<LogEventsPane> childrenPanes = new ArrayList<LogEventsPane>();
-	    		
+	    			    		
 	    		for(int index : indexes){
 	    			LogEventsPane childPane = (LogEventsPane) centralPane.getChildren().get(index);
+	    			
+	    			
+	    			//Apply inverted animation
+	    			childPane.setOpacity(0.7);
+	    			childPane.setTranslateY(childPane.getTranslateY()-height*(maxIndexFinal - index));
+	    			
 	    			childrenPanes.add(childPane);
 	    			deletePane(index);
 	    		}
 	    		
-//	    		pane.addChildrenPanes(childrenPanes);
+	    		Collections.reverse(childrenPanes);
+	    		pane.addChildrenPanes(childrenPanes);
 	        }
 	    });
 

@@ -21,7 +21,8 @@ public class LogEventsPane extends Pane {
 	private Color col;
 	private Rectangle bgRectangle = new Rectangle();
 	private boolean isSelected = false;
-//	private ArrayList<LogEventsPane> childrenPanes;
+	private ArrayList<LogEventsPane> childrenPanes;
+	private boolean expanded = false;
 
 	public LogEventsPane(String key, int index, Color col) {
 		super();
@@ -36,7 +37,7 @@ public class LogEventsPane extends Pane {
 		this.setSelected(false);
 		this.getChildren().add(bgRectangle);
 		
-//		this.childrenPanes = new ArrayList<LogEventsPane>();
+		this.childrenPanes = new ArrayList<LogEventsPane>();
 	}
 
 	protected void setSelected(boolean b) {
@@ -56,16 +57,24 @@ public class LogEventsPane extends Pane {
 		this.index = index;
 	}
 
-//	public ArrayList<LogEventsPane> getChildrenPanes() {
-//		return childrenPanes;
-//	}
-//
-//	public void addChildrenPanes(ArrayList<LogEventsPane> childrenPanes) {
-//		this.childrenPanes.addAll(childrenPanes);
-//	}
+	public ArrayList<LogEventsPane> getChildrenPanes() {
+		return childrenPanes;
+	}
+
+	public void addChildrenPanes(ArrayList<LogEventsPane> childrenPanes) {
+		this.childrenPanes.addAll(childrenPanes);
+	}
 	
 	public void setKey(String str){
 		this.key=str;
+	}
+
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
 	}
 	
 }
