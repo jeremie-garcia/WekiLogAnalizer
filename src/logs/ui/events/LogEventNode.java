@@ -26,7 +26,7 @@ public class LogEventNode extends Group {
 	private LogEvent logEvent;
 	private static LogEventNode prevActiveNode;
 	private Boolean selected;
-	private int RADIUS = 6;
+	private double RADIUS = 6;
 	private Ellipse item;
 	private Color color = Color.BLUE;
 
@@ -139,6 +139,15 @@ public class LogEventNode extends Group {
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
+	}
+	
+	public void setTailleX(double taille){
+		this.item.radiusXProperty().setValue(taille);
+		this.setRadius(taille/2);
+	}
+	
+	public void setRadius(double radius){
+		this.RADIUS = radius;
 	}
 	
 	/**

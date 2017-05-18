@@ -1,5 +1,6 @@
 package logs.ui;
 
+import java.awt.Component;
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -23,9 +25,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -199,6 +203,9 @@ public class TimelinesExplorer extends BorderPane {
 	 */
 	public void animationFusion(){
 		
+		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
+		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
+		
 		Map<String, ArrayList> map = logEventsManager.recherchePattern();
 			
 		ArrayList<LogEvent> events = map.get("eventList");
@@ -224,12 +231,33 @@ public class TimelinesExplorer extends BorderPane {
 		
 		LogEventsPane pane = new LogEventsPane(key, 0, color);
 		pane.setPrefHeight(60);
+		
+		HBox textButton = new HBox();
+		textButton.getTransforms().add(inverseScale);
+		textButton.setTranslateY(-1);
 		Text txt = new Text(key);
 		txt.setFont(Font.font(8));
-		txt.getTransforms().add(inverseScale);
-		txt.setTranslateY(6);
+		
 		this.textLabels.add(txt);
-		pane.getChildren().add(txt);
+		
+		textButton.getChildren().add(txt);
+		
+		Button expandButton = new Button();
+		expandButton.setMinHeight(1);
+		expandButton.setMaxHeight(9);
+		
+//		expandButton.setOnAction(new EventHandler<ActionEvent>(){
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//				//System.out.println(((Button) arg0.getSource()));
+//			}
+//			
+//		});
+		
+		textButton.getChildren().add(expandButton);
+		
+		pane.getChildren().add(textButton);
 		Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
 		l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
 		pane.getChildren().add(l);
@@ -237,15 +265,22 @@ public class TimelinesExplorer extends BorderPane {
 		Group points = new Group();
 		for (LogEvent logEvent : events) {
 			LogEventNode node = new LogEventNode(logEvent);
-			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
-			node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
+			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+			node.setTailleX(logEvent.getDuration()/2);
 			node.setFillColor(color);
 			points.getChildren().add(node);
 		}
-
-		pane.getChildren().add(points);
-		pane.prefWidthProperty().set(endPosInScene);
 		
+		pane.getChildren().add(points);
+		
+		pane.prefWidthProperty().set(endPosInScene);
+		pane.setOpacity(0);
+		
+		FadeTransition lastFadeTransition = new FadeTransition(Duration.millis(3000),pane);
+		lastFadeTransition.setFromValue(0);
+		lastFadeTransition.setToValue(1);
+				
 		String maxIndexKey = "NULLISH";
 		int maxIndex = Integer.MIN_VALUE;
 		
@@ -254,6 +289,7 @@ public class TimelinesExplorer extends BorderPane {
 		for (String currentKey : keys){
 			for (Node node : this.centralPane.getChildren()){
 				if (((LogEventsPane) node).getKey().equals(currentKey)){
+					
 					indexedKeys.put(currentKey, ((LogEventsPane) node).getIndex());
 				
 					if (((LogEventsPane) node).getIndex()>maxIndex){
@@ -267,12 +303,12 @@ public class TimelinesExplorer extends BorderPane {
 		System.out.println("Index = " + maxIndex + " and key = " + maxIndexKey);
 		
 		indexedKeys.remove(maxIndexKey);
-		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
-		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
 
 		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
 		
 		final int maxIndexFinal = maxIndex;
+		
+		// Interpolation LOG plutôt que linéaire
 		
 		for(int index : indexedKeys.values()){
 			
@@ -286,6 +322,7 @@ public class TimelinesExplorer extends BorderPane {
 			translateTransition.setDuration(Duration.millis(3000));
 			translateTransition.setNode(this.centralPane.getChildren().get(index));
 			translateTransition.setByY(height*(maxIndexFinal - index));
+			translateTransition.setInterpolator(Interpolator.EASE_OUT);
 			
 			translates.add(translateTransition);
 			
@@ -304,7 +341,10 @@ public class TimelinesExplorer extends BorderPane {
 	        	System.out.println("PLAYED");
 	        	
 	        	deletePane(maxIndexFinal);
-	    		insertNewPane(maxIndexFinal, pane);	
+	        	
+	    		insertNewPane(maxIndexFinal, pane);
+	    		
+	    		lastFadeTransition.play();
 	    		
 	    		Collection<Integer> collection = indexedKeys.values();
 	    		
@@ -313,9 +353,15 @@ public class TimelinesExplorer extends BorderPane {
 	    		Collections.sort(indexes);
 	    		Collections.reverse(indexes);
 	    		
+	    		ArrayList<LogEventsPane> childrenPanes = new ArrayList<LogEventsPane>();
+	    		
 	    		for(int index : indexes){
+	    			LogEventsPane childPane = (LogEventsPane) centralPane.getChildren().get(index);
+	    			childrenPanes.add(childPane);
 	    			deletePane(index);
 	    		}
+	    		
+//	    		pane.addChildrenPanes(childrenPanes);
 	        }
 	    });
 
