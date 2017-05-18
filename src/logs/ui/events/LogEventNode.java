@@ -19,6 +19,7 @@ import logs.utils.JavaFXUtils;
  *
  * @author jeremiegarcia
  *
+ *with the participation of marie, clement and charlelie
  */
 public class LogEventNode extends Group {
 
@@ -53,6 +54,7 @@ public class LogEventNode extends Group {
 			}
 		});
 		
+		//Fait pour le projet SITA
 		this.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -63,6 +65,7 @@ public class LogEventNode extends Group {
 			}
 		});
 		
+		//Fait pour le projet SITA
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -102,6 +105,7 @@ public class LogEventNode extends Group {
 		
 		highlight(false);
 		
+		//Fait pour le projet SITA
 		this.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
 			System.out.println("bla");
 	        if (evt.getCode() == KeyCode.CONTROL) {

@@ -18,6 +18,7 @@ import java.util.Map.Entry;
  *
  * @author jeremiegarcia
  *
+ *with the participation of marie, clement and charlelie
  */
 public abstract class LogEventsManager {
 
@@ -104,6 +105,7 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
+	//Fait par le projetSITA
 	public Map<String, ArrayList> recherchePattern(){
 		/*Renvoie une Map avec la nouvelle ligne composée de tous les LogEvent sous la clé "eventList" et le nom des lignes
 		 * qui la compose sous la clé "keyList"

@@ -10,6 +10,7 @@ import javafx.scene.Node;
  *
  * @author jeremiegarcia
  *
+ *with the participation of marie, clement and charlelie
  */
 public class LogEvent implements Comparable<LogEvent>{
 
@@ -72,6 +73,7 @@ public class LogEvent implements Comparable<LogEvent>{
 		return null;
 	}
 
+	//Fait pour le projet SITA
 	@Override
 	public int compareTo(LogEvent o) {
 		if(this.timeStamp>o.getTimeStamp()){

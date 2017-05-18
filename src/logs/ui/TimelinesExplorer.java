@@ -47,6 +47,7 @@ import logs.utils.JavaFXUtils;
  *
  * @author jeremiegarcia
  *
+ *with the participation of marie, clement and charlelie
  */
 public class TimelinesExplorer extends BorderPane {
 
@@ -190,7 +191,8 @@ public class TimelinesExplorer extends BorderPane {
 
 	}
 	
-	/** This function manage the animation when operating a fusion
+	//Fait pour le projet SITA
+	/**This function manage the animation when operating a fusion
 	 * 
 	 * @param x
 	 * @param y
@@ -319,6 +321,7 @@ public class TimelinesExplorer extends BorderPane {
 
 	}
 	
+	//Fait pour le projet SITA
 	public void insertNewPane(int position, LogEventsPane pane){
 		
 		//PART1 : Update position of following panes (+1)
@@ -336,6 +339,7 @@ public class TimelinesExplorer extends BorderPane {
 		
 	}
 	
+	//Fait pour le projet SITA
 	public void deletePane(int position){
 		
 		this.centralPane.getChildren().remove(position);
