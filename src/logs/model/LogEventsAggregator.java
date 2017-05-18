@@ -12,7 +12,7 @@ public class LogEventsAggregator {
 
 	public static LogEvent aggregateLogEvents(LogEvent startEvent, LogEvent endEvent) {
 
-		String label = startEvent.getLabel() + " " + endEvent.getLabel();
+		String label = startEvent.getLabel() + endEvent.getLabel();
 		long start = startEvent.getTimeStamp();
 		long duration = endEvent.getTimeStamp() - start;
 		ArrayList<String> args = startEvent.getArgs();

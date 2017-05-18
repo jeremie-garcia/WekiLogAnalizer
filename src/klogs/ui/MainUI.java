@@ -38,6 +38,7 @@ import klogs.utils.GraderTool;
 import logs.config.Configuration;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
+import logs.ui.FusionManager;
 import logs.ui.TimelinesExplorer;
 import logs.utils.FileCellRenderer;
 //removing dependencies to private lib
@@ -80,8 +81,8 @@ public class MainUI extends Application {
 		root.setTop(menuBar);
 
 		// file selector
-		VBox fileSelector = createFileSelector();
-		root.setLeft(fileSelector);
+		VBox leftBox = createFileSelector();
+		root.setLeft(leftBox);
 
 		// right pane (inspector)
 		EventInspector inspector = EventInspector.getInstance();
@@ -92,10 +93,13 @@ public class MainUI extends Application {
 		timelinesExplorer = new TimelinesExplorer(this.logEventsManager);
 		root.setCenter(timelinesExplorer);
 
+		FusionManager fusionManager=new FusionManager(this.logEventsManager, timelinesExplorer);
+		leftBox.getChildren().add(fusionManager);
+		
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
 
-		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+		/*scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
             	if (event.getCode()==KeyCode.CONTROL){
@@ -103,7 +107,7 @@ public class MainUI extends Application {
             		timelinesExplorer.animationFusion();
             	}
             }
-        });
+        });*/
 
 		primaryStage.setScene(scene);
 		primaryStage.show();

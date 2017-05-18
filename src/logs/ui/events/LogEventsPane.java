@@ -50,6 +50,8 @@ public class LogEventsPane extends Pane {
 	public void setIndex(int index) {
 		this.index = index;
 	}
-	
+	public void setKey(String str){
+		this.key=str;
+	}
 	
 }

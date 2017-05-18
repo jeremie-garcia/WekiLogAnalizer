@@ -31,7 +31,8 @@ public abstract class LogEventsManager {
 	
 	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap<String, ArrayList<LogEvent>>();
 
-	private static String pathFileSauvegarde = "./tmp/bla.txt";
+	private static String pathFileSauvegarde = "./tmp/sauvegarde.txt";
+	
 	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
 		return selectedList;
 	}
@@ -107,7 +108,6 @@ public abstract class LogEventsManager {
 		/*Renvoie une Map avec la nouvelle ligne composée de tous les LogEvent sous la clé "eventList" et le nom des lignes
 		 * qui la compose sous la clé "keyList"
 		*/
-		System.out.println("Ca passe");
 		if (selectedList.isEmpty()){
 			System.out.println("La liste est vide");
 			return null;
@@ -134,19 +134,21 @@ public abstract class LogEventsManager {
 			for (LogEvent evt:eventsList){
 				String key=order.get(a);
 				if(evt.getLabel().equals(key)){
+					System.out.println("Trouvé un element "+String.valueOf(a));
 					newLigne.add(evt);
 					a++;
 					if(a==order.size()){a=0;}
 				}
 				else{
 					if(order.contains(evt.getLabel())){
-						if(a==1 && evt.getLabel().equals(order.get(0))){
-							newLigne.remove(newLigne.size()-1);
+						if(evt.getLabel().equals(order.get(0))){
+							for(int cst=0;cst<a;cst++){
+								newLigne.remove(newLigne.size()-cst-1);
+							}
 							newLigne.add(evt);
 							a=1;
 						}
 						else{	
-							System.out.println(a);
 							for(int i=0;i<a;i++){
 								newLigne.remove(newLigne.size()-1);
 							}
@@ -155,6 +157,7 @@ public abstract class LogEventsManager {
 				}
 			}
 			}
+			System.out.println("Nouvelle ligne : " +newLigne);
 			
 			//On enlève les événements d'un pattern non terminé à la fin de la ligne
 			for(int i=0;i<a;i++){
@@ -165,22 +168,48 @@ public abstract class LogEventsManager {
 			for (int j=0;j<newLigne.size()/order.size();j++){
 				for(int i=0;i<order.size()-1;i++){
 					if(i==0){
-						newLigneAggregated.add(LogEventsAggregator.aggregateLogEvents(newLigne.get(j*order.size()),newLigne.get(j*order.size()+1)));
+						LogEvent nouveau=LogEventsAggregator.aggregateLogEvents(newLigne.get(j*order.size()),newLigne.get(j*order.size()+1));
+						newLigneAggregated.add(nouveau);
+						eventsList.add(nouveau);
 					}
 					else{
-						newLigneAggregated.add(LogEventsAggregator.aggregateLogEvents(newLigneAggregated.get(newLigneAggregated.size()-1),newLigne.get(j*order.size()+i+1)));
+						LogEvent nouveau=LogEventsAggregator.aggregateLogEvents(newLigneAggregated.get(newLigneAggregated.size()-1),newLigne.get(j*order.size()+i+1));
+						newLigneAggregated.add(nouveau);
 						newLigneAggregated.remove(newLigneAggregated.size()-2);
+						eventsList.add(nouveau);
+						eventsList.remove(eventsList.size()-2);
+						if(i==order.size()-2){
+							try{
+								eventsMap.get(nouveau.getLabel()).add(nouveau);
+							}
+							catch(Exception e){
+								eventsMap.put(nouveau.getLabel(), new ArrayList<LogEvent>());
+								eventsMap.get(nouveau.getLabel()).add(nouveau);
+							}
+						}
 					}
 				}
 			}
+			Collections.sort(eventsList);
+			/*for (LogEvent elt : newLigneAggregated){
+				int temp=0;
+				for(LogEvent bla : eventsList){
+					if(bla.getTimeStamp()>elt.getTimeStamp()){
+						eventsList.add(temp-1,bla);
+					}
+					temp++;
+				}
+			}*/
 			
 			Map <String,ArrayList> map=new HashMap();
 			map.put("keyList",order);
 			map.put("eventList", newLigneAggregated);
+			System.out.println(order);
+			System.out.println(newLigneAggregated);
 			
-			//Sauvegarder dan sun fichier txt les recherches effectuées
+			//Sauvegarder dans un fichier txt les recherches effectuées
 			try{
-				FileWriter fw=new FileWriter(pathFileSauvegarde);
+				FileWriter fw=new FileWriter(pathFileSauvegarde,true);
 				BufferedWriter out = new BufferedWriter(fw);
 				out.write("Sauvegarde: [");
 				int b=0;
