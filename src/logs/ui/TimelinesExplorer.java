@@ -1,6 +1,7 @@
 package logs.ui;
 
 import java.awt.List;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +26,10 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -56,6 +60,8 @@ public class TimelinesExplorer extends BorderPane {
 
 	// visual elements
 	private VBox centralPane;
+	private Pane pane;
+	private StackPane superPane;
 	private RangeSelector rangeSelector;
 	private TimeRuler timeRuler;
 	// visibility offset are used to display extended scene portions to avoid
@@ -67,6 +73,10 @@ public class TimelinesExplorer extends BorderPane {
 	private Scale horizontalScale = new Scale(1, 1);
 	private ArrayList<Text> textLabels;
 	
+	//pour la selection
+	private Point2D.Double pointDepSelec;
+	private boolean move=false;
+	Rectangle rectangleSelec;
 	/**
 	 * Builds a timelines exploree using a logManager
 	 *
@@ -103,11 +113,25 @@ public class TimelinesExplorer extends BorderPane {
 		r.heightProperty().bind(this.heightProperty().add(VISIBILITY_OFFSET));
 		this.setClip(r);
 
+		//the SatckPane
+		this.superPane = new StackPane();
+		//this.superPane.setPadding(VISIBILITY_INSETS);
+		this.setCenter(superPane);
+		
 		this.centralPane = new VBox();
 		// this.centralPane.prefWidthProperty().bind(this.widthProperty());
 		this.centralPane.setPadding(VISIBILITY_INSETS);
 		this.centralPane.getTransforms().add(horizontalScale);
-		this.setCenter(centralPane);
+		//this.setCenter(centralPane);
+		
+		//The pane
+		this.pane = new Pane();
+		this.pane.setPadding(VISIBILITY_INSETS);
+		this.pane.prefWidth(800);
+		this.pane.prefHeight(800);
+		//this.setTop(pane);
+		
+		this.superPane.getChildren().add(centralPane);
 
 		// scaling and translating functions (mapping between ruler and scene)
 		rangeSelector.getVisiblePercentage().addListener(new ChangeListener<Number>() {
@@ -130,6 +154,64 @@ public class TimelinesExplorer extends BorderPane {
 			}
 		});
 	}
+		//sélection rectangle
+//		this.setOnMousePressed(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//			
+//				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
+//				pointDepSelec=new Point2D.Double(event.getX(),event.getY());
+//				rectangleSelec=createRectangle(pointDepSelec, pointDepSelec);
+//				move=true;
+//				pane.getChildren().add(rectangleSelec);
+//
+//				
+//				System.out.println(move);
+//				System.out.println(pane.getChildren().size());
+//
+////				Rectangle test = new Rectangle();
+////				test.widthProperty().bind(pane.prefWidthProperty());
+////				test.heightProperty().bind(pane.prefHeightProperty());
+////				test.setFill(Color.RED);
+////				pane.setPrefHeight(10000000);
+////				pane.setPrefWidth(100000000);
+////
+////				pane.getChildren().add(test);
+//				superPane.getChildren().add(pane);
+//				//centralPane.getChildren().add(pane);
+//			}
+//
+//			
+//		});
+//		
+//		this.setOnMouseDragged(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
+//				System.out.println(move);
+//				if(move){
+//					Point2D.Double newPoint = new Point2D.Double(event.getX(),event.getY());
+//					//pointDepSelec.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+//					setRectangle(rectangleSelec, pointDepSelec, newPoint);
+//					System.out.println("drag");
+//					
+//				}
+//					
+//			}	
+//		});
+//		
+//		this.setOnMouseReleased(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				
+//				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
+//				move=false;	
+//				System.out.println(move);
+//				pane.getChildren().remove(rectangleSelec);
+//				superPane.getChildren().remove(pane);	
+//			}	
+//		});
+//	}
 
 	/**
 	 * Update the visualization of the log events Uses the logEventsManager
@@ -400,6 +482,47 @@ public class TimelinesExplorer extends BorderPane {
 		WritableImage snapshot = this.centralPane.snapshot(new SnapshotParameters(), null);
 		ImageView imgView = new ImageView(snapshot);
 		return imgView;
+	}
+	
+	
+	public Rectangle createRectangle(Point2D.Double a, Point2D.Double b){
+		double x = a.getX();
+		double y = b.getY();
+		double width = Math.abs(b.getX()-a.getX());
+		double height = Math.abs(b.getY()-a.getY());
+		Rectangle rectangle = new Rectangle(x,y,width,height);
+		rectangle.setStroke(Color.RED);
+		rectangle.setFill(Color.TRANSPARENT);
+		rectangle.setVisible(true);
+		return rectangle;
+	}
+	
+	public void setRectangle(Rectangle rectangle, Point2D.Double a, Point2D.Double b){
+		if (b.getX()>a.getX() && b.getY() > a.getY()){
+			rectangle.setWidth((b.getX()-a.getX()));
+			rectangle.setHeight((b.getY()-a.getY()));
+		}
+		
+		else if (b.getX()<a.getX() && b.getY() > a.getY()){
+			rectangle.setX(b.getX());
+			rectangle.setWidth(a.getX()-b.getX());
+			rectangle.setHeight((b.getY()-a.getY()));
+		}
+		
+		else if (b.getX()<a.getX() && b.getY() < a.getY()){
+			rectangle.setX(b.getX());
+			rectangle.setY(b.getY());
+			rectangle.setWidth(a.getX()-b.getX());
+			rectangle.setHeight(a.getY()-b.getY());
+		}
+		
+		else {
+			rectangle.setY(b.getY());
+			rectangle.setWidth(b.getX()-a.getX());
+			rectangle.setHeight(a.getY()-b.getY());
+		}
+		
+
 	}
 
 }
