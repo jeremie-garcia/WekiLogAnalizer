@@ -32,12 +32,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+
 //<<<<<<< HEAD
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 //=======
 import javafx.scene.layout.HBox;
 //>>>>>>> branch 'ProjetSITA' of https://github.com/jeremie-garcia/kLogs.git
+=======
+import javafx.scene.layout.HBox;
+>>>>>>> branch 'ProjetSITA' of https://github.com/jeremie-garcia/kLogs.git
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -382,7 +386,6 @@ public class TimelinesExplorer extends BorderPane {
 		}
 		
 		pane.getChildren().add(points);
-		
 		pane.prefWidthProperty().set(endPosInScene);
 		pane.setOpacity(0);
 		
@@ -412,6 +415,8 @@ public class TimelinesExplorer extends BorderPane {
 		System.out.println("Index = " + maxIndex + " and key = " + maxIndexKey);
 		
 		indexedKeys.remove(maxIndexKey);
+		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
+		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
 
 		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
 		
