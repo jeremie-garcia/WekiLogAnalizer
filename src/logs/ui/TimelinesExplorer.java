@@ -33,15 +33,10 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
-//<<<<<<< HEAD
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-//=======
 import javafx.scene.layout.HBox;
-//>>>>>>> branch 'ProjetSITA' of https://github.com/jeremie-garcia/kLogs.git
-=======
 import javafx.scene.layout.HBox;
->>>>>>> branch 'ProjetSITA' of https://github.com/jeremie-garcia/kLogs.git
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -294,7 +289,7 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	//Fait pour le projet SITA
-	/**This function manage the animation when operating a fusion
+	/**This function manages the animation when operating a fusion
 	 * 
 	 * @param x
 	 * @param y
@@ -396,7 +391,7 @@ public class TimelinesExplorer extends BorderPane {
 		String maxIndexKey = "NULLISH";
 		int maxIndex = Integer.MIN_VALUE;
 		
-		Map<String, Integer> indexedKeys = new HashMap();
+		Map<String, Integer> indexedKeys = new HashMap<String, Integer>();
 		
 		for (String currentKey : keys){
 			for (Node node : this.centralPane.getChildren()){
@@ -415,10 +410,15 @@ public class TimelinesExplorer extends BorderPane {
 		System.out.println("Index = " + maxIndex + " and key = " + maxIndexKey);
 		
 		indexedKeys.remove(maxIndexKey);
-		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
-		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
 
 		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
+
+//		int o = 0;
+//		
+//		for (Node node : this.centralPane.getChildren()){
+//			System.out.println(("height " + o + " = " + ((LogEventsPane) node).getBoundsInLocal().getHeight()));
+//			o++;
+//		}
 		
 		final int maxIndexFinal = maxIndex;
 		
@@ -491,6 +491,11 @@ public class TimelinesExplorer extends BorderPane {
 	        }
 	    });
 
+	}
+	
+	//Fait pour le projet SITA
+	public void patternFinding(){
+		
 	}
 	
 	//Fait pour le projet SITA

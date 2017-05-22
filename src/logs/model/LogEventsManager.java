@@ -125,7 +125,7 @@ public abstract class LogEventsManager {
 			   ArrayList<LogEvent> evt=entry.getValue();
 			   intermediaire.addAll(evt);
 			}
-			Collections.sort(intermediaire);;
+			Collections.sort(intermediaire);
 			
 			for(LogEvent evt:intermediaire){
 				order.add((String) evt.getLabel());
@@ -143,6 +143,7 @@ public abstract class LogEventsManager {
 				}
 				else{
 					if(order.contains(evt.getLabel())){
+						//Les lignes ne sont ppas fusionnables
 						if(evt.getLabel().equals(order.get(0))){
 							for(int cst=0;cst<a;cst++){
 								newLigne.remove(newLigne.size()-cst-1);
