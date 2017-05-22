@@ -2,9 +2,12 @@ package logs.ui.events;
 
 
 import java.awt.Point;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
@@ -16,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
+import logs.ui.TimelinesExplorer;
 import logs.utils.JavaFXUtils;
 
 /**
@@ -30,7 +34,7 @@ public class LogEventNode extends Group {
 	private LogEvent logEvent;
 	private static LogEventNode prevActiveNode;
 	private Boolean selected;
-	private int RADIUS = 6;
+	private double RADIUS = 6;
 	private Ellipse item;
 	private Color color = Color.BLUE;
 
@@ -49,6 +53,8 @@ public class LogEventNode extends Group {
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				TimelinesExplorer.setInNode(true);
+				System.out.println(TimelinesExplorer.areInNode);
 				EventInspector.getInstance().update(logEvent);
 				LogEventNode.this.highlight(true);
 				if (prevActiveNode != null && prevActiveNode != LogEventNode.this && !prevActiveNode.getSelected()) {
@@ -66,6 +72,7 @@ public class LogEventNode extends Group {
 					LogEventNode.this.highlight(false);
 					LogEventNode.this.highlight2(true);
 				}
+				TimelinesExplorer.setInNode(false);
 			}
 		});
 		
@@ -77,7 +84,7 @@ public class LogEventNode extends Group {
 				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				
 				if(event.isControlDown()){
-					
+				
 				EventInspector.getInstance().update(logEvent);
 				HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
 				String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
@@ -143,6 +150,15 @@ public class LogEventNode extends Group {
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
+	}
+	
+	public void setTailleX(double taille){
+		this.item.radiusXProperty().setValue(taille);
+		this.setRadius(taille/2);
+	}
+	
+	public void setRadius(double radius){
+		this.RADIUS = radius;
 	}
 	
 	/**

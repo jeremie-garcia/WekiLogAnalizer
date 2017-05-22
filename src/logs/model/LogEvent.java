@@ -44,6 +44,10 @@ public class LogEvent implements Comparable<LogEvent>{
 		return args;
 	}
 
+	public long getDuration(){
+		return duration;
+	}
+	
 	/**
 	 * This means that the event has no duration
 	 *
