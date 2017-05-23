@@ -111,6 +111,10 @@ public class LogEventNode extends Group {
 				System.out.println(LogEventsManager.getSelectedList());
 
 			}
+				
+				if(!TimelinesExplorer.areInNode){
+					highlight2(false);
+				}
 			}
 		});
 		
@@ -145,7 +149,7 @@ public class LogEventNode extends Group {
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 
-	private void highlight2(boolean setHighlight) {
+	public void highlight2(boolean setHighlight) {
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
 		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);

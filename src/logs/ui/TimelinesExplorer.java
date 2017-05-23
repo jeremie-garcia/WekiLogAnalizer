@@ -39,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
@@ -87,6 +88,11 @@ public class TimelinesExplorer extends BorderPane {
 	private boolean move=false;
 	private static Rectangle rectangleSelec;
 	public static boolean areInNode=false;
+	
+	//Liste des nodes
+	private ArrayList<LogEventNode> listeNode;
+	private ArrayList<LogEventsPane> listePane;
+	private double tailleFenetre=0;
 
 	/**
 	 * Builds a timelines exploree using a logManager
@@ -139,7 +145,7 @@ public class TimelinesExplorer extends BorderPane {
 		this.pane = new Pane();
 		this.pane.setPadding(VISIBILITY_INSETS);
 		this.pane.prefWidth(800);
-		this.pane.prefHeight(800);
+		this.pane.prefHeight(600);
 		//this.setTop(pane);
 		
 		this.superPane.getChildren().add(centralPane);
@@ -209,8 +215,7 @@ public class TimelinesExplorer extends BorderPane {
 					Point2D.Double newPoint = new Point2D.Double(event.getX(),event.getY());
 					//pointDepSelec.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 					setRectangle(rectangleSelec, pointDepSelec, newPoint);
-					
-					
+					updatehighlight();	
 				}
 					
 			}	
@@ -242,15 +247,18 @@ public class TimelinesExplorer extends BorderPane {
 		long end = this.logEventsManager.getEndTime();
 
 		this.unitConverter = new UnitConverter(begin, end);
-
+		
 		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
 		double endPosInScene = unitConverter.getPosInSceneFromTime(end);
-
+		tailleFenetre = endPosInScene-beginPosInScene;
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
 				
 		int index = 0;
-
+		//
+		this.listeNode = new ArrayList<LogEventNode>();
+		this.listePane = new ArrayList<LogEventsPane>();
+		//
 		Scale inverseScale = new Scale(1, 1);
 		inverseScale.xProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 		for (String key : this.logEventsManager.getLogevents().keySet()) {
@@ -270,6 +278,10 @@ public class TimelinesExplorer extends BorderPane {
 			Group points = new Group();
 			for (LogEvent logEvent : this.logEventsManager.getLogevents().get(key)) {
 				LogEventNode node = new LogEventNode(logEvent);
+				//
+				listeNode.add(node);
+				listePane.add(pane);
+				//
 				node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
 				node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 				node.setFillColor(color);
@@ -633,6 +645,48 @@ public class TimelinesExplorer extends BorderPane {
 	
 	public static Rectangle getRectangle (){
 		return rectangleSelec;
+	}
+	
+	private void updatehighlight(){
+		System.out.println("highthight");
+		System.out.println(listeNode.get(3).getItem().getCenterY());
+		System.out.println(rectangleSelec.getBoundsInLocal());
+		for (int i=0;i<listeNode.size();i++){
+			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
+				listeNode.get(i).highlight2(true);
+			}
+			else
+				listeNode.get(i).highlight2(false);
+		}
+	}
+	
+	private boolean areInRectangle(LogEventNode node, Rectangle rectangle,int position){
+		double x_node = node.getItem().getCenterX();
+		double y_node = posNodeinPane(position);
+		double x_node_pane = conversionFenPaneX(x_node);
+		Bounds sizeRec = rectangle.getBoundsInLocal();
+		if (x_node_pane>=sizeRec.getMinX() && x_node_pane <= sizeRec.getMaxX() && y_node >=sizeRec.getMinY() && y_node<=sizeRec.getMaxY()){
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	private double conversionFenPaneX(double fenX){
+		return fenX*800/tailleFenetre; // 800 ets la largeur de la fenetre en pixel
+	}
+	
+	private double posNodeinPane(int indice){
+		double posY=0;
+		LogEventsPane superPane = (LogEventsPane)listeNode.get(indice).getParent().getParent();
+		int max = superPane.getIndex();
+		System.out.println(listeNode.get(0).getItem().getCenterY());		
+		for (int i=0; i<max;i++){
+			LogEventsPane pane = (LogEventsPane)listeNode.get(i).getParent().getParent();
+			posY+=pane.getBoundsInLocal().getMaxY()-0.5;
+		}
+		
+		return posY+listeNode.get(indice).getItem().getCenterY()+20;
 	}
 
 }
