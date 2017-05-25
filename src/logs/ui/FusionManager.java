@@ -22,6 +22,7 @@ public class FusionManager extends VBox{
 	private TimelinesExplorer tlexp;
 	
 	private Button buttonFusion;
+	private Button buttonRecherchePattern;
 	
 	public FusionManager(LogEventsManager eveManag, TimelinesExplorer tlexp){
 		super();
@@ -32,15 +33,22 @@ public class FusionManager extends VBox{
 		Label title = new Label("Interaction");
 		
 		buttonFusion= new Button("fusion");
+		buttonRecherchePattern= new Button("Recherce de pattern");
 		buttonFusion.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				tlexp.animationFusion();
 			}
 		});
+		buttonRecherchePattern.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("pas encore dispo");
+			}
+		});
 		
 		this.setPadding(new Insets(5, 10, 5, 10));
-		this.getChildren().addAll(title,buttonFusion);
+		this.getChildren().addAll(title,buttonFusion,buttonRecherchePattern);
 	}
 
 }

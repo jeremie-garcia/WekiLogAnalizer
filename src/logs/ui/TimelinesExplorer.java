@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
@@ -23,6 +24,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -648,11 +650,24 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	private void updatehighlight(){
+		logEventsManager.getSelectedList().clear();
 		System.out.println("highthight");
 		System.out.println(listeNode.get(3).getItem().getCenterY());
 		System.out.println(rectangleSelec.getBoundsInLocal());
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
+				String key=listeNode.get(i).getLogEvent().getLabel();
+				LogEvent logEvent=listeNode.get(i).getLogEvent();
+				if(logEventsManager.getSelectedList().containsKey(key)){
+					logEventsManager.getSelectedList().get(key).add(logEvent);
+
+				}
+				else{
+
+					ArrayList<LogEvent> bla=new ArrayList();
+					bla.add(logEvent);
+					logEventsManager.getSelectedList().put(key,bla);
+				}
 				listeNode.get(i).highlight2(true);
 			}
 			else

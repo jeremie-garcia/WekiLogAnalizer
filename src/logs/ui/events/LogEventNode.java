@@ -177,5 +177,10 @@ public class LogEventNode extends Group {
 	public Boolean getSelected(){
 		return selected;
 	}
-
+	public Ellipse getItem(){
+		return item;
+	}
+	public LogEvent getLogEvent(){
+		return logEvent;
+	}
 }
