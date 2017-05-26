@@ -16,8 +16,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;
+import logs.ui.CenteredRectangle;
 import logs.ui.EventInspector;
 import logs.ui.TimelinesExplorer;
 import logs.utils.JavaFXUtils;
@@ -27,7 +29,7 @@ import logs.utils.JavaFXUtils;
  *
  * @author jeremiegarcia
  *
- *with the participation of marie, clement and charlelie
+ * with the participation of marie, clement and charlelie
  */
 public class LogEventNode extends Group {
 
@@ -35,18 +37,23 @@ public class LogEventNode extends Group {
 	private static LogEventNode prevActiveNode;
 	private Boolean selected;
 	private double RADIUS = 6;
-	private Ellipse item;
+//	private Ellipse item;
+	private CenteredRectangle item;
+	private Text text;
 	private Color color = Color.BLUE;
 
 	/**
 	 * builds a LogEventNode with a LogEvent
 	 *
-	 * @param event
+	 * @param event : The event you want to create a node of.
 	 */
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
-		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
+//		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
+		item = new CenteredRectangle(this.logEvent.getTimeStamp(), -2, RADIUS / 2, RADIUS);
+		text = new Text();
+		text.setPickOnBounds(false);
 		this.getChildren().add(item);
 		selected=false;
 		
@@ -54,7 +61,6 @@ public class LogEventNode extends Group {
 			@Override
 			public void handle(MouseEvent event) {
 				TimelinesExplorer.setInNode(true);
-				System.out.println(TimelinesExplorer.areInNode);
 				EventInspector.getInstance().update(logEvent);
 				LogEventNode.this.highlight(true);
 				if (prevActiveNode != null && prevActiveNode != LogEventNode.this && !prevActiveNode.getSelected()) {
@@ -65,6 +71,9 @@ public class LogEventNode extends Group {
 		});
 		
 		//Fait pour le projet SITA
+		/**
+		 * This method highlights the node back in blue if selected
+		 */
 		this.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -77,40 +86,40 @@ public class LogEventNode extends Group {
 		});
 		
 		//Fait pour le projet SITA
+		/**
+		 * This method selects the node and highlights it
+		 */
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
-				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
-				
+								
 				if(event.isControlDown()){
 				
-				EventInspector.getInstance().update(logEvent);
-				HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
-				String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
-				if(selected){
-					selected = false;
-					LogEventNode.this.highlight2(false);
-					selectedList.get(key).remove(logEvent);
-					if (selectedList.get(key).isEmpty()){
-						selectedList.remove(key);
-					}
-				}
-				else{
-					if (selectedList.containsKey(key)){
-						selectedList.get(key).add(logEvent);
+					EventInspector.getInstance().update(logEvent);
+					HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
+					String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
+					if(selected){
+						selected = false;
+						LogEventNode.this.highlight2(false);
+						selectedList.get(key).remove(logEvent);
+						if (selectedList.get(key).isEmpty()){
+							selectedList.remove(key);
+						}
 					}
 					else{
-						ArrayList<LogEvent> temp= new ArrayList<LogEvent>();
-						temp.add(logEvent);
-						selectedList.put(key,temp);
+						if (selectedList.containsKey(key)){
+							selectedList.get(key).add(logEvent);
+						}
+						else{
+							ArrayList<LogEvent> temp= new ArrayList<LogEvent>();
+							temp.add(logEvent);
+							selectedList.put(key,temp);
+						}
+						selected=true;
+						LogEventNode.this.highlight2(true);
 					}
-					selected=true;
-					LogEventNode.this.highlight2(true);
+					System.out.println(LogEventsManager.getSelectedList());
 				}
-				System.out.println(LogEventsManager.getSelectedList());
-
-			}
 				
 				if(!TimelinesExplorer.areInNode){
 					highlight2(false);
@@ -121,12 +130,15 @@ public class LogEventNode extends Group {
 		highlight(false);
 		
 		//Fait pour le projet SITA
+		/**
+		 * This method starts the selection
+		 */
 		this.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
 			System.out.println("bla");
 	        if (evt.getCode() == KeyCode.CONTROL) {
 	            evt.consume();
 	        }
-	});
+		});
 	}
 	
 	
@@ -144,11 +156,19 @@ public class LogEventNode extends Group {
 	 */
 	private void highlight(boolean setHighlight) {
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
-		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
+		if(color != Color.BLACK){
+			item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
+		}
 		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 
+	//Fait pour le projet SITA
+	/**
+	 * This method highlights the node in blue
+	 * 
+	 * @param setHighlight
+	 */
 	public void highlight2(boolean setHighlight) {
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
 		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
@@ -156,11 +176,13 @@ public class LogEventNode extends Group {
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}
 	
+	//Fait pour le projet SITA
 	public void setTailleX(double taille){
 		this.item.radiusXProperty().setValue(taille);
-		this.setRadius(taille/2);
+		this.setRadius(taille);
 	}
 	
+	//Fait pour le projet SITA
 	public void setRadius(double radius){
 		this.RADIUS = radius;
 	}
@@ -174,10 +196,29 @@ public class LogEventNode extends Group {
 		this.item.setCenterX(posX);
 	}
 	
+	public double getPosX(){
+		return this.item.getCenterX();
+	}
+	
+	//Fait pour le projet SITA
+	public Text getText(){
+		return text;
+	}
+	
+	//Fait pour le projet SITA
+	/**
+	 * This method gets the selection boolean
+	 * 
+	 * @return true if selected
+	 */
 	public Boolean getSelected(){
 		return selected;
 	}
-	public Ellipse getItem(){
+	
+	public void setSelected(Boolean bool){
+		selected = bool;
+	}
+	public CenteredRectangle getItem(){
 		return item;
 	}
 	public LogEvent getLogEvent(){

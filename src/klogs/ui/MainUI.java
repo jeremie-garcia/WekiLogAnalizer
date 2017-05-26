@@ -124,7 +124,7 @@ public class MainUI extends Application {
 		// load an initial file
 		this.loadFromZipFile(new File(KLogConfiguration.DEFAULT_ZIP_FILE));
 		// select first log file from extracted files
-		this.filesListView.getSelectionModel().select(0);
+		this.filesListView.getSelectionModel().select(0);		
 	}
 
 	ObservableList<File> filesList = FXCollections.observableArrayList();

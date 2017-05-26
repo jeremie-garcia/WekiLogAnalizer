@@ -18,7 +18,7 @@ import java.util.Map.Entry;
  *
  * @author jeremiegarcia
  *
- *with the participation of marie, clement and charlelie
+ * with the participation of marie, clement and charlelie
  */
 public abstract class LogEventsManager {
 
@@ -106,10 +106,18 @@ public abstract class LogEventsManager {
 	}
 
 	//Fait par le projetSITA
+	/**
+	 * This method searches patterns in the selected lines and creates a line with the aggregates formed
+	 * from the patterns.
+	 * 
+	 * It returns a map with the list of aggregated events (key = "eventList")
+	 * and the lines used for the research (key = keyList).
+	 * 
+	 * @return Map<String, ArrayList> map
+	 */
 	public Map<String, ArrayList> recherchePattern(){
-		/*Renvoie une Map avec la nouvelle ligne composée de tous les LogEvent sous la clé "eventList" et le nom des lignes
-		 * qui la compose sous la clé "keyList"
-		*/
+		ArrayList isFusion = new ArrayList();
+		isFusion.add(true);
 		if (selectedList.isEmpty()){
 			System.out.println("La liste est vide");
 			return null;
@@ -143,7 +151,8 @@ public abstract class LogEventsManager {
 				}
 				else{
 					if(order.contains(evt.getLabel())){
-						//Les lignes ne sont ppas fusionnables
+						isFusion.set(0, false);
+						//Les lignes ne sont pas fusionnables
 						if(evt.getLabel().equals(order.get(0))){
 							for(int cst=0;cst<a;cst++){
 								newLigne.remove(newLigne.size()-cst-1);
@@ -210,27 +219,29 @@ public abstract class LogEventsManager {
 			System.out.println(order);
 			System.out.println(newLigneAggregated);
 			
+			map.put("fusion", isFusion);
+			
 			//Sauvegarder dans un fichier txt les recherches effectuées
-			try{
-				FileWriter fw=new FileWriter(pathFileSauvegarde,true);
-				BufferedWriter out = new BufferedWriter(fw);
-				out.write("Sauvegarde: [");
-				int b=0;
-				for(String str:order){
-					if(b==order.size()-1){
-						out.write(str);
-					}
-					else{
-						out.write(str+",");
-						b++;
-					}
-				}
-				out.write("]\n");
-				out.close();
-			}
-			catch(IOException e){
-				System.out.println("Impossible d'ouvrir ou de créer le fichier");
-			}
+//			try{
+//				FileWriter fw=new FileWriter(pathFileSauvegarde,true);
+//				BufferedWriter out = new BufferedWriter(fw);
+//				out.write("Sauvegarde: [");
+//				int b=0;
+//				for(String str:order){
+//					if(b==order.size()-1){
+//						out.write(str);
+//					}
+//					else{
+//						out.write(str+",");
+//						b++;
+//					}
+//				}
+//				out.write("]\n");
+//				out.close();
+//			}
+//			catch(IOException e){
+//				System.out.println("Impossible d'ouvrir ou de créer le fichier");
+//			}
 			selectedList.clear();
 			
 			return map;

@@ -37,7 +37,7 @@ public class FusionManager extends VBox{
 		buttonFusion.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				tlexp.animationFusion();
+				tlexp.checkFusion();
 			}
 		});
 		buttonRecherchePattern.setOnAction(new EventHandler<ActionEvent>() {

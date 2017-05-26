@@ -44,6 +44,7 @@ public class LogEvent implements Comparable<LogEvent>{
 		return args;
 	}
 
+	//Fait pour le projet SITA
 	public long getDuration(){
 		return duration;
 	}
@@ -51,7 +52,7 @@ public class LogEvent implements Comparable<LogEvent>{
 	/**
 	 * This means that the event has no duration
 	 *
-	 * @return
+	 * @return true if the duration is 0
 	 */
 	public boolean isPointEvent() {
 		return duration == 0;
@@ -61,7 +62,7 @@ public class LogEvent implements Comparable<LogEvent>{
 	 * This methods has to be overidden to have a node displayed in the
 	 * inspector for specific types of LogEvents
 	 *
-	 * @return
+	 * @return false
 	 */
 	public boolean hasInspectorNode() {
 		return false;
@@ -70,7 +71,7 @@ public class LogEvent implements Comparable<LogEvent>{
 	/**
 	 * This methods need to be overidden to give the Node
 	 *
-	 * @return
+	 * @return null
 	 */
 	public Node getInspectorNode() {
 		// TODO Auto-generated method stub

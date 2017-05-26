@@ -47,6 +47,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
@@ -63,7 +64,7 @@ import logs.utils.JavaFXUtils;
  *
  * @author jeremiegarcia
  *
- *with the participation of marie, clement and charlelie
+ * with the participation of marie, clement and charlelie
  */
 public class TimelinesExplorer extends BorderPane {
 
@@ -97,9 +98,10 @@ public class TimelinesExplorer extends BorderPane {
 	private double tailleFenetre=0;
 
 	/**
-	 * Builds a timelines exploree using a logManager
+	 * Builds a timelines explorer using a logManager
 	 *
 	 * @param logManager
+	 * 
 	 */
 	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
@@ -172,16 +174,16 @@ public class TimelinesExplorer extends BorderPane {
 				updateTimeRulerRange();
 			}
 		});
-	
-		//sélection rectangle
-		System.out.println(areInNode);
-		
+			
+		//Fait pour le projet SITA
+		/**
+		 * This method creates a selection rectangle.
+		 */
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			
 			public void handle(MouseEvent event) {
 				if (areInNode==false){
-				System.out.println(areInNode);
 				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				pointDepSelec=new Point2D.Double(event.getX(),event.getY());
 				rectangleSelec=createRectangle(pointDepSelec, pointDepSelec);
@@ -189,7 +191,6 @@ public class TimelinesExplorer extends BorderPane {
 				pane.getChildren().add(rectangleSelec);
 
 				
-				System.out.println(move);
 				//System.out.println(pane.getChildren().size());
 
 //				Rectangle test = new Rectangle();
@@ -208,10 +209,12 @@ public class TimelinesExplorer extends BorderPane {
 			
 		});
 		
+		/**
+		 * This method updates the rectangle when the mouse moves.
+		 */
 		this.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				
 				if(move){
 					Point2D.Double newPoint = new Point2D.Double(event.getX(),event.getY());
@@ -223,11 +226,13 @@ public class TimelinesExplorer extends BorderPane {
 			}	
 		});
 		
+		/**
+		 * This method removes the rectangle when the mouse is released.
+		 */
 		this.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				
-				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				move=false;	
 				
 				pane.getChildren().remove(rectangleSelec);
@@ -241,8 +246,6 @@ public class TimelinesExplorer extends BorderPane {
 	/**
 	 * Update the visualization of the log events Uses the logEventsManager
 	 * database. This should be called when data change in the logEventManager.
-	 *
-	 * @param newEventsMap
 	 */
 	public void update() {
 		long begin = this.logEventsManager.getBeginTime();
@@ -302,18 +305,31 @@ public class TimelinesExplorer extends BorderPane {
 		this.rangeSelector.setBgImageView(backgroundImage);
 	}
 	
+	public void checkFusion(){
+		Map<String, ArrayList> map = logEventsManager.recherchePattern();
+		
+		if (map == null){
+			return ;
+		}
+		if ((boolean) map.get("fusion").get(0)){
+			map.remove("isFusion");
+			animationFusion(map);
+		}
+		else{
+			map.remove("isFusion");
+			patternFinding(map);
+		}
+	}
 	//Fait pour le projet SITA
-	/**This function manages the animation when operating a fusion
+	/**This function manages the animation when operating a fusion. It launches the method "recherchePattern"
+	 * from the logEventsManager.
 	 * 
-	 * @param x
-	 * @param y
+	 * 
 	 */
-	public void animationFusion(){
+	public void animationFusion(Map<String, ArrayList> map){
 		
 		ArrayList<FadeTransition> fades = new ArrayList<FadeTransition>();
 		ArrayList<TranslateTransition> translates = new ArrayList<TranslateTransition>();
-		
-		Map<String, ArrayList> map = logEventsManager.recherchePattern();
 			
 		ArrayList<LogEvent> events = map.get("eventList");
 		ArrayList<String> keys = map.get("keyList");
@@ -345,9 +361,7 @@ public class TimelinesExplorer extends BorderPane {
 		Text txt = new Text(key);
 		txt.setFont(Font.font(8));
 		
-		this.textLabels.add(txt);
-		
-		textButton.getChildren().add(txt);
+		this.textLabels.add(txt);		
 		
 		Button expandButton = new Button();
 		expandButton.setMinHeight(1);
@@ -362,6 +376,7 @@ public class TimelinesExplorer extends BorderPane {
 				if(! expandPane.isExpanded()){
 					for (LogEventsPane pane : expandPane.getChildrenPanes()){
 						expandIndex ++;
+		    			pane.setOpacity(expandPane.getOpacity()-0.3);
 						insertNewPane(expandIndex, pane);
 					}
 					expandPane.setExpanded(true);
@@ -378,20 +393,38 @@ public class TimelinesExplorer extends BorderPane {
 		});
 		
 		textButton.getChildren().add(expandButton);
+		textButton.getChildren().add(txt);
+
 		
 		pane.getChildren().add(textButton);
 		Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
 		l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
 		pane.getChildren().add(l);
-
+		double length = l.getBoundsInLocal().getWidth();
 		Group points = new Group();
 		for (LogEvent logEvent : events) {
 			LogEventNode node = new LogEventNode(logEvent);
 			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
 			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 			node.setTailleX(logEvent.getDuration()/2);
+			Text textDuration = node.getText();
+			textDuration.setText(String.valueOf(logEvent.getDuration()/1000)+"s");
+			textDuration.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+			textDuration.setFill(Color.WHITE);
+			textDuration.setStroke(Color.GREY);
+			textDuration.setStrokeWidth(0);
+			double textW = unitConverter.getDurationInMillisFromPercentage(textDuration.getBoundsInLocal().getWidth()/length);
+			double textH = textDuration.getBoundsInLocal().getHeight();
+			if (textW>logEvent.getDuration()){
+				textDuration.setStrokeWidth(1);
+			}
+			textDuration.setTranslateX(node.getPosX()-textW/2);
+			textDuration.setTranslateY(l.getEndY()+textH/4);
+			textDuration.getTransforms().add(inverseScale);
 			node.setFillColor(color);
+			node.setOpacity(0.6);
 			points.getChildren().add(node);
+			points.getChildren().add(textDuration);
 		}
 		
 		pane.getChildren().add(points);
@@ -420,9 +453,7 @@ public class TimelinesExplorer extends BorderPane {
 				}
 			}
 		}
-		
-		System.out.println("Index = " + maxIndex + " and key = " + maxIndexKey);
-		
+				
 		indexedKeys.remove(maxIndexKey);
 
 		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
@@ -493,7 +524,6 @@ public class TimelinesExplorer extends BorderPane {
 	    			
 	    			
 	    			//Apply inverted animation
-	    			childPane.setOpacity(0.7);
 	    			childPane.setTranslateY(childPane.getTranslateY()-height*(maxIndexFinal - index));
 	    			
 	    			childrenPanes.add(childPane);
@@ -508,11 +538,114 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	//Fait pour le projet SITA
-	public void patternFinding(){
+	/**
+	 * This method inserts the new line of aggregators when the fusion is impossible (simple pattern matching)
+	 */
+	public void patternFinding(Map<String, ArrayList> map){
+				
+		ArrayList<LogEvent> events = map.get("eventList");
+		ArrayList<String> keys = map.get("keyList");
 		
+		long begin = this.logEventsManager.getBeginTime();
+		long end = this.logEventsManager.getEndTime();
+
+		this.unitConverter = new UnitConverter(begin, end);
+
+		double beginPosInScene = unitConverter.getPosInSceneFromTime(begin);
+		double endPosInScene = unitConverter.getPosInSceneFromTime(end);
+		
+		Scale inverseScale = new Scale(1, 1);
+		inverseScale.xProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+		
+		String key = new String();
+		Color color = Color.BLACK;
+		
+		for (String k : keys){
+			key += k;
+		}
+		
+		LogEventsPane pane = new LogEventsPane(key, 0, color);
+		pane.setPrefHeight(60);
+		
+		HBox textButton = new HBox();
+		textButton.getTransforms().add(inverseScale);
+		textButton.setTranslateY(-1);
+		Text txt = new Text(key);
+		txt.setFont(Font.font(8));
+		
+		this.textLabels.add(txt);
+		
+		textButton.getChildren().add(txt);
+		
+		pane.getChildren().add(textButton);
+		Line l = new Line(beginPosInScene, 10, endPosInScene, 10);
+		l.setStroke(color.deriveColor(0, 1., 0.3, 1.));
+		pane.getChildren().add(l);
+
+		double length = this.centralPane.getWidth();
+		
+		Group points = new Group();
+		for (LogEvent logEvent : events) {
+			LogEventNode node = new LogEventNode(logEvent);
+			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
+			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
+			node.setTailleX(logEvent.getDuration()/2);
+			Text textDuration = node.getText();
+			textDuration.setText(String.valueOf(logEvent.getDuration()/1000)+"s");
+			textDuration.getTransforms().add(inverseScale);
+			textDuration.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
+			textDuration.setFill(Color.WHITE);
+			textDuration.setStroke(Color.GREY);
+			textDuration.setStrokeWidth(0);
+			double textW = unitConverter.getDurationInMillisFromPercentage(textDuration.getBoundsInLocal().getWidth()/length);
+			double textH = textDuration.getBoundsInLocal().getHeight();
+			if (textW>logEvent.getDuration()){
+				textDuration.setStrokeWidth(1);
+			}
+			textDuration.setTranslateX(node.getPosX()-textW/2);
+			textDuration.setTranslateY(l.getEndY()+textH/4);
+			node.setFillColor(color);
+			points.getChildren().add(node);
+			points.getChildren().add(textDuration);
+		}
+		
+		pane.getChildren().add(points);
+		pane.prefWidthProperty().set(endPosInScene);
+		pane.setOpacity(0);
+		
+		FadeTransition lastFadeTransition = new FadeTransition(Duration.millis(3000),pane);
+		lastFadeTransition.setFromValue(0);
+		lastFadeTransition.setToValue(1);
+				
+		int maxIndex = Integer.MIN_VALUE;
+		
+		Map<String, Integer> indexedKeys = new HashMap<String, Integer>();
+		
+		for (String currentKey : keys){
+			for (Node node : this.centralPane.getChildren()){
+				if (((LogEventsPane) node).getKey().equals(currentKey)){
+					
+					indexedKeys.put(currentKey, ((LogEventsPane) node).getIndex());
+				
+					if (((LogEventsPane) node).getIndex()>maxIndex){
+						maxIndex = ((LogEventsPane) node).getIndex();
+					};
+				}
+			}
+		}
+		
+		insertNewPane(maxIndex+1, pane);
+		
+		lastFadeTransition.play();
 	}
 	
 	//Fait pour le projet SITA
+	/**
+	 * This method inserts the given pane at the given position in the centralPane.
+	 * 
+	 * @param position
+	 * @param pane
+	 */
 	public void insertNewPane(int position, LogEventsPane pane){
 		
 		//PART1 : Update position of following panes (+1)
@@ -531,6 +664,11 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	//Fait pour le projet SITA
+	/**
+	 * This method deletes the pane at the given position.
+	 * 
+	 * @param position
+	 */
 	public void deletePane(int position){
 		
 		this.centralPane.getChildren().remove(position);
@@ -584,7 +722,7 @@ public class TimelinesExplorer extends BorderPane {
 	/**
 	 * this methods creates an ImageView from the scene (screen snapshot)
 	 *
-	 * @return
+	 * @return imgView
 	 */
 	private ImageView createImageViewFromScene() {
 
@@ -593,7 +731,16 @@ public class TimelinesExplorer extends BorderPane {
 		return imgView;
 	}
 	
-	
+	//Fait pour le projet SITA
+	/**
+	 * This method creates the selection rectangle, with a and b describing it.
+	 * 
+	 * In a practical way, a will be the origin of the rectangle and b the current position of the mouse.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return rectangle
+	 */
 	public Rectangle createRectangle(Point2D.Double a, Point2D.Double b){
 		double x = a.getX();
 		double y = b.getY();
@@ -603,7 +750,6 @@ public class TimelinesExplorer extends BorderPane {
 		rectangle.setStroke(Color.BLACK);
 		rectangle.setFill(Color.TRANSPARENT);
 		ObservableList<Double> patron = rectangle.getStrokeDashArray();
-		System.out.println(patron);
 		patron.add(20.);
 		patron.add(10.);
 		rectangle.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -611,6 +757,16 @@ public class TimelinesExplorer extends BorderPane {
 		return rectangle;
 	}
 	
+	//Fait pour le projet SITA
+	/**
+	 * This method sets the given rectangle with the new points a and b.
+	 * 
+	 * In a practical way, it keeps the selection rectangle updated with the mouse movements.
+	 * 
+	 * @param rectangle
+	 * @param a
+	 * @param b
+	 */
 	public void setRectangle(Rectangle rectangle, Point2D.Double a, Point2D.Double b){
 		if (b.getX()>a.getX() && b.getY() > a.getY()){
 			rectangle.setWidth((b.getX()-a.getX()));
@@ -637,23 +793,39 @@ public class TimelinesExplorer extends BorderPane {
 		}
 	}
 	
+	//Fait pour le projet SITA
+	/**
+	 * This methods returns the boolean areInNode.
+	 * 
+	 * It checks whether the mouse is on a node or not.
+	 * @return areInNode
+	 */
 	public boolean areInNode(){
 		return areInNode;
 	}
 	
+	//Fait pour le projet SITA
+	/**
+	 * This method changes the state of areInNode, according to the boolean b.
+	 * 
+	 * @param b
+	 */
 	public static void setInNode(boolean b){
 		areInNode=b;
 	}
 	
+	//Fait pour le projet SITA
+	/**
+	 * This method returns the rectangle.
+	 * 
+	 * @return rectangleSelec
+	 */
 	public static Rectangle getRectangle (){
 		return rectangleSelec;
 	}
 	
 	private void updatehighlight(){
 		logEventsManager.getSelectedList().clear();
-		System.out.println("highthight");
-		System.out.println(listeNode.get(3).getItem().getCenterY());
-		System.out.println(rectangleSelec.getBoundsInLocal());
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
 				String key=listeNode.get(i).getLogEvent().getLabel();
@@ -669,14 +841,17 @@ public class TimelinesExplorer extends BorderPane {
 					logEventsManager.getSelectedList().put(key,bla);
 				}
 				listeNode.get(i).highlight2(true);
+				listeNode.get(i).setSelected(true);
 			}
-			else
+			else{
 				listeNode.get(i).highlight2(false);
+				listeNode.get(i).setSelected(false);
+			}
 		}
 	}
 	
 	private boolean areInRectangle(LogEventNode node, Rectangle rectangle,int position){
-		double x_node = node.getItem().getCenterX();
+		double x_node = node.getPosX();
 		double y_node = posNodeinPane(position);
 		double x_node_pane = conversionFenPaneX(x_node);
 		Bounds sizeRec = rectangle.getBoundsInLocal();
@@ -688,20 +863,20 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	private double conversionFenPaneX(double fenX){
-		return fenX*800/tailleFenetre; // 800 ets la largeur de la fenetre en pixel
+		return fenX*this.centralPane.getWidth()/tailleFenetre; // 800 ets la largeur de la fenetre en pixel
 	}
 	
 	private double posNodeinPane(int indice){
 		double posY=0;
 		LogEventsPane superPane = (LogEventsPane)listeNode.get(indice).getParent().getParent();
 		int max = superPane.getIndex();
-		System.out.println(listeNode.get(0).getItem().getCenterY());		
 		for (int i=0; i<max;i++){
 			LogEventsPane pane = (LogEventsPane)listeNode.get(i).getParent().getParent();
-			posY+=pane.getBoundsInLocal().getMaxY()-0.5;
+			posY+=pane.getBoundsInLocal().getHeight();
 		}
 		
-		return posY+listeNode.get(indice).getItem().getCenterY()+20;
+//		System.out.println(listeNode.get(indice).getItem().getCenterY());
+		return posY+((Line) superPane.getChildren().get(2)).getEndY()+listeNode.get(indice).getItem().getHeight()/2;
 	}
 
 }
