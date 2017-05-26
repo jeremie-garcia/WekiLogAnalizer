@@ -77,6 +77,8 @@ public class TimelinesExplorer extends BorderPane {
 	private StackPane superPane;
 	private RangeSelector rangeSelector;
 	private TimeRuler timeRuler;
+	private ContextMenu contextMenu;
+	
 	// visibility offset are used to display extended scene portions to avoid
 	// masquing elements
 	private int VISIBILITY_OFFSET = 10;
@@ -175,21 +177,28 @@ public class TimelinesExplorer extends BorderPane {
 			}
 		});
 			
+		
 		//Fait pour le projet SITA
+		
+		/** 
+		 * This method creates a contextual menu but doesn't display it until releasing the mouse
+		 */
+		contextMenu= new ContextMenu(this, pane);
+		superPane.getChildren().add(pane);
+
 		/**
 		 * This method creates a selection rectangle.
 		 */
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
-			
 			public void handle(MouseEvent event) {
+				contextMenu.cacher();
 				if (areInNode==false){
 				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				pointDepSelec=new Point2D.Double(event.getX(),event.getY());
 				rectangleSelec=createRectangle(pointDepSelec, pointDepSelec);
 				move=true;
 				pane.getChildren().add(rectangleSelec);
-
 				
 				//System.out.println(pane.getChildren().size());
 
@@ -201,7 +210,6 @@ public class TimelinesExplorer extends BorderPane {
 //				pane.setPrefWidth(100000000);
 //
 //				pane.getChildren().add(test);
-				superPane.getChildren().add(pane);
 				//centralPane.getChildren().add(pane);
 				
 			}
@@ -232,11 +240,13 @@ public class TimelinesExplorer extends BorderPane {
 		this.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				
+				if(!logEventsManager.getSelectedList().isEmpty()){
+					contextMenu.afficher(event.getX(), event.getY());
+				}
 				move=false;	
-				
 				pane.getChildren().remove(rectangleSelec);
-				superPane.getChildren().remove(pane);	
+	
+
 			}	
 		});
 		
@@ -885,5 +895,7 @@ public class TimelinesExplorer extends BorderPane {
 //		System.out.println(listeNode.get(indice).getItem().getCenterY());
 		return posY+((Line) superPane.getChildren().get(2)).getEndY()+listeNode.get(indice).getItem().getHeight()/2;
 	}
-
+	public Pane getPane(){
+		return pane;
+	}
 }

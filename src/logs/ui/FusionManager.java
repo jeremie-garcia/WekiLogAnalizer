@@ -38,7 +38,6 @@ public class FusionManager extends VBox{
 				tlexp.checkFusion();
 			}
 		});
-
 		
 		this.setPadding(new Insets(5, 10, 5, 10));
 		this.getChildren().addAll(title,buttonFusion);
