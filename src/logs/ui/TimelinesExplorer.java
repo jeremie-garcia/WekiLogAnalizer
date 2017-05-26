@@ -95,6 +95,7 @@ public class TimelinesExplorer extends BorderPane {
 	//Liste des nodes
 	private ArrayList<LogEventNode> listeNode;
 	private double tailleFenetre=0;
+	
 
 	/**
 	 * Builds a timelines explorer using a logManager
