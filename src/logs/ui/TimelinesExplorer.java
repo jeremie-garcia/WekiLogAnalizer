@@ -134,7 +134,7 @@ public class TimelinesExplorer extends BorderPane {
 		r.heightProperty().bind(this.heightProperty().add(VISIBILITY_OFFSET));
 		this.setClip(r);
 
-		//the SatckPane
+		//the StackPane
 		this.superPane = new StackPane();
 		//this.superPane.setPadding(VISIBILITY_INSETS);
 		this.setCenter(superPane);
@@ -220,7 +220,7 @@ public class TimelinesExplorer extends BorderPane {
 					Point2D.Double newPoint = new Point2D.Double(event.getX(),event.getY());
 					//pointDepSelec.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 					setRectangle(rectangleSelec, pointDepSelec, newPoint);
-					updatehighlight();	
+					updateHighlight();	
 				}
 					
 			}	
@@ -532,7 +532,6 @@ public class TimelinesExplorer extends BorderPane {
 	    		pane.addChildrenPanes(childrenPanes);
 	        }
 	    });
-
 	}
 	
 	//Fait pour le projet SITA
@@ -823,12 +822,8 @@ public class TimelinesExplorer extends BorderPane {
 		return rectangleSelec;
 	}
 	
-	private void updatehighlight(){
+	private void updateHighlight(){
 		logEventsManager.getSelectedList().clear();
-		ArrayList<LogEvent> listeEvent = logEventsManager.getTimeSortedLogEventsAsArrayList();
-		for(LogEvent event : listeEvent){
-			
-		}
 		
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
@@ -867,7 +862,15 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	private double conversionFenPaneX(double fenX){
-		return fenX*this.centralPane.getWidth()/tailleFenetre; // 800 ets la largeur de la fenetre en pixel
+		double visibleBeginTime = timeRuler.getMinTimeInMillisProperty().get();
+		double visibleEndTime = timeRuler.getMaxTimeInMillisProperty().get();
+		double visibleWidthInPixels = centralPane.getWidth();
+		if (visibleBeginTime<=fenX && visibleEndTime>=fenX){
+			return ((fenX-visibleBeginTime)/(visibleEndTime-visibleBeginTime))*visibleWidthInPixels;
+		}
+		else{
+			return 0;
+		}
 	}
 	
 	private double posNodeinPane(int indice){
