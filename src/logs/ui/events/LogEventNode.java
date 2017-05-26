@@ -171,7 +171,9 @@ public class LogEventNode extends Group {
 	 */
 	public void highlight2(boolean setHighlight) {
 		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
-		item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
+		if(color != Color.BLACK){
+			item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
+		}
 		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);
 		item.setStrokeWidth(setHighlight ? 2 : 1);
 	}

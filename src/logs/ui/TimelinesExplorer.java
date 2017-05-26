@@ -94,7 +94,6 @@ public class TimelinesExplorer extends BorderPane {
 	
 	//Liste des nodes
 	private ArrayList<LogEventNode> listeNode;
-	private ArrayList<LogEventsPane> listePane;
 	private double tailleFenetre=0;
 
 	/**
@@ -258,12 +257,10 @@ public class TimelinesExplorer extends BorderPane {
 		tailleFenetre = endPosInScene-beginPosInScene;
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
-				
+		
+		listeNode = new ArrayList<LogEventNode>();
+		
 		int index = 0;
-		//
-		this.listeNode = new ArrayList<LogEventNode>();
-		this.listePane = new ArrayList<LogEventsPane>();
-		//
 		Scale inverseScale = new Scale(1, 1);
 		inverseScale.xProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 		for (String key : this.logEventsManager.getLogevents().keySet()) {
@@ -285,7 +282,6 @@ public class TimelinesExplorer extends BorderPane {
 				LogEventNode node = new LogEventNode(logEvent);
 				//
 				listeNode.add(node);
-				listePane.add(pane);
 				//
 				node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
 				node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
@@ -404,6 +400,7 @@ public class TimelinesExplorer extends BorderPane {
 		Group points = new Group();
 		for (LogEvent logEvent : events) {
 			LogEventNode node = new LogEventNode(logEvent);
+			listeNode.add(node);
 			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
 			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 			node.setTailleX(logEvent.getDuration()/2);
@@ -587,6 +584,7 @@ public class TimelinesExplorer extends BorderPane {
 		Group points = new Group();
 		for (LogEvent logEvent : events) {
 			LogEventNode node = new LogEventNode(logEvent);
+			listeNode.add(node);
 			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
 			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 			node.setTailleX(logEvent.getDuration()/2);
@@ -826,9 +824,14 @@ public class TimelinesExplorer extends BorderPane {
 	
 	private void updatehighlight(){
 		logEventsManager.getSelectedList().clear();
+		ArrayList<LogEvent> listeEvent = logEventsManager.getTimeSortedLogEventsAsArrayList();
+		for(LogEvent event : listeEvent){
+			
+		}
+		
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
-				String key=listeNode.get(i).getLogEvent().getLabel();
+				String key=((LogEventNode) listeNode.get(i)).getLogEvent().getLabel();
 				LogEvent logEvent=listeNode.get(i).getLogEvent();
 				if(logEventsManager.getSelectedList().containsKey(key)){
 					logEventsManager.getSelectedList().get(key).add(logEvent);
