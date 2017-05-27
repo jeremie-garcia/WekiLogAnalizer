@@ -191,6 +191,7 @@ public class TimelinesExplorer extends BorderPane {
 		contextMenu= new ContextMenu(this, pane);
 		superPane.getChildren().add(pane);
 		pane.setVisible(false);
+
 		
 		/**
 		 * This method creates a selection rectangle.
@@ -199,6 +200,7 @@ public class TimelinesExplorer extends BorderPane {
 			@Override
 			public void handle(MouseEvent event) {
 				pane.setVisible(true);
+
 				contextMenu.cacher();
 				if (areInNode==false){
 				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
@@ -251,11 +253,13 @@ public class TimelinesExplorer extends BorderPane {
 			public void handle(MouseEvent event) {
 				if(LogEventsManager.getSelectedList().size()>1 && !displayMenuOnce){
 					pane.setVisible(true);
+					pane.setMouseTransparent(false);
 					contextMenu.afficher(event.getX(), event.getY());
 					displayMenuOnce=true;
 				}
 				else{
 					pane.setVisible(false);
+					pane.setMouseTransparent(true);
 				}
 				move=false;	
 				pane.getChildren().remove(rectangleSelec);
