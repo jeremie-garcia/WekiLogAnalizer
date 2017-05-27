@@ -77,7 +77,6 @@ public class TimelinesExplorer extends BorderPane {
 	private StackPane superPane;
 	private RangeSelector rangeSelector;
 	private TimeRuler timeRuler;
-	private ContextMenu contextMenu;
 	
 	// visibility offset are used to display extended scene portions to avoid
 	// masquing elements
@@ -98,7 +97,10 @@ public class TimelinesExplorer extends BorderPane {
 	private ArrayList<LogEventNode> listeNode;
 	private double tailleFenetre=0;
 	
-
+	//Pour le menu contextuel
+	private ContextMenu contextMenu;
+	private boolean displayMenuOnce;
+	
 	/**
 	 * Builds a timelines explorer using a logManager
 	 *
@@ -107,9 +109,12 @@ public class TimelinesExplorer extends BorderPane {
 	 */
 	public TimelinesExplorer(LogEventsManager logManager) {
 		super();
+		
+		displayMenuOnce=false; 
+
 		this.setPrefWidth(800);
 		this.setPrefHeight(500);
-
+		
 		this.logEventsManager = logManager;
 		this.unitConverter = new UnitConverter(0, 1000);
 		
@@ -185,13 +190,15 @@ public class TimelinesExplorer extends BorderPane {
 		 */
 		contextMenu= new ContextMenu(this, pane);
 		superPane.getChildren().add(pane);
-
+		pane.setVisible(false);
+		
 		/**
 		 * This method creates a selection rectangle.
 		 */
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				pane.setVisible(true);
 				contextMenu.cacher();
 				if (areInNode==false){
 				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
@@ -209,6 +216,8 @@ public class TimelinesExplorer extends BorderPane {
 //				pane.setPrefHeight(10000000);
 //				pane.setPrefWidth(100000000);
 //
+				//superPane.getChildren().add(pane);
+				
 //				pane.getChildren().add(test);
 				//centralPane.getChildren().add(pane);
 				
@@ -240,13 +249,16 @@ public class TimelinesExplorer extends BorderPane {
 		this.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if(!logEventsManager.getSelectedList().isEmpty()){
+				if(LogEventsManager.getSelectedList().size()>1 && !displayMenuOnce){
+					pane.setVisible(true);
 					contextMenu.afficher(event.getX(), event.getY());
+					displayMenuOnce=true;
+				}
+				else{
+					pane.setVisible(false);
 				}
 				move=false;	
 				pane.getChildren().remove(rectangleSelec);
-	
-
 			}	
 		});
 		
@@ -834,7 +846,7 @@ public class TimelinesExplorer extends BorderPane {
 	
 	private void updateHighlight(){
 		logEventsManager.getSelectedList().clear();
-		
+		displayMenuOnce=false;
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
 				String key=((LogEventNode) listeNode.get(i)).getLogEvent().getLabel();

@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
 * This class represents the contextual Menu that has to appear after a selection to 
@@ -24,7 +26,8 @@ import javafx.scene.shape.Shape;
 
 public class ContextMenu{
 	private TimelinesExplorer tlExplorer;
-	private String label;
+	private Text labelFusion;
+	private Text labelNothing;
 	private Pane pane;
 	private Shape boutonFusion;
 	private Shape boutonDoNothing;
@@ -32,7 +35,6 @@ public class ContextMenu{
 	
 	public ContextMenu(TimelinesExplorer tlExplorer, Pane pane){
 		this.tlExplorer=tlExplorer;
-		this.label="Fusion";
 		this.pane=pane;
 		Ellipse step1 = new Ellipse();
 		step1.setCenterX(0);
@@ -54,6 +56,7 @@ public class ContextMenu{
 		boutonFusion.setFill(Color.DARKGREY);
 		boutonFusion.setStroke(Color.BLACK);
 		boutonFusion.setOpacity(0.5);
+		labelFusion=new Text("Fusion");
 		this.boutonFusion.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -89,6 +92,8 @@ public class ContextMenu{
 		boutonDoNothing.setFill(Color.DARKGREY);
 		boutonDoNothing.setStroke(Color.BLACK);
 		boutonDoNothing.setOpacity(0.5);
+		labelNothing=new Text("Do Nothing");
+		labelNothing.setFont(Font.font(9));
 		this.boutonDoNothing.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -103,7 +108,7 @@ public class ContextMenu{
 		});
 		boutonFusion.setVisible(false);
 		boutonDoNothing.setVisible(false);
-		pane.getChildren().addAll(boutonFusion,boutonDoNothing);
+		pane.getChildren().addAll(boutonFusion,boutonDoNothing,labelFusion,labelNothing);
 
 
 	}
@@ -111,14 +116,18 @@ public class ContextMenu{
 	public void afficher(double x,double y){
 		System.out.println("blabl");
 		boutonFusion.relocate(x-30,y-30);
+		labelFusion.relocate(x-17,y-22);
 		boutonDoNothing.relocate(x-30, y);
-		boutonFusion.toFront();
-		boutonDoNothing.toFront();
+		labelNothing.relocate(x-22, y+7);
 		boutonFusion.setVisible(true);
 		boutonDoNothing.setVisible(true);
+		labelFusion.setVisible(true);
+		labelNothing.setVisible(true);
 	}
 	public void cacher(){
 		boutonFusion.setVisible(false);
 		boutonDoNothing.setVisible(false);
+		labelFusion.setVisible(false);
+		labelNothing.setVisible(false);
 	}
 }

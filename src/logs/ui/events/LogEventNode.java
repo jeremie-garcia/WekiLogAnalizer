@@ -67,6 +67,7 @@ public class LogEventNode extends Group {
 					prevActiveNode.highlight(false);
 				}
 				prevActiveNode = LogEventNode.this;
+				event.consume();
 			}
 		});
 		
@@ -82,6 +83,7 @@ public class LogEventNode extends Group {
 					LogEventNode.this.highlight2(true);
 				}
 				TimelinesExplorer.setInNode(false);
+				event.consume();
 			}
 		});
 		
@@ -124,6 +126,7 @@ public class LogEventNode extends Group {
 				if(!TimelinesExplorer.areInNode){
 					highlight2(false);
 				}
+				event.consume();
 			}
 		});
 		
