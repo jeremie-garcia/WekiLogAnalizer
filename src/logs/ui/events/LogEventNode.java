@@ -132,12 +132,6 @@ public class LogEventNode extends Group {
 		/**
 		 * This method starts the selection
 		 */
-		this.addEventFilter(KeyEvent.KEY_PRESSED, evt -> {
-			System.out.println("bla");
-	        if (evt.getCode() == KeyCode.CONTROL) {
-	            evt.consume();
-	        }
-		});
 	}
 	
 	

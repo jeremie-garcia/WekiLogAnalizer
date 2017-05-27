@@ -242,8 +242,6 @@ public abstract class LogEventsManager {
 //			catch(IOException e){
 //				System.out.println("Impossible d'ouvrir ou de créer le fichier");
 //			}
-			selectedList.clear();
-			
 			return map;
 			}
 		}

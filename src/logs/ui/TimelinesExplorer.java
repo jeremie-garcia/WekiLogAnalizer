@@ -32,6 +32,8 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
@@ -100,6 +102,8 @@ public class TimelinesExplorer extends BorderPane {
 	//Pour le menu contextuel
 	private ContextMenu contextMenu;
 	private boolean displayMenuOnce;
+	private double mouseXpos;
+	private double mouseYpos;
 	
 	/**
 	 * Builds a timelines explorer using a logManager
@@ -192,14 +196,20 @@ public class TimelinesExplorer extends BorderPane {
 		superPane.getChildren().add(pane);
 		pane.setVisible(false);
 
-		
 		/**
 		 * This method creates a selection rectangle.
 		 */
+		this.setOnMouseMoved(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				mouseXpos=event.getX();
+				mouseYpos=event.getY();
+			}
+		});
+		
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				pane.setVisible(true);
 
 				contextMenu.cacher();
 				if (areInNode==false){
@@ -252,8 +262,6 @@ public class TimelinesExplorer extends BorderPane {
 			@Override
 			public void handle(MouseEvent event) {
 				if(LogEventsManager.getSelectedList().size()>1 && !displayMenuOnce){
-					pane.setVisible(true);
-					pane.setMouseTransparent(false);
 					contextMenu.afficher(event.getX(), event.getY());
 					displayMenuOnce=true;
 				}
@@ -265,7 +273,7 @@ public class TimelinesExplorer extends BorderPane {
 				pane.getChildren().remove(rectangleSelec);
 			}	
 		});
-		
+			
 		
 	}
 
@@ -337,10 +345,14 @@ public class TimelinesExplorer extends BorderPane {
 		if ((boolean) map.get("fusion").get(0)){
 			map.remove("isFusion");
 			animationFusion(map);
+			LogEventsManager.getSelectedList().clear();
+			updateHighlight();
 		}
 		else{
 			map.remove("isFusion");
 			patternFinding(map);
+			LogEventsManager.getSelectedList().clear();
+			updateHighlight();
 		}
 	}
 	//Fait pour le projet SITA
@@ -913,5 +925,17 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	public Pane getPane(){
 		return pane;
+	}
+	public ContextMenu getContextMenu(){
+		return contextMenu;
+	}
+	public double getMouseXpos(){
+		return mouseXpos;
+	}
+	public double getMouseYpos(){
+		return mouseYpos;
+	}
+	public LogEventsManager getLogEventsManager(){
+		return logEventsManager;
 	}
 }

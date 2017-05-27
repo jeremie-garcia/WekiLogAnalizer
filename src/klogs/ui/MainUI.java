@@ -99,15 +99,15 @@ public class MainUI extends Application {
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
 
-		/*scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-            	if (event.getCode()==KeyCode.CONTROL){
-            		//logEventsManager.recherchePattern();
-            		timelinesExplorer.animationFusion();
+            	timelinesExplorer.getLogEventsManager();
+				if (event.getCode()==KeyCode.CONTROL && LogEventsManager.getSelectedList().size()>1){
+            		timelinesExplorer.getContextMenu().afficher(timelinesExplorer.getMouseXpos(), timelinesExplorer.getMouseYpos());
             	}
             }
-        });*/
+        });
 
 		primaryStage.setScene(scene);
 		primaryStage.show();

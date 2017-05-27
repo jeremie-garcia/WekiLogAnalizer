@@ -125,8 +125,11 @@ public class ContextMenu{
 		boutonDoNothing.setVisible(true);
 		labelFusion.setVisible(true);
 		labelNothing.setVisible(true);
+		pane.setVisible(true);
+		pane.setMouseTransparent(false);
 	}
 	public void cacher(){
+		pane.setVisible(true);
 		boutonFusion.setVisible(false);
 		boutonDoNothing.setVisible(false);
 		labelFusion.setVisible(false);
