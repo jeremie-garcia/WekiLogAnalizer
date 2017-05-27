@@ -57,6 +57,7 @@ public class ContextMenu{
 		boutonFusion.setStroke(Color.BLACK);
 		boutonFusion.setOpacity(0.5);
 		labelFusion=new Text("Fusion");
+		labelFusion.setPickOnBounds(false);
 		this.boutonFusion.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -94,6 +95,7 @@ public class ContextMenu{
 		boutonDoNothing.setOpacity(0.5);
 		labelNothing=new Text("Do Nothing");
 		labelNothing.setFont(Font.font(9));
+		labelNothing.setPickOnBounds(false);
 		this.boutonDoNothing.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
