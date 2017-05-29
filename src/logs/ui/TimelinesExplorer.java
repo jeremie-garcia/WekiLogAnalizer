@@ -261,16 +261,18 @@ public class TimelinesExplorer extends BorderPane {
 		this.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if(LogEventsManager.getSelectedList().size()>1 && !displayMenuOnce){
-					contextMenu.afficher(event.getX(), event.getY());
-					displayMenuOnce=true;
+				if (!event.isControlDown()){
+					if(LogEventsManager.getSelectedList().size()>1 && !displayMenuOnce){
+						contextMenu.afficher(event.getX(), event.getY());
+						displayMenuOnce=true;
+					}
+					else{
+						pane.setVisible(false);
+						pane.setMouseTransparent(true);
+					}
+					move=false;	
+					pane.getChildren().remove(rectangleSelec);
 				}
-				else{
-					pane.setVisible(false);
-					pane.setMouseTransparent(true);
-				}
-				move=false;	
-				pane.getChildren().remove(rectangleSelec);
 			}	
 		});
 			
@@ -937,5 +939,11 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	public LogEventsManager getLogEventsManager(){
 		return logEventsManager;
+	}
+	public boolean getDisplayMenuOnce(){
+		return displayMenuOnce;
+	}
+	public void setDisplayMenuOnce(boolean bool){
+		displayMenuOnce=bool;
 	}
 }

@@ -1,6 +1,8 @@
 package logs.ui;
 
 
+import javax.xml.stream.EventFilter;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -31,7 +33,6 @@ public class ContextMenu{
 	private Pane pane;
 	private Shape boutonFusion;
 	private Shape boutonDoNothing;
-	private Shape boutonFinal;
 	
 	public ContextMenu(TimelinesExplorer tlExplorer, Pane pane){
 		this.tlExplorer=tlExplorer;
@@ -57,20 +58,23 @@ public class ContextMenu{
 		boutonFusion.setStroke(Color.BLACK);
 		boutonFusion.setOpacity(0.5);
 		labelFusion=new Text("Fusion");
+		labelFusion.setMouseTransparent(true);
 		labelFusion.setPickOnBounds(false);
 		this.boutonFusion.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+				System.out.println("VOILLALALLALLA");
 				tlExplorer.checkFusion();
 			}
 		});
-		this.boutonFusion.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		this.boutonFusion.setOnMouseEntered( new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
+            public void handle(MouseEvent event) {
 				boutonFusion.setOpacity(1);
-			}
-		});
-		this.boutonFusion.setOnMouseExited(new EventHandler<MouseEvent>() {
+            };
+        });
+
+		this.boutonFusion.setOnMouseExited( new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				boutonFusion.setOpacity(0.5);
@@ -95,13 +99,15 @@ public class ContextMenu{
 		boutonDoNothing.setOpacity(0.5);
 		labelNothing=new Text("Do Nothing");
 		labelNothing.setFont(Font.font(9));
+		labelNothing.setMouseTransparent(true);
 		labelNothing.setPickOnBounds(false);
 		this.boutonDoNothing.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
+            public void handle(MouseEvent event) {
 				boutonDoNothing.setOpacity(1);
-			}
-		});
+            };
+        });
+
 		this.boutonDoNothing.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -111,8 +117,6 @@ public class ContextMenu{
 		boutonFusion.setVisible(false);
 		boutonDoNothing.setVisible(false);
 		pane.getChildren().addAll(boutonFusion,boutonDoNothing,labelFusion,labelNothing);
-
-
 	}
 	
 	public void afficher(double x,double y){
@@ -134,5 +138,14 @@ public class ContextMenu{
 		boutonDoNothing.setVisible(false);
 		labelFusion.setVisible(false);
 		labelNothing.setVisible(false);
+	}
+	public void cacherControl(){
+		pane.setVisible(true);
+		boutonFusion.setVisible(false);
+		boutonDoNothing.setVisible(false);
+		labelFusion.setVisible(false);
+		labelNothing.setVisible(false);
+		pane.setVisible(false);
+		pane.setMouseTransparent(true);
 	}
 }

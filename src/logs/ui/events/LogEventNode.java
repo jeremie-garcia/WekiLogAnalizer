@@ -1,21 +1,13 @@
 package logs.ui.events;
 
 
-import java.awt.Point;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;

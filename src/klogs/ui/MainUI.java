@@ -1,7 +1,10 @@
 package klogs.ui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import javafx.application.Application;
@@ -36,6 +39,7 @@ import klogs.KLogConfiguration;
 import klogs.KLogEventsManager;
 import klogs.utils.GraderTool;
 import logs.config.Configuration;
+import logs.model.LogEvent;
 import logs.model.LogEventsManager;
 import logs.ui.EventInspector;
 import logs.ui.FusionManager;
@@ -50,6 +54,7 @@ import logs.utils.FileCellRenderer;
  *
  * @author jeremiegarcia
  *
+ *with the participation of marie, clement and charlelie
  */
 public class MainUI extends Application {
 	private String logFile = "";
@@ -58,6 +63,8 @@ public class MainUI extends Application {
 	//private Grade currentGrade;
 
 	private TimelinesExplorer timelinesExplorer;
+
+	private HashMap<String,ArrayList<LogEvent>> oldSelectedList;
 
 	private MainUI app;
 
@@ -93,18 +100,32 @@ public class MainUI extends Application {
 		timelinesExplorer = new TimelinesExplorer(this.logEventsManager);
 		root.setCenter(timelinesExplorer);
 
-		FusionManager fusionManager=new FusionManager(this.logEventsManager, timelinesExplorer);
+		FusionManager fusionManager=new FusionManager(timelinesExplorer);
 		leftBox.getChildren().add(fusionManager);
 		
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
-
+		oldSelectedList=new HashMap<String,ArrayList<LogEvent>>();
+		//Fait pour le projet SITA
+		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+				if (event.getCode()==KeyCode.CONTROL){
+					oldSelectedList.putAll(LogEventsManager.getSelectedList());
+					timelinesExplorer.getContextMenu().cacherControl();
+					timelinesExplorer.setDisplayMenuOnce(false);
+            	}
+            }
+        });
 		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-            	timelinesExplorer.getLogEventsManager();
 				if (event.getCode()==KeyCode.CONTROL && LogEventsManager.getSelectedList().size()>1){
-            		timelinesExplorer.getContextMenu().afficher(timelinesExplorer.getMouseXpos(), timelinesExplorer.getMouseYpos());
+					System.out.println(LogEventsManager.equalSelectedList(oldSelectedList));
+					if(!timelinesExplorer.getDisplayMenuOnce() && !LogEventsManager.equalSelectedList(oldSelectedList)){
+						timelinesExplorer.getContextMenu().afficher(timelinesExplorer.getMouseXpos(), timelinesExplorer.getMouseYpos());
+						timelinesExplorer.setDisplayMenuOnce(true);
+					}
             	}
             }
         });

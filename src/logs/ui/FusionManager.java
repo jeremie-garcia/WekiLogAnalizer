@@ -23,9 +23,8 @@ public class FusionManager extends VBox{
 	
 	private Button buttonFusion;
 	
-	public FusionManager(LogEventsManager eveManag, TimelinesExplorer tlexp){
+	public FusionManager(TimelinesExplorer tlexp){
 		super();
-		this.logEventsManager=eveManag;
 		this.tlexp= tlexp;
 		this.setPrefSize(300, 0);
 
