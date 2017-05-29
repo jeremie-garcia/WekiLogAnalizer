@@ -235,28 +235,42 @@ public abstract class LogEventsManager {
 		}
 
 	public static boolean equalSelectedList(HashMap<String, ArrayList<LogEvent>> oldSelectedList){
+		if(oldSelectedList.size()==selectedList.size()){
+			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
+			{
+				String key= entry.getKey();
+				ArrayList<LogEvent> listEvent=entry.getValue();
+				if (oldSelectedList.containsKey(key)){
+					if(listEvent.size()!=oldSelectedList.get(key).size()){
+						return false;
+					}
+					else{
+						for(LogEvent evt:listEvent){
+							if (!oldSelectedList.get(key).contains(evt)){
+								return false;
+							}
+						}
+					}
+				}
+				else{
+					return false;
+				}
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public static HashMap<String, ArrayList<LogEvent>> copieSelectedList(){
+		HashMap<String, ArrayList<LogEvent>> temp=new HashMap<String, ArrayList<LogEvent>>();
 		for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
 		{
 			String key= entry.getKey();
 			ArrayList<LogEvent> listEvent=entry.getValue();
-			System.out.println(listEvent);
-			   if (oldSelectedList.containsKey(key)){
-				   if(!(listEvent.size()==oldSelectedList.get(key).size())){
-					   return false;
-				   }
-				   else{
-					   for(LogEvent evt:listEvent){
-						   if (!oldSelectedList.get(key).contains(evt)){
-							   return false;
-						   }
-					   }
-				   }
-			   }
-			   else{
-				   return false;
-			   }
+			temp.put(new String(key), new ArrayList<LogEvent>(listEvent));
 		}
-		return true;
+		return temp;
 	}
-	
 	}

@@ -110,7 +110,7 @@ public class MainUI extends Application {
             @Override
             public void handle(KeyEvent event) {
 				if (event.getCode()==KeyCode.CONTROL){
-					oldSelectedList.putAll(LogEventsManager.getSelectedList());
+					oldSelectedList=LogEventsManager.copieSelectedList();
 					timelinesExplorer.getContextMenu().cacherControl();
 					timelinesExplorer.setDisplayMenuOnce(false);
             	}
@@ -120,7 +120,6 @@ public class MainUI extends Application {
             @Override
             public void handle(KeyEvent event) {
 				if (event.getCode()==KeyCode.CONTROL && LogEventsManager.getSelectedList().size()>1){
-					System.out.println(LogEventsManager.equalSelectedList(oldSelectedList));
 					if(!timelinesExplorer.getDisplayMenuOnce() && !LogEventsManager.equalSelectedList(oldSelectedList)){
 						timelinesExplorer.getContextMenu().afficher(timelinesExplorer.getMouseXpos(), timelinesExplorer.getMouseYpos());
 						timelinesExplorer.setDisplayMenuOnce(true);
