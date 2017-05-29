@@ -110,7 +110,6 @@ public class ContextMenu{
 	}
 	
 	public void afficher(double x,double y){
-		System.out.println("blabl");
 		boutonFusion.relocate(x-30,y-30);
 		labelFusion.relocate(x-17,y-22);
 		boutonDoNothing.relocate(x-30, y);

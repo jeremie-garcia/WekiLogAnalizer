@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
@@ -203,8 +205,7 @@ public class TimelinesExplorer extends BorderPane {
 				pointDepSelec=new Point2D.Double(event.getX(),event.getY());
 				rectangleSelec=createRectangle(pointDepSelec, pointDepSelec);
 				move=true;
-				pane.getChildren().add(rectangleSelec);
-				
+				pane.getChildren().add(rectangleSelec);				
 			}
 			}
 			
@@ -240,9 +241,18 @@ public class TimelinesExplorer extends BorderPane {
 					else{
 						pane.setVisible(false);
 						pane.setMouseTransparent(true);
+						if(displayMenuOnce){
+							for (LogEventNode evt : listeNode){
+								evt.highlight2(false);
+								evt.setSelected(false);
+							}
+							LogEventsManager.getSelectedList().clear();
+						}
 					}
 					move=false;	
 					pane.getChildren().remove(rectangleSelec);
+					
+
 				}
 			}	
 		});
@@ -319,13 +329,11 @@ public class TimelinesExplorer extends BorderPane {
 			map.remove("isFusion");
 			animationFusion(map);
 			LogEventsManager.getSelectedList().clear();
-			updateHighlight();
 		}
 		else{
 			map.remove("isFusion");
 			patternFinding(map);
 			LogEventsManager.getSelectedList().clear();
-			updateHighlight();
 		}
 	}
 	//Fait pour le projet SITA

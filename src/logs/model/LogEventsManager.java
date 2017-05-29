@@ -132,24 +132,24 @@ public abstract class LogEventsManager {
 			}
 			Collections.sort(intermediaire);
 			
-			for(LogEvent evt:intermediaire){
-				order.add(evt.getLabel());
+			for(int i=0; i<intermediaire.size();i++){
+				order.add(intermediaire.get(i).getLabel());
+				System.out.println(order.get(i));
 			}
 			
 			//recherche de pattern
 			int a=0;
-			for (LogEvent evt:eventsList){
+			for (int j=0;j<eventsList.size();j++){
+				LogEvent evt=eventsList.get(j);
 				String key=order.get(a);
 				if(evt.getLabel().equals(key)){
-					System.out.println("Trouvé un element "+String.valueOf(a));
 					newLigne.add(evt);
 					a++;
 					if(a==order.size()){a=0;}
 				}
 				else{
 					if(order.contains(evt.getLabel())){
-						isFusion.set(0, false);
-						//Les lignes ne sont pas fusionnables
+						isFusion.set(0, false);//Les lignes ne sont pas fusionnables
 						if(evt.getLabel().equals(order.get(0))){
 							for(int cst=0;cst<a;cst++){
 								newLigne.remove(newLigne.size()-cst-1);
