@@ -1,16 +1,9 @@
 package logs.ui;
 
 
-import javax.xml.stream.EventFilter;
-
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
@@ -27,7 +20,6 @@ import javafx.scene.text.Text;
 */
 
 public class ContextMenu{
-	private TimelinesExplorer tlExplorer;
 	private Text labelFusion;
 	private Text labelNothing;
 	private Pane pane;
@@ -35,7 +27,6 @@ public class ContextMenu{
 	private Shape boutonDoNothing;
 	
 	public ContextMenu(TimelinesExplorer tlExplorer, Pane pane){
-		this.tlExplorer=tlExplorer;
 		this.pane=pane;
 		Ellipse step1 = new Ellipse();
 		step1.setCenterX(0);
@@ -63,7 +54,6 @@ public class ContextMenu{
 		this.boutonFusion.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				System.out.println("VOILLALALLALLA");
 				tlExplorer.checkFusion();
 			}
 		});

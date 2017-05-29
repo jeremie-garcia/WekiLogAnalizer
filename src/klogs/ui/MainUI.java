@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import klogs.KLogConfiguration;
 import klogs.KLogEventsManager;
-import klogs.utils.GraderTool;
 import logs.config.Configuration;
 import logs.model.LogEvent;
 import logs.model.LogEventsManager;

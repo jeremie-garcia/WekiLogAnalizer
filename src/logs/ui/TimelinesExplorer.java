@@ -1,23 +1,15 @@
 package logs.ui;
 
-import java.awt.Component;
-import java.awt.List;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.LogManager;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,22 +24,17 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -213,25 +200,10 @@ public class TimelinesExplorer extends BorderPane {
 
 				contextMenu.cacher();
 				if (areInNode==false){
-				//TimelinesExplorer.animationFusion(event.getScreenX(), event.getScreenY());
 				pointDepSelec=new Point2D.Double(event.getX(),event.getY());
 				rectangleSelec=createRectangle(pointDepSelec, pointDepSelec);
 				move=true;
 				pane.getChildren().add(rectangleSelec);
-				
-				//System.out.println(pane.getChildren().size());
-
-//				Rectangle test = new Rectangle();
-//				test.widthProperty().bind(pane.prefWidthProperty());
-//				test.heightProperty().bind(pane.prefHeightProperty());
-//				test.setFill(Color.RED);
-//				pane.setPrefHeight(10000000);
-//				pane.setPrefWidth(100000000);
-//
-				//superPane.getChildren().add(pane);
-				
-//				pane.getChildren().add(test);
-				//centralPane.getChildren().add(pane);
 				
 			}
 			}
@@ -247,7 +219,6 @@ public class TimelinesExplorer extends BorderPane {
 				
 				if(move){
 					Point2D.Double newPoint = new Point2D.Double(event.getX(),event.getY());
-					//pointDepSelec.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 					setRectangle(rectangleSelec, pointDepSelec, newPoint);
 					updateHighlight();	
 				}
@@ -443,7 +414,6 @@ public class TimelinesExplorer extends BorderPane {
 			LogEventNode node = new LogEventNode(logEvent);
 			listeNode.add(node);
 			node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp() + logEvent.getDuration()/2));
-			//node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 			node.setTailleX(logEvent.getDuration()/2);
 			Text textDuration = node.getText();
 			textDuration.setText(String.valueOf(logEvent.getDuration()/1000)+"s");
@@ -495,14 +465,6 @@ public class TimelinesExplorer extends BorderPane {
 		indexedKeys.remove(maxIndexKey);
 
 		double height = this.centralPane.getChildren().get(0).getBoundsInLocal().getHeight();
-
-//		int o = 0;
-//		
-//		for (Node node : this.centralPane.getChildren()){
-//			System.out.println(("height " + o + " = " + ((LogEventsPane) node).getBoundsInLocal().getHeight()));
-//			o++;
-//		}
-		
 		final int maxIndexFinal = maxIndex;
 		
 		// Interpolation LOG plutôt que linéaire
@@ -863,21 +825,21 @@ public class TimelinesExplorer extends BorderPane {
 	}
 	
 	private void updateHighlight(){
-		logEventsManager.getSelectedList().clear();
+		LogEventsManager.getSelectedList().clear();
 		displayMenuOnce=false;
 		for (int i=0;i<listeNode.size();i++){
 			if(areInRectangle(listeNode.get(i), rectangleSelec, i)){
-				String key=((LogEventNode) listeNode.get(i)).getLogEvent().getLabel();
+				String key=listeNode.get(i).getLogEvent().getLabel();
 				LogEvent logEvent=listeNode.get(i).getLogEvent();
-				if(logEventsManager.getSelectedList().containsKey(key)){
-					logEventsManager.getSelectedList().get(key).add(logEvent);
+				if(LogEventsManager.getSelectedList().containsKey(key)){
+					LogEventsManager.getSelectedList().get(key).add(logEvent);
 
 				}
 				else{
 
 					ArrayList<LogEvent> bla=new ArrayList();
 					bla.add(logEvent);
-					logEventsManager.getSelectedList().put(key,bla);
+					LogEventsManager.getSelectedList().put(key,bla);
 				}
 				listeNode.get(i).highlight2(true);
 				listeNode.get(i).setSelected(true);

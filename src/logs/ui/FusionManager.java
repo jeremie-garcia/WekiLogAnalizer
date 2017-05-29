@@ -5,10 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import logs.model.LogEventsManager;
-import logs.ui.events.LogEventNode;
 
 /**
  * FusionManager is a class that displays all the elements allowing the fusion of LogEvent
@@ -18,16 +15,12 @@ import logs.ui.events.LogEventNode;
  */
 public class FusionManager extends VBox{
 	
-	private LogEventsManager logEventsManager;
-	private TimelinesExplorer tlexp;
 	
 	private Button buttonFusion;
 	
 	public FusionManager(TimelinesExplorer tlexp){
 		super();
-		this.tlexp= tlexp;
 		this.setPrefSize(300, 0);
-
 		Label title = new Label("Interaction");
 		
 		buttonFusion= new Button("fusion");

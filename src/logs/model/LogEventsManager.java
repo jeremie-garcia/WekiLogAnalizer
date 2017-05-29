@@ -1,9 +1,6 @@
 package logs.model;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +29,7 @@ public abstract class LogEventsManager {
 	
 	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap<String, ArrayList<LogEvent>>();
 
-	private static String pathFileSauvegarde = "./tmp/sauvegarde.txt";
+	private static String pathFileSauvegarde = "./sauvegarde/sauvegarde.txt";
 	
 	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
 		return selectedList;
@@ -136,7 +133,7 @@ public abstract class LogEventsManager {
 			Collections.sort(intermediaire);
 			
 			for(LogEvent evt:intermediaire){
-				order.add((String) evt.getLabel());
+				order.add(evt.getLabel());
 			}
 			
 			//recherche de pattern
@@ -203,15 +200,6 @@ public abstract class LogEventsManager {
 				}
 			}
 			Collections.sort(eventsList);
-			/*for (LogEvent elt : newLigneAggregated){
-				int temp=0;
-				for(LogEvent bla : eventsList){
-					if(bla.getTimeStamp()>elt.getTimeStamp()){
-						eventsList.add(temp-1,bla);
-					}
-					temp++;
-				}
-			}*/
 			
 			Map <String,ArrayList> map=new HashMap();
 			map.put("keyList",order);

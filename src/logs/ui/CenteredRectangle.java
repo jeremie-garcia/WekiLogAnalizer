@@ -4,7 +4,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 public class CenteredRectangle extends Rectangle {

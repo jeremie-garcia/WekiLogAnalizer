@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import weka.gui.SetInstancesPanel;
 
 /**
  * This is a simple container for logEventsNode It stores a log key and an index
