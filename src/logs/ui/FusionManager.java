@@ -23,7 +23,7 @@ public class FusionManager extends VBox{
 		this.setPrefSize(300, 0);
 		Label title = new Label("Interaction");
 		
-		buttonFusion= new Button("fusion");
+		buttonFusion= new Button("Fusion");
 		buttonFusion.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {

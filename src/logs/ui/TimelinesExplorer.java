@@ -185,9 +185,6 @@ public class TimelinesExplorer extends BorderPane {
 		superPane.getChildren().add(pane);
 		pane.setVisible(false);
 
-		/**
-		 * This method creates a selection rectangle.
-		 */
 		this.setOnMouseMoved(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -195,6 +192,10 @@ public class TimelinesExplorer extends BorderPane {
 				mouseYpos=event.getY();
 			}
 		});
+	
+		/**
+		 * This method creates a selection rectangle.
+		 */
 		
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -208,7 +209,6 @@ public class TimelinesExplorer extends BorderPane {
 				pane.getChildren().add(rectangleSelec);				
 			}
 			}
-			
 		});
 		
 		/**
@@ -249,14 +249,11 @@ public class TimelinesExplorer extends BorderPane {
 							LogEventsManager.getSelectedList().clear();
 						}
 					}
-					move=false;	
+					move=false;
 					pane.getChildren().remove(rectangleSelec);
-					
-
 				}
 			}	
 		});
-			
 		
 	}
 

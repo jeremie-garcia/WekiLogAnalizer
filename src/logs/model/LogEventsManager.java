@@ -134,7 +134,6 @@ public abstract class LogEventsManager {
 			
 			for(int i=0; i<intermediaire.size();i++){
 				order.add(intermediaire.get(i).getLabel());
-				System.out.println(order.get(i));
 			}
 			
 			//recherche de pattern
@@ -152,7 +151,7 @@ public abstract class LogEventsManager {
 						isFusion.set(0, false);//Les lignes ne sont pas fusionnables
 						if(evt.getLabel().equals(order.get(0))){
 							for(int cst=0;cst<a;cst++){
-								newLigne.remove(newLigne.size()-cst-1);
+								newLigne.remove(newLigne.size()-1);
 							}
 							newLigne.add(evt);
 							a=1;
