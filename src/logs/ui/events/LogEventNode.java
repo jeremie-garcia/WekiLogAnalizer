@@ -1,6 +1,5 @@
 package logs.ui.events;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,159 +20,97 @@ import logs.utils.JavaFXUtils;
  *
  * @author jeremiegarcia
  *
- * with the participation of marie, clement and charlelie
+ *         with the participation of marie, clement and charlelie
  */
 public class LogEventNode extends Group {
 
+	// Data
 	private LogEvent logEvent;
-	private static LogEventNode prevActiveNode;
-	private Boolean selected;
+	private String labelOverlay = "";
+
+	// States
+	private boolean isSelected = false;
+
+	// Graphical appearance
 	private double RADIUS = 6;
-//	private Ellipse item;
 	private CenteredRectangle item;
-	private Text text;
-	private Color color = Color.BLUE;
+	private Text text = new Text();
+	private Color fillColor = Color.BLUE;
 
 	/**
 	 * builds a LogEventNode with a LogEvent
 	 *
-	 * @param event : The event you want to create a node of.
+	 * @param event
 	 */
 	public LogEventNode(LogEvent event) {
 		super();
 		this.logEvent = event;
-//		item = new Ellipse(this.logEvent.getTimeStamp(), 10, RADIUS / 2, RADIUS);
 		item = new CenteredRectangle(this.logEvent.getTimeStamp(), -2, RADIUS / 2, RADIUS);
-		text = new Text();
 		text.setPickOnBounds(false);
 		this.getChildren().add(item);
-		selected=false;
-		
+
 		this.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				TimelinesExplorer.setInNode(true);
 				EventInspector.getInstance().update(logEvent);
-				LogEventNode.this.highlight(true);
-				if (prevActiveNode != null && prevActiveNode != LogEventNode.this && !prevActiveNode.getSelected()) {
-					prevActiveNode.highlight(false);
-				}
-				prevActiveNode = LogEventNode.this;
+				LogEventNode.this.inspectorHighlight(true);
 			}
 		});
-		
-		//Fait pour le projet SITA
-		/**
-		 * This method highlights the node back in blue if selected
-		 */
 		this.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if(selected){
-					LogEventNode.this.highlight(false);
-					LogEventNode.this.highlight2(true);
-				}
-				TimelinesExplorer.setInNode(false);
+				LogEventNode.this.inspectorHighlight(false);
 			}
 		});
-		
-		//Fait pour le projet SITA
-		/**
-		 * This method selects the node and highlights it
-		 */
-		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if(event.isControlDown()){
-				
-					EventInspector.getInstance().update(logEvent);
-					HashMap<String,ArrayList<LogEvent>> selectedList=LogEventsManager.getSelectedList();
-					String key=((LogEventsPane) LogEventNode.this.getParent().getParent()).getKey();
-					if(selected){
-						selected = false;
-						LogEventNode.this.highlight2(false);
-						selectedList.get(key).remove(logEvent);
-						if (selectedList.get(key).isEmpty()){
-							selectedList.remove(key);
-						}
-					}
-					else{
-						if (selectedList.containsKey(key)){
-							selectedList.get(key).add(logEvent);
-						}
-						else{
-							ArrayList<LogEvent> temp= new ArrayList<LogEvent>();
-							temp.add(logEvent);
-							selectedList.put(key,temp);
-						}
-						selected=true;
-						LogEventNode.this.highlight2(true);
-					}
-					System.out.println(LogEventsManager.getSelectedList());
-				}
-				
-				if(!TimelinesExplorer.areInNode){
-					highlight2(false);
-				}
-			}
-		});
-		
-		highlight(false);
-		
-		//Fait pour le projet SITA
-		/**
-		 * This method starts the selection
-		 */
+
+		this.selectionHighlight(isSelected);
 	}
-	
-	
 
 	public void setFillColor(Color color) {
-		this.color = color;
-		this.item.setFill(this.color);
-
+		this.fillColor = color;
+		this.item.setFill(this.fillColor);
 	}
 
 	/**
-	 * This methods sets the visual parameters to highlight (true or false)
+	 * This methods sets the visual parameters to highlight when the component
+	 * is hovered and the context displayed in the inspector (true or false)
 	 *
-	 * @param setHighlight
+	 * @param isInspectorHighligh
 	 */
-	public void highlight(boolean setHighlight) {
-		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
-		if(color != Color.BLACK){
-			item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
-		}
-		item.setStroke(setHighlight ? Color.RED : Color.BLACK);
-		item.setStrokeWidth(setHighlight ? 2 : 1);
+	public void inspectorHighlight(boolean isInspectorHighligh) {
+		item.setFill(isInspectorHighligh ? JavaFXUtils.getEmphasizedColor(fillColor) : fillColor);
+		item.setRadiusX(isInspectorHighligh ? RADIUS : RADIUS / 2);
 	}
 
-	//Fait pour le projet SITA
 	/**
-	 * This method highlights the node in blue
-	 * 
-	 * @param setHighlight
+	 * This methods sets the visual parameters to highlight when the component
+	 * is selected (true or false)
+	 *
+	 * @param isSelectionHighlight
 	 */
-	public void highlight2(boolean setHighlight) {
-		item.setFill(setHighlight ? JavaFXUtils.getEmphasizedColor(color) : color);
-		if(color != Color.BLACK){
-			item.setRadiusX(setHighlight ? RADIUS : RADIUS / 2);
-		}
-		item.setStroke(setHighlight ? Color.BLUE : Color.BLACK);
-		item.setStrokeWidth(setHighlight ? 2 : 1);
+	public void selectionHighlight(boolean isSelectionHighlight) {
+		item.setFill(isSelectionHighlight ? JavaFXUtils.getEmphasizedColor(fillColor) : fillColor);
+		item.setStroke(isSelectionHighlight ? Color.RED : Color.BLACK);
+		item.setStrokeWidth(isSelectionHighlight ? 2 : 1);
 	}
-	
-	//Fait pour le projet SITA
-	public void setTailleX(double taille){
+
+	/**
+	 * This methods sets the visual parameters to highlight when the component
+	 * is included in a search pattern (true or false)
+	 *
+	 * @param isPatternHighligh
+	 */
+	public void patternHighlight(boolean isPatternHighligh) {
+		item.setFill(isPatternHighligh ? JavaFXUtils.getEmphasizedColor(fillColor) : fillColor);
+		item.setStroke(isPatternHighligh ? Color.GREEN : Color.BLACK);
+		// item.setStrokeWidth(isPatternHighligh ? 2 : 1);
+	}
+
+	public void setTailleX(double taille) {
 		this.item.radiusXProperty().setValue(taille);
-		this.setRadius(taille);
+		this.RADIUS = taille;
 	}
-	
-	//Fait pour le projet SITA
-	public void setRadius(double radius){
-		this.RADIUS = radius;
-	}
-	
+
 	/**
 	 * This methods sets the horizontal position of the node in the scene
 	 *
@@ -182,33 +119,29 @@ public class LogEventNode extends Group {
 	public void setPosX(double posX) {
 		this.item.setCenterX(posX);
 	}
-	
-	public double getPosX(){
+
+	public double getPosX() {
 		return this.item.getCenterX();
 	}
-	
-	//Fait pour le projet SITA
-	public Text getText(){
+
+	public Text getText() {
 		return text;
 	}
-	
-	//Fait pour le projet SITA
-	/**
-	 * This method gets the selection boolean
-	 * 
-	 * @return true if selected
-	 */
-	public Boolean getSelected(){
-		return selected;
+
+	public void setTextOverlay(String text) {
+		this.labelOverlay = text;
 	}
-	
-	public void setSelected(Boolean bool){
-		selected = bool;
+
+	public void setSelected(Boolean isSelected) {
+		this.isSelected = isSelected;
+		this.selectionHighlight(this.isSelected);
 	}
-	public CenteredRectangle getItem(){
+
+	public CenteredRectangle getItem() {
 		return item;
 	}
-	public LogEvent getLogEvent(){
+
+	public LogEvent getLogEvent() {
 		return logEvent;
 	}
 }

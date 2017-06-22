@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author jeremiegarcia
  *
- * with the participation of marie, clement and charlelie
+ *         with the participation of marie, clement and charlelie
  */
 public abstract class LogEventsManager {
 
@@ -26,15 +26,15 @@ public abstract class LogEventsManager {
 	private ArrayList<LogEvent> eventsList;
 
 	private File logFile;
-	
-	private static HashMap<String,ArrayList<LogEvent>> selectedList=new HashMap<String, ArrayList<LogEvent>>();
+
+	private static HashMap<String, ArrayList<LogEvent>> selectedList = new HashMap<String, ArrayList<LogEvent>>();
 
 	private static String pathFileSauvegarde = "./sauvegarde/sauvegarde.txt";
-	
-	public static HashMap<String,ArrayList<LogEvent>> getSelectedList(){
+
+	public static HashMap<String, ArrayList<LogEvent>> getSelectedList() {
 		return selectedList;
 	}
-	
+
 	/**
 	 * Process a logFile and extract the data
 	 */
@@ -102,95 +102,94 @@ public abstract class LogEventsManager {
 		return eventsList;
 	}
 
-	//Fait par le projetSITA
 	/**
-	 * This method searches patterns in the selected lines and creates a line with the aggregates formed
-	 * from the patterns.
-	 * 
+	 * This method searches patterns in the selected lines and creates a line
+	 * with the aggregates formed from the patterns.
+	 *
 	 * It returns a map with the list of aggregated events (key = "eventList")
 	 * and the lines used for the research (key = keyList).
-	 * 
+	 *
 	 * @return Map<String, ArrayList> map
 	 */
-	public Map<String, ArrayList> recherchePattern(){
+	public Map<String, ArrayList> recherchePattern() {
 		ArrayList isFusion = new ArrayList();
 		isFusion.add(true);
-		if (selectedList.isEmpty()){
+		if (selectedList.isEmpty()) {
 			System.out.println("La liste est vide");
 			return null;
-		}
-		else{
-			ArrayList<String> order=new ArrayList<String>();
-			ArrayList<LogEvent> newLigne=new ArrayList<LogEvent>();
+		} else {
+			ArrayList<String> order = new ArrayList<String>();
+			ArrayList<LogEvent> newLigne = new ArrayList<LogEvent>();
 			ArrayList<LogEvent> newLigneAggregated = new ArrayList<LogEvent>();
-			ArrayList<LogEvent> intermediaire=new ArrayList<LogEvent>();
-			
-			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
-			{
-			   ArrayList<LogEvent> evt=entry.getValue();
-			   intermediaire.addAll(evt);
+			ArrayList<LogEvent> intermediaire = new ArrayList<LogEvent>();
+
+			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet()) {
+				ArrayList<LogEvent> evt = entry.getValue();
+				intermediaire.addAll(evt);
 			}
 			Collections.sort(intermediaire);
-			
-			for(int i=0; i<intermediaire.size();i++){
+
+			for (int i = 0; i < intermediaire.size(); i++) {
 				order.add(intermediaire.get(i).getLabel());
 			}
-			
-			//recherche de pattern
-			int a=0;
-			for (int j=0;j<eventsList.size();j++){
-				LogEvent evt=eventsList.get(j);
-				String key=order.get(a);
-				if(evt.getLabel().equals(key)){
+
+			// recherche de pattern
+			int a = 0;
+			for (int j = 0; j < eventsList.size(); j++) {
+				LogEvent evt = eventsList.get(j);
+				String key = order.get(a);
+				if (evt.getLabel().equals(key)) {
 					newLigne.add(evt);
 					a++;
-					if(a==order.size()){a=0;}
-				}
-				else{
-					if(order.contains(evt.getLabel())){
-						isFusion.set(0, false);//Les lignes ne sont pas fusionnables
-						if(evt.getLabel().equals(order.get(0))){
-							for(int cst=0;cst<a;cst++){
-								newLigne.remove(newLigne.size()-1);
+					if (a == order.size()) {
+						a = 0;
+					}
+				} else {
+					if (order.contains(evt.getLabel())) {
+						isFusion.set(0, false);// Les lignes ne sont pas
+												// fusionnables
+						if (evt.getLabel().equals(order.get(0))) {
+							for (int cst = 0; cst < a; cst++) {
+								newLigne.remove(newLigne.size() - 1);
 							}
 							newLigne.add(evt);
-							a=1;
-						}
-						else{	
-							for(int i=0;i<a;i++){
-								newLigne.remove(newLigne.size()-1);
+							a = 1;
+						} else {
+							for (int i = 0; i < a; i++) {
+								newLigne.remove(newLigne.size() - 1);
 							}
-							a=0;
+							a = 0;
 						}
+					}
 				}
 			}
+
+			// On enlève les événements d'un pattern non terminé à la fin de la
+			// ligne
+			for (int i = 0; i < a; i++) {
+				newLigne.remove(newLigne.size() - 1);
 			}
-			System.out.println("Nouvelle ligne : " +newLigne);
-			
-			//On enlève les événements d'un pattern non terminé à la fin de la ligne
-			for(int i=0;i<a;i++){
-				newLigne.remove(newLigne.size()-1);
-			}
-			
-			//Créer les aggrégés correspondant
-			for (int j=0;j<newLigne.size()/order.size();j++){
-				for(int i=0;i<order.size()-1;i++){
-					if(i==0){
-						LogEvent nouveau=LogEventsAggregator.aggregateLogEvents(newLigne.get(j*order.size()),newLigne.get(j*order.size()+1));
+
+			// Créer les aggrégés correspondant
+			for (int j = 0; j < newLigne.size() / order.size(); j++) {
+				for (int i = 0; i < order.size() - 1; i++) {
+					if (i == 0) {
+						LogEvent nouveau = LogEventsAggregator.aggregateLogEvents(newLigne.get(j * order.size()),
+								newLigne.get(j * order.size() + 1));
 						newLigneAggregated.add(nouveau);
 						eventsList.add(nouveau);
-					}
-					else{
-						LogEvent nouveau=LogEventsAggregator.aggregateLogEvents(newLigneAggregated.get(newLigneAggregated.size()-1),newLigne.get(j*order.size()+i+1));
+					} else {
+						LogEvent nouveau = LogEventsAggregator.aggregateLogEvents(
+								newLigneAggregated.get(newLigneAggregated.size() - 1),
+								newLigne.get(j * order.size() + i + 1));
 						newLigneAggregated.add(nouveau);
-						newLigneAggregated.remove(newLigneAggregated.size()-2);
+						newLigneAggregated.remove(newLigneAggregated.size() - 2);
 						eventsList.add(nouveau);
-						eventsList.remove(eventsList.size()-2);
-						if(i==order.size()-2){
-							try{
+						eventsList.remove(eventsList.size() - 2);
+						if (i == order.size() - 2) {
+							try {
 								eventsMap.get(nouveau.getLabel()).add(nouveau);
-							}
-							catch(Exception e){
+							} catch (Exception e) {
 								eventsMap.put(nouveau.getLabel(), new ArrayList<LogEvent>());
 								eventsMap.get(nouveau.getLabel()).add(nouveau);
 							}
@@ -199,77 +198,47 @@ public abstract class LogEventsManager {
 				}
 			}
 			Collections.sort(eventsList);
-			
-			Map <String,ArrayList> map=new HashMap();
-			map.put("keyList",order);
-			map.put("eventList", newLigneAggregated);
-			System.out.println(order);
-			System.out.println(newLigneAggregated);
-			
-			map.put("fusion", isFusion);
-			
-			//Sauvegarder dans un fichier txt les recherches effectuées
-//			try{
-//				FileWriter fw=new FileWriter(pathFileSauvegarde,true);
-//				BufferedWriter out = new BufferedWriter(fw);
-//				out.write("Sauvegarde: [");
-//				int b=0;
-//				for(String str:order){
-//					if(b==order.size()-1){
-//						out.write(str);
-//					}
-//					else{
-//						out.write(str+",");
-//						b++;
-//					}
-//				}
-//				out.write("]\n");
-//				out.close();
-//			}
-//			catch(IOException e){
-//				System.out.println("Impossible d'ouvrir ou de créer le fichier");
-//			}
-			return map;
-			}
-		}
 
-	public static boolean equalSelectedList(HashMap<String, ArrayList<LogEvent>> oldSelectedList){
-		if(oldSelectedList.size()==selectedList.size()){
-			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
-			{
-				String key= entry.getKey();
-				ArrayList<LogEvent> listEvent=entry.getValue();
-				if (oldSelectedList.containsKey(key)){
-					if(listEvent.size()!=oldSelectedList.get(key).size()){
+			Map<String, ArrayList> map = new HashMap();
+			map.put("keyList", order);
+			map.put("eventList", newLigneAggregated);
+			map.put("fusion", isFusion);
+			return map;
+		}
+	}
+
+	public static boolean equalSelectedList(HashMap<String, ArrayList<LogEvent>> oldSelectedList) {
+		if (oldSelectedList.size() == selectedList.size()) {
+			for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet()) {
+				String key = entry.getKey();
+				ArrayList<LogEvent> listEvent = entry.getValue();
+				if (oldSelectedList.containsKey(key)) {
+					if (listEvent.size() != oldSelectedList.get(key).size()) {
 						return false;
-					}
-					else{
-						for(LogEvent evt:listEvent){
-							if (!oldSelectedList.get(key).contains(evt)){
+					} else {
+						for (LogEvent evt : listEvent) {
+							if (!oldSelectedList.get(key).contains(evt)) {
 								return false;
 							}
 						}
 					}
-				}
-				else{
+				} else {
 					return false;
 				}
 			}
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
-	
-	public static HashMap<String, ArrayList<LogEvent>> copieSelectedList(){
-		HashMap<String, ArrayList<LogEvent>> temp=new HashMap<String, ArrayList<LogEvent>>();
-		for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet())
-		{
-			String key= entry.getKey();
-			ArrayList<LogEvent> listEvent=entry.getValue();
+
+	public static HashMap<String, ArrayList<LogEvent>> copieSelectedList() {
+		HashMap<String, ArrayList<LogEvent>> temp = new HashMap<String, ArrayList<LogEvent>>();
+		for (Entry<java.lang.String, java.util.ArrayList<LogEvent>> entry : selectedList.entrySet()) {
+			String key = entry.getKey();
+			ArrayList<LogEvent> listEvent = entry.getValue();
 			temp.put(new String(key), new ArrayList<LogEvent>(listEvent));
 		}
 		return temp;
 	}
-	}
+}

@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -28,8 +28,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -53,17 +53,17 @@ import logs.utils.FileCellRenderer;
  *
  * @author jeremiegarcia
  *
- *with the participation of marie, clement and charlelie
+ *         with the participation of marie, clement and charlelie
  */
 public class MainUI extends Application {
 	private String logFile = "";
 	private LogEventsManager logEventsManager;
-	//removing dependencies to private lib
-	//private Grade currentGrade;
+	// removing dependencies to private lib
+	// private Grade currentGrade;
 
 	private TimelinesExplorer timelinesExplorer;
 
-	private HashMap<String,ArrayList<LogEvent>> oldSelectedList;
+	private HashMap<String, ArrayList<LogEvent>> oldSelectedList;
 
 	private MainUI app;
 
@@ -99,37 +99,19 @@ public class MainUI extends Application {
 		timelinesExplorer = new TimelinesExplorer(this.logEventsManager);
 		root.setCenter(timelinesExplorer);
 
-		FusionManager fusionManager=new FusionManager(timelinesExplorer);
+		FusionManager fusionManager = new FusionManager(timelinesExplorer);
 		leftBox.getChildren().add(fusionManager);
-		
+
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(root);
-		oldSelectedList=new HashMap<String,ArrayList<LogEvent>>();
-		//Fait pour le projet SITA
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-				if (event.getCode()==KeyCode.CONTROL){
-					oldSelectedList=LogEventsManager.copieSelectedList();
-					timelinesExplorer.getContextMenu().cacherControl();
-					timelinesExplorer.setDisplayMenuOnce(false);
-            	}
-            }
-        });
-		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-				if (event.getCode()==KeyCode.CONTROL && LogEventsManager.getSelectedList().size()>1){
-					if(!timelinesExplorer.getDisplayMenuOnce() && !LogEventsManager.equalSelectedList(oldSelectedList)){
-						timelinesExplorer.getContextMenu().afficher(timelinesExplorer.getMouseXpos(), timelinesExplorer.getMouseYpos());
-						timelinesExplorer.setDisplayMenuOnce(true);
-					}
-            	}
-            }
-        });
+		oldSelectedList = new HashMap<String, ArrayList<LogEvent>>();
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
+//		Stage secondStage = new Stage();
+//		secondStage.setScene(new Scene(new HBox(4, new Label("Second window"))));
+//		secondStage.show();
 
 		// create the tmp directory if it does not exists
 		File tmpDir = new File(Configuration.TMP_DIR);
@@ -143,7 +125,7 @@ public class MainUI extends Application {
 		// load an initial file
 		this.loadFromZipFile(new File(KLogConfiguration.DEFAULT_ZIP_FILE));
 		// select first log file from extracted files
-		this.filesListView.getSelectionModel().select(0);		
+		this.filesListView.getSelectionModel().select(0);
 	}
 
 	ObservableList<File> filesList = FXCollections.observableArrayList();
@@ -159,8 +141,8 @@ public class MainUI extends Application {
 	private void loadFromZipFile(File zipFile) {
 
 		// extract the grade and unzip in TMP folder
-		//removing dependencies to private lib
-		//this.currentGrade = GraderTool.unzipAndGetGradeForFile(zipFile);
+		// removing dependencies to private lib
+		// this.currentGrade = GraderTool.unzipAndGetGradeForFile(zipFile);
 		String[] elements = zipFile.getParent().split("/");
 		String name = elements[elements.length - 2] + "/" + elements[elements.length - 1];
 		this.selectedZipFileLabel.setText(name);
