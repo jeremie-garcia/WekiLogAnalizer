@@ -12,6 +12,9 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -77,7 +80,7 @@ public class TimelinesExplorer extends BorderPane {
 	private boolean dragSelectionRectangleState = false;
 
 	// current selection
-	private ArrayList<LogEventNode> selectedNodeList;
+	private ObservableList<LogEventNode> selectedNodeList;
 
 	// Contextual Menu to apply fusion algorithms
 	private ContextMenu contextMenu;
@@ -95,6 +98,7 @@ public class TimelinesExplorer extends BorderPane {
 		this.setPrefHeight(500);
 
 		this.logEventsManager = logManager;
+		this.selectedNodeList = FXCollections.observableArrayList(new ArrayList<LogEventNode>());
 		this.unitConverter = new UnitConverter(0, 1000);
 
 		// create the time scale and the ruler
@@ -166,6 +170,16 @@ public class TimelinesExplorer extends BorderPane {
 			}
 		});
 
+		selectedNodeList.addListener(new ListChangeListener<LogEventNode>() {
+
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends LogEventNode> c) {
+				System.out.println(c + " " + selectedNodeList.size());
+
+			}
+
+		});
+
 		this.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -176,7 +190,6 @@ public class TimelinesExplorer extends BorderPane {
 						contextMenu.showAtPosition(event.getX(), event.getY());
 					}
 				} else {
-
 					Node parentNode = event.getPickResult().getIntersectedNode().getParent();
 					if (parentNode instanceof LogEventNode) {
 						LogEventNode eventNode = (LogEventNode) parentNode;
@@ -211,11 +224,17 @@ public class TimelinesExplorer extends BorderPane {
 					for (LogEventNode node : selectedNodeList) {
 						node.setSelected(false);
 					}
-					selectedNodeList.clear();
+
+					if (!event.isShiftDown()) {
+						selectedNodeList.clear();
+					}
+
 					selectionRectangle.updateFromPoint(new Point2D(event.getX(), event.getY()));
 					ArrayList<LogEventNode> nodes = findNodesInSelectionRectangle();
+
 					selectedNodeList.addAll(nodes);
 					for (LogEventNode node : selectedNodeList) {
+
 						node.setSelected(true);
 					}
 				}
@@ -260,7 +279,7 @@ public class TimelinesExplorer extends BorderPane {
 		this.centralPane.getChildren().clear();
 		this.textLabels = new ArrayList<Text>();
 
-		selectedNodeList = new ArrayList<LogEventNode>();
+		selectedNodeList.clear();
 
 		int index = 0;
 		Scale inverseScale = new Scale(1, 1);
@@ -282,9 +301,6 @@ public class TimelinesExplorer extends BorderPane {
 			Group points = new Group();
 			for (LogEvent logEvent : this.logEventsManager.getLogevents().get(key)) {
 				LogEventNode node = new LogEventNode(logEvent);
-				//
-				selectedNodeList.add(node);
-				//
 				node.setPosX(unitConverter.getPosInSceneFromTime(logEvent.getTimeStamp()));
 				node.scaleXProperty().bind(JavaFXUtils.getReversedScaleXBinding(horizontalScale.xProperty()));
 				node.setFillColor(color);
